@@ -1086,13 +1086,16 @@ $("placechip").onclick = () => setPlace(null);
 // show the small logo in the sticky bar once the page header has scrolled away
 (() => {   // top bar: hide the title part when scrolling down, show it again when scrolling up
   const bar = $("topbar"), hdr = document.querySelector("header"), ctl = $("controls"), body = document.body;
-  let lastY = scrollY, hidden = false, ticking = false;
+  // distance travelled since the scroll direction last changed, so slow scrolls count too
+  let lastY = scrollY, anchor = scrollY, dir = 0, hidden = false, ticking = false;
   const update = () => {
     ticking = false;
     const y = Math.max(0, scrollY), H = hdr.offsetHeight;
-    if (y < H) hidden = false;
-    else if (y > lastY + 6) hidden = true;
-    else if (y < lastY - 6) hidden = false;
+    const d = Math.sign(y - lastY);
+    if (d && d !== dir) { dir = d; anchor = lastY; }
+    if (y < 30) hidden = false;
+    else if (dir > 0 && y - anchor > 14) hidden = true;       // scrolled down a little: tuck the title away
+    else if (dir < 0 && anchor - y > 40) hidden = false;      // scrolled up a bit more: bring it back
     lastY = y;
     body.style.setProperty("--hide", (hidden ? H : 0) + "px");
     body.classList.toggle("scrolled", y > 2);
