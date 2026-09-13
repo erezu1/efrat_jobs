@@ -1093,7 +1093,8 @@ $("placechip").onclick = () => setPlace(null);
     const y = Math.max(0, scrollY), H = hdr.offsetHeight;
     const d = Math.sign(y - lastY);
     if (d && d !== dir) { dir = d; anchor = lastY; }
-    if (y < 30) hidden = false;
+    // tucking the title away before it has scrolled past would uncover the empty space it leaves behind
+    if (y < H) hidden = false;
     else if (dir > 0 && y - anchor > 14) hidden = true;       // scrolled down a little: tuck the title away
     else if (dir < 0 && anchor - y > 40) hidden = false;      // scrolled up a bit more: bring it back
     lastY = y;
