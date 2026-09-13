@@ -297,6 +297,10 @@ input[type=search]:focus,select:focus{outline:2px solid var(--accent);outline-of
 .card.liked.stripe-in{animation:stripeIn .45s cubic-bezier(.25,.8,.3,1) both}
 .card.liked.stripe-out{animation:stripeIn .32s cubic-bezier(.25,.8,.3,1) reverse both}
 @keyframes stripeIn{from{box-shadow:var(--e1),inset 0 0 0 var(--accent)}to{box-shadow:var(--e1),inset 4px 0 0 var(--accent)}}
+/* rejected: red stripe on the right, mirroring the purple one */
+.card.disliked{box-shadow:var(--e1),inset -4px 0 0 var(--danger)}
+.card.disliked.stripe-out{animation:stripeInR .32s cubic-bezier(.25,.8,.3,1) reverse both}
+@keyframes stripeInR{from{box-shadow:var(--e1),inset 0 0 0 var(--danger)}to{box-shadow:var(--e1),inset -4px 0 0 var(--danger)}}
 .card.dragging,.card.moving{z-index:3}   /* above other cards, below the pinned search bar */
 .card.dragging{user-select:none;cursor:grabbing}
 @property --p{syntax:"<number>";inherits:true;initial-value:0}
@@ -778,7 +782,7 @@ function card(r){
   if (!r.pre) tags.push(`<span class="tag">filtered: ${esc(r.pre_reason)}</span>`);
   if (translated) tags.push(`<a class="tag trtag" href="https://translate.google.com/translate?sl=nl&tl=en&u=${encodeURIComponent(r.url)}" target="_blank" rel="noopener" title="Translated from Dutch — open the full ad in Google Translate"><span class="mi">translate</span>Translated · full ad</a>`);
   const m = marks[r.key];
-  return `<article class="card  ${m==="interested"?"liked":""} ${justLiked===r.key?"stripe-in":""}" data-k="${esc(r.key)}" data-url="${esc(r.url)}">
+  return `<article class="card  ${m==="interested"?"liked":""} ${m==="hidden"?"disliked":""} ${justLiked===r.key?"stripe-in":""}" data-k="${esc(r.key)}" data-url="${esc(r.url)}">
     <div class="score ${sc==null?"na":""}" style="${col?`background:${col}`:""}" title="Fit score (0-10)">${sc==null?"–":sc}</div>
     <div>
       <a class="title" href="${esc(r.url)}" target="_blank" rel="noopener">${esc(title)}</a>
@@ -836,6 +840,11 @@ function draw(){
     if (m === "interested" && marks[k] === "interested" && ab) {    // un-marking: Applied? shrinks away first
       b.classList.remove("on"); ab.classList.remove("appear"); void ab.offsetWidth; ab.classList.add("out");
       c.classList.remove("stripe-in"); void c.offsetWidth; c.classList.add("stripe-out");
+      if (view === "interested" || view === "applied") leave(c, 1);
+      return setTimeout(() => setMark(k, m), 320);
+    }
+    if (m === "hidden" && marks[k] === "hidden") {                   // un-rejecting in the Rejected tab
+      b.classList.remove("on"); c.classList.add("stripe-out"); leave(c, -1);
       return setTimeout(() => setMark(k, m), 320);
     }
     setMark(k, m);
@@ -854,6 +863,10 @@ function draw(){
   });
 }
 
+function leave(c, dir){   // gentle exit for a card that no longer belongs in this tab
+  c.style.transition = "transform .32s ease, opacity .32s ease";
+  c.style.transform = `translateY(-6px) scale(.97) translateX(${dir * 12}px)`; c.style.opacity = "0";
+}
 // Swipe a card: right = interested, left = not interested
 function wireSwipe(el){
   const k = el.dataset.k;
@@ -898,6 +911,8 @@ function wireSwipe(el){
     if (view !== "interested") {          // card is leaving this tab: same fly-out as a right swipe
       const flyRight = () => {
         const yes = el.querySelector(".vote.yes"); yes?.classList.add("on");
+        el.querySelector(".vote.no")?.classList.remove("on");
+        if (el.classList.contains("disliked")) el.classList.add("stripe-out");
         el.style.transition = "transform .32s cubic-bezier(.5,0,.75,0), opacity .32s ease";
         el.style.transform = "translateX(120%) rotate(10deg)"; el.style.opacity = "0";
         setTimeout(() => setMark(k, "interested", true), 300);
@@ -965,6 +980,14 @@ function wireSwipe(el){
       if (Math.abs(mx) < 10 && Math.abs(my) < 10) return;
       if (Math.abs(my) > Math.abs(mx)) { tracking = false; return; }   // vertical: let the page scroll
       dragging = true; try { el.setPointerCapture(e.pointerId); } catch (_) {} el.classList.add("dragging");
+    }
+    // already in that state (right on an interested card, left on a rejected one): rubber-band, no action
+    const blocked = (mx > 0 && marks[k] === "interested") || (mx < 0 && marks[k] === "hidden");
+    if (blocked) {
+      dx = Math.sign(mx) * 34 * (1 - Math.exp(-Math.abs(mx) / 70));
+      el.style.transform = `translateX(${dx}px) rotate(${dx / 90}deg)`;
+      paint(0, mx > 0 ? "yes" : "no");
+      return;
     }
     dx = mx;
     el.style.transform = `translateX(${dx}px) rotate(${dx / 45}deg)`;
