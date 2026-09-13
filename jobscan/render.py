@@ -215,30 +215,22 @@ h1 .logo{width:40px;height:40px;border-radius:12px;background:linear-gradient(13
 .stat.on span{color:var(--on-accent);opacity:.85}
 :root{--on-accent:#fff}
 @media (prefers-color-scheme: dark){:root{--on-accent:#1f0f26}}
-.controls{border-bottom:0;background:transparent;padding-top:max(12px,env(safe-area-inset-top))}
-/* full-width backing behind the pinned bar (so card shadows never peek out at the sides) */
-.controls::before{content:"";position:absolute;top:0;bottom:0;left:-50vw;right:-50vw;background:var(--bg);z-index:-1;
-  transition:background .25s}
 html,body{overflow-x:clip}
-/* Pinned-bar glass: a separate fixed layer (steadier than blurring the sticky bar itself while scrolling fast) */
-#glass{position:fixed;left:0;right:0;top:0;height:var(--gh,0px);z-index:4;pointer-events:none;opacity:0;
-  background:color-mix(in srgb,var(--bg) 70%,transparent);transition:opacity .2s;
-  -webkit-mask-image:linear-gradient(to bottom,#000 0,#000 calc(100% - 34px),transparent 100%);
-  mask-image:linear-gradient(to bottom,#000 0,#000 calc(100% - 34px),transparent 100%)}
+/* Top bar = title + tabs + search/filters, fixed to the screen (composited: no jitter on fast scrolls).
+   Scrolling down slides the title part up out of view; scrolling up slides it back. The whole bar moves as one. */
+#topbar{position:fixed;top:0;left:0;right:0;z-index:6;padding-top:env(safe-area-inset-top);
+  transform:translateY(calc(-1 * var(--hide,0px)));transition:transform .32s cubic-bezier(.25,.8,.3,1);will-change:transform}
+#topbar::before{content:"";position:absolute;left:0;right:0;top:0;bottom:0;z-index:-1;background:var(--bg);transition:background .25s}
+body.scrolled #topbar::before{bottom:-30px;background:color-mix(in srgb,var(--bg) 72%,transparent);
+  -webkit-mask-image:linear-gradient(to bottom,#000 0,#000 calc(100% - 30px),transparent 100%);
+  mask-image:linear-gradient(to bottom,#000 0,#000 calc(100% - 30px),transparent 100%)}
 @supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
-  #glass{-webkit-backdrop-filter:blur(16px) saturate(1.5);backdrop-filter:blur(16px) saturate(1.5)}
+  body.scrolled #topbar::before{-webkit-backdrop-filter:blur(16px) saturate(1.5);backdrop-filter:blur(16px) saturate(1.5)}
 }
-body.stuck #glass{opacity:1}
-body.stuck .controls::before{background:transparent}
-.controls{top:0;transform:translateY(var(--rv,0px)) translateZ(0)}
-/* scrolling up reveals the title + tabs above the pinned search bar; scrolling down tucks them away */
-/* the header scrolls away normally (sticky with a negative top parks it just above the screen);
-   when revealed, header and search bar are shifted down together by the same amount (--rv) */
-header{position:sticky;top:calc(-1 * var(--hh,0px));z-index:6;transform:translateY(var(--rv,0px))}
-body.anim header,body.anim .controls{transition:transform .32s cubic-bezier(.25,.8,.3,1)}
-body.anim #glass{transition:opacity .2s,height .32s cubic-bezier(.25,.8,.3,1)}
-header::before{content:"";position:absolute;inset:0 -50vw;z-index:-1;background:var(--bg);transition:background .2s}
-body.stuck header::before{background:transparent}
+#topspace{height:var(--tbh,0px)}
+header{position:relative}
+.barwrap{max-width:980px;margin:0 auto;padding:0 20px}
+.controls{position:relative;top:auto;z-index:auto;border-bottom:0;background:transparent;padding:10px 0 12px}
 
 input[type=search],select{border:0;border-radius:12px;box-shadow:var(--e1);padding:9px 12px}
 select{-webkit-appearance:none;appearance:none;padding-right:34px;cursor:pointer;
@@ -325,7 +317,6 @@ input[type=search]:focus,select:focus{outline:2px solid var(--accent);outline-of
 .toast button{border:0;border-radius:10px;background:transparent;color:#f08cc0;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:8px 12px;font-size:13px}
 .toast button:hover{background:rgba(255,255,255,.08)}
 @media (prefers-color-scheme: dark){.toast{background:#ece6ee;color:#241a28}.toast .mi,.toast button{color:#7b2d8e}}
-/* header is sticky (see above), which also positions the sync panel */
 .toph{display:flex;align-items:center;justify-content:space-between;gap:12px}
 .iconbtn.syncbtn{display:inline-flex;flex:none;width:42px;height:42px;border-radius:14px;background:var(--panel)}
 .iconbtn.syncbtn .mi{font-size:22px}
@@ -393,6 +384,7 @@ details.srcs{background:var(--panel);border-radius:16px;box-shadow:var(--e1);pad
 @media (max-width: 760px){
   header{padding:18px 14px 4px}
   main{padding:0 14px 60px}
+  .barwrap{padding:0 14px}
   .sub{font-size:12px}
   .stats{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;margin:12px -14px 4px;padding:4px 14px 8px;gap:8px}
   .stats::-webkit-scrollbar{display:none}
@@ -482,6 +474,7 @@ details.srcs{background:var(--panel);border-radius:16px;box-shadow:var(--e1);pad
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,400,0..1,0&display=block">
 </head>
 <body>
+<div id="topbar">
 <header>
   <div class="toph">
     <h1><span class="logo"><svg class="helix" viewBox="0 0 64 64" aria-hidden="true"><g fill="none" stroke="#fff" stroke-width="4.5" stroke-linecap="round"><path d="M21 10C21 23 43 23 43 32S21 41 21 54"/><path d="M43 10C43 23 21 23 21 32S43 41 43 54"/></g><g stroke="#fff" stroke-width="3" stroke-linecap="round" opacity=".8"><path d="M25 15h14M25 49h14M29 22h6M29 42h6"/></g></svg></span><span class="name">BioJobs</span></h1>
@@ -493,7 +486,7 @@ details.srcs{background:var(--panel);border-radius:16px;box-shadow:var(--e1);pad
     <div class="body"></div>
   </div>
 </header>
-<main>
+<div class="barwrap">
   <div class="controls" id="controls">
     <div class="toprow">
       <a class="minilogo" href="#" id="minilogo" title="Back to top"><svg class="helix" viewBox="0 0 64 64" aria-hidden="true"><g fill="none" stroke="#fff" stroke-width="4.5" stroke-linecap="round"><path d="M21 10C21 23 43 23 43 32S21 41 21 54"/><path d="M43 10C43 23 21 23 21 32S43 41 43 54"/></g><g stroke="#fff" stroke-width="3" stroke-linecap="round" opacity=".8"><path d="M25 15h14M25 49h14M29 22h6M29 42h6"/></g></svg></a>
@@ -525,6 +518,10 @@ details.srcs{background:var(--panel);border-radius:16px;box-shadow:var(--e1);pad
       <div class="seg"><span class="segpill" id="segpill"></span><button id="btnList" class="on"><span class="mi">view_agenda</span>List</button><button id="btnMap"><span class="mi">map</span>Map</button></div>
     </div>
   </div>
+</div>
+</div>
+<div id="topspace"></div>
+<main>
   <div class="notice" id="unscored" hidden>Some jobs have no score yet. They'll be scored on the next daily run.</div>
   <div id="map" hidden></div>
   <div class="nomap" id="nomap" hidden></div>
@@ -1087,38 +1084,24 @@ function drawMap(rows){
 }
 $("placechip").onclick = () => setPlace(null);
 // show the small logo in the sticky bar once the page header has scrolled away
-(() => {   // pinned bar: header scrolls away with the page; scrolling up slides header + search bar back in together
-  const hdr = document.querySelector("header"), ctl = $("controls"), body = document.body;
-  const glass = document.createElement("div"); glass.id = "glass"; body.appendChild(glass);
-  let lastY = scrollY, reveal = false, ticking = false, natH = hdr.offsetHeight, animTimer = null;
+(() => {   // top bar: hide the title part when scrolling down, show it again when scrolling up
+  const bar = $("topbar"), hdr = document.querySelector("header"), ctl = $("controls"), body = document.body;
+  let lastY = scrollY, hidden = false, ticking = false;
   const update = () => {
     ticking = false;
-    const y = Math.max(0, scrollY);
-    natH = hdr.offsetHeight;                 // layout height (transforms don't change it)
-    let next = reveal;
-    if (y <= 2) next = false;
-    else if (y < lastY - 6 && y > natH * .5) next = true;
-    else if (y > lastY + 6) next = false;
-    if (next !== reveal) {                   // animate only the moment it toggles; otherwise follow the scroll exactly
-      reveal = next;
-      body.classList.add("anim"); clearTimeout(animTimer);
-      animTimer = setTimeout(() => body.classList.remove("anim"), 340);
-    }
+    const y = Math.max(0, scrollY), H = hdr.offsetHeight;
+    if (y < H) hidden = false;
+    else if (y > lastY + 6) hidden = true;
+    else if (y < lastY - 6) hidden = false;
     lastY = y;
-    const rv = reveal ? Math.min(natH, y) : 0;          // how far header + bar are pulled down
-    const stuck = y > natH || rv > 0;
-    body.classList.toggle("stuck", stuck);
-    body.classList.toggle("reveal", reveal);
-    ctl.classList.toggle("stuck", y > natH && !reveal);      // mini logo only when the title is hidden
-    body.style.setProperty("--hh", natH + "px");
-    body.style.setProperty("--rv", rv + "px");
-    body.style.setProperty("--gh", (stuck ? rv + ctl.offsetHeight + 34 : 0) + "px");
+    body.style.setProperty("--hide", (hidden ? H : 0) + "px");
+    body.classList.toggle("scrolled", y > 2);
+    ctl.classList.toggle("stuck", hidden);            // mini logo while the title is tucked away
   };
+  const measure = () => document.body.style.setProperty("--tbh", bar.offsetHeight + "px");
   addEventListener("scroll", () => { if (!ticking) { ticking = true; requestAnimationFrame(update); } }, {passive: true});
-  addEventListener("resize", update);
-  document.fonts?.ready.then(update);
-  new ResizeObserver(update).observe(hdr);
-  update();
+  new ResizeObserver(() => { measure(); update(); }).observe(bar);
+  measure(); update();
 })();
 $("minilogo").onclick = e => { e.preventDefault(); window.scrollTo({top: 0, behavior: "smooth"}); };
 function setCat(c, scroll = true){   // show only this job type ("" = all types)
