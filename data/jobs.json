@@ -1867,17 +1867,6 @@
    "pass": true,
    "reason": "keyword: molecul"
   },
-  "score": {
-   "blockers": [],
-   "category": "phd",
-   "deadline": "2026-09-13",
-   "dutch_required": "no",
-   "fit_score": 4,
-   "in_netherlands": true,
-   "model": "keywords",
-   "summary": "Your position will be in the Toxicology division of the Institute for Risk Assessment Sciences (IRAS), where you will be working on your PhD research in a team of motivated scientists and fellow PhD students who are all…",
-   "why": "Matches: nature, molecul, cell culture, life science · PhD position"
-  },
   "source": "academictransfer",
   "source_id": "363386",
   "title": "PhD student: Neurotoxicity of herbal supplements",
@@ -2198,17 +2187,6 @@
   "prefilter": {
    "pass": true,
    "reason": "keyword: molecul"
-  },
-  "score": {
-   "blockers": [],
-   "category": "phd",
-   "deadline": "2026-09-13",
-   "dutch_required": "no",
-   "fit_score": 9,
-   "in_netherlands": true,
-   "model": "keywords",
-   "summary": "Correct gene transcription by RNA polymerase II to transcribe new RNA molecules is crucial for proper cell function.",
-   "why": "Matches: gene, genome, crispr, nature, rna, molecul, lab, biolog · PhD position"
   },
   "source": "academictransfer",
   "source_id": "363457",
@@ -2674,17 +2652,6 @@
   "prefilter": {
    "pass": true,
    "reason": "keyword: Laborator"
-  },
-  "score": {
-   "blockers": [],
-   "category": "conservation_zoo_ngo",
-   "deadline": "2026-09-13",
-   "dutch_required": "fluent",
-   "fit_score": 2,
-   "in_netherlands": true,
-   "model": "keywords",
-   "summary": "Introductietekst Binnen het Leids Instituut voor Chemisch onderzoek Chemistry (LIC), onderdeel van de Faculteit Wiskunde en Natuurwetenschappen, wordt breed spectrum van chemisch onderzoek en onderwijs uitgevoerd.",
-   "why": "Matches: natuur, celkweek, laborator, biolog · Off-profile: chemistry"
   },
   "source": "academictransfer",
   "source_id": "363510",
@@ -6177,17 +6144,6 @@
    "pass": true,
    "reason": "keyword: populat"
   },
-  "score": {
-   "blockers": [],
-   "category": "other",
-   "deadline": "2026-09-13",
-   "dutch_required": "fluent",
-   "fit_score": 0,
-   "in_netherlands": true,
-   "model": "keywords",
-   "summary": "Anesthesioloog Solliciteer Anesthesioloog 36-45u p/wk € 8.868 - € 15.392 wo Sluitingsdatum: 13 sep.",
-   "why": "Off-profile: anesthes"
-  },
   "source": "avl",
   "source_id": "anesthesioloog",
   "title": "Anesthesioloog",
@@ -6206,17 +6162,6 @@
   "prefilter": {
    "pass": true,
    "reason": "keyword: populat"
-  },
-  "score": {
-   "blockers": [],
-   "category": "other",
-   "deadline": "2026-09-13",
-   "dutch_required": "fluent",
-   "fit_score": 0,
-   "in_netherlands": true,
-   "model": "keywords",
-   "summary": "Artsen; 28 - 38 uur; €10.032 - €14.265 Als anesthesioloog-pijnspecialist werk je binnen de afdeling Pijngeneeskunde van het UMC Utrecht en het Wilhelmina Kinderziekenhuis (WKZ).",
-   "why": "Off-profile: anesthes"
   },
   "source": "avl",
   "source_id": "anesthesioloog-pijnspecialist",
@@ -6585,17 +6530,6 @@
   "prefilter": {
    "pass": true,
    "reason": "keyword: Laborator"
-  },
-  "score": {
-   "blockers": [],
-   "category": "other",
-   "deadline": "2026-09-13",
-   "dutch_required": "fluent",
-   "fit_score": 0,
-   "in_netherlands": true,
-   "model": "keywords",
-   "summary": "Klinisch Chemicus (tijdelijke vervanging) Solliciteer Klinisch Chemicus (tijdelijke vervanging) 16-24u p/wk € 7.901 - € 11.865 wo Sluitingsdatum: 13 sep.",
-   "why": "Matches: molecul, laborator · Off-profile: klinisch"
   },
   "source": "avl",
   "source_id": "klinisch-chemicus-tijdelijke-vervanging",
@@ -8994,17 +8928,6 @@
    "pass": true,
    "reason": "keyword: Lab"
   },
-  "score": {
-   "blockers": [],
-   "category": "phd",
-   "deadline": "2026-09-13",
-   "dutch_required": "basic",
-   "fit_score": 2,
-   "in_netherlands": true,
-   "model": "keywords",
-   "summary": "Are you fascinated by how large teams of connected autonomous systems can coordinate complex missions intelligently and safely without revealing sensitive information? As a PhD candidate, you will develop verifiable,…",
-   "why": "Matches: lab · PhD position"
-  },
   "source": "euraxess",
   "source_id": "454673",
   "title": "PhD in Security-aware task planning and control of multi-agent systems",
@@ -10104,17 +10027,6 @@
   "prefilter": {
    "pass": true,
    "reason": "keyword: animal"
-  },
-  "score": {
-   "blockers": [],
-   "category": "phd",
-   "deadline": "2026-09-13",
-   "dutch_required": "basic",
-   "fit_score": 2,
-   "in_netherlands": true,
-   "model": "keywords",
-   "summary": "Help build a needle-free future for dialysis patients. Join TU Delft and LUMC to develop a transcutaneous vascular access, uniting biomaterials, medical technology and clinical nephrology.",
-   "why": "Matches: lab, biomedic · PhD position"
   },
   "source": "euraxess",
   "source_id": "460403",
@@ -11282,17 +11194,6 @@
    "pass": true,
    "reason": "keyword: molecul"
   },
-  "score": {
-   "blockers": [],
-   "category": "phd",
-   "deadline": "2026-09-13",
-   "dutch_required": "no",
-   "fit_score": 4,
-   "in_netherlands": true,
-   "model": "keywords",
-   "summary": "Your position will be in the Toxicology division of the Institute for Risk Assessment Sciences (IRAS), where you will be working on your PhD research in a team of motivated scientists and fellow PhD students who are all…",
-   "why": "Matches: nature, molecul, cell culture, life science · PhD position"
-  },
   "source": "euraxess",
   "source_id": "461089",
   "title": "PhD student: Neurotoxicity of herbal supplements",
@@ -11622,17 +11523,6 @@
   "prefilter": {
    "pass": true,
    "reason": "keyword: molecul"
-  },
-  "score": {
-   "blockers": [],
-   "category": "phd",
-   "deadline": "2026-09-13",
-   "dutch_required": "no",
-   "fit_score": 9,
-   "in_netherlands": true,
-   "model": "keywords",
-   "summary": "Correct gene transcription by RNA polymerase II to transcribe new RNA molecules is crucial for proper cell function.",
-   "why": "Matches: gene, genome, crispr, nature, rna, molecul, lab, biolog · PhD position"
   },
   "source": "euraxess",
   "source_id": "461412",
@@ -23213,17 +23103,6 @@
    "pass": true,
    "reason": "keyword: natuur"
   },
-  "score": {
-   "blockers": [],
-   "category": "conservation_zoo_ngo",
-   "deadline": "2026-09-13",
-   "dutch_required": "fluent",
-   "fit_score": 1,
-   "in_netherlands": true,
-   "model": "keywords",
-   "summary": "Ben jij een coachende leider die mensen in hun kracht zet? Als Teamleider Relatiemanagement help je een bevlogen team groeien en draag je bij aan duurzame relaties met grote gevers, nalaters en sponsors.",
-   "why": "Matches: biodiversit, natuur · senior / management level, nature organisation"
-  },
   "source": "fondsen",
   "source_id": "13264",
   "title": "Teamleider Relatiemanagement",
@@ -30251,17 +30130,6 @@
   "prefilter": {
    "pass": true,
    "reason": "keyword: natuur"
-  },
-  "score": {
-   "blockers": [],
-   "category": "conservation_zoo_ngo",
-   "deadline": "2026-09-13",
-   "dutch_required": "fluent",
-   "fit_score": 1,
-   "in_netherlands": true,
-   "model": "keywords",
-   "summary": "Vacature: Teamleider Relatiemanagement Ben jij een coachende leider die mensen in hun kracht zet? Als Teamleider Relatiemanagement help je een bevlogen team groeien en draag je bij aan duurzame relaties met grote…",
-   "why": "Matches: biodiversit, natuur · senior / management level, nature organisation"
   },
   "source": "greenjobs",
   "source_id": "34919",
@@ -39676,17 +39544,6 @@
    "pass": true,
    "reason": "keyword: analist"
   },
-  "score": {
-   "blockers": [],
-   "category": "other",
-   "deadline": "2026-09-13",
-   "dutch_required": "fluent",
-   "fit_score": 0,
-   "in_netherlands": true,
-   "model": "keywords",
-   "summary": "Information Security Officer (ISO) Innovatie, maatschappelijke relevantie én een goede werk-privébalans. Daar kun je op rekenen in deze baan bij het ICT Shared Service Centre (ISSC) van de Universiteit Leiden.",
-   "why": "Off-profile: office"
-  },
   "source": "leiden",
   "source_id": "16755",
   "title": "Information Security Officer (ISO)",
@@ -40119,17 +39976,6 @@
    "pass": true,
    "reason": "keyword: Laborator"
   },
-  "score": {
-   "blockers": [],
-   "category": "conservation_zoo_ngo",
-   "deadline": "2026-09-13",
-   "dutch_required": "fluent",
-   "fit_score": 2,
-   "in_netherlands": true,
-   "model": "keywords",
-   "summary": "Introductietekst Binnen het Leids Instituut voor Chemisch onderzoek Chemistry (LIC), onderdeel van de Faculteit Wiskunde en Natuurwetenschappen, wordt breed spectrum van chemisch onderzoek en onderwijs uitgevoerd.",
-   "why": "Matches: natuur, celkweek, laborator, biolog · Off-profile: chemistry"
-  },
   "source": "leiden",
   "source_id": "16844",
   "title": "Medewerker Laboratorium/mediakeuken (0,6 - 0,8 FTE)",
@@ -40171,17 +40017,6 @@
   "prefilter": {
    "pass": true,
    "reason": "keyword: Natuur"
-  },
-  "score": {
-   "blockers": [],
-   "category": "other",
-   "deadline": "2026-09-13",
-   "dutch_required": "fluent",
-   "fit_score": 0,
-   "in_netherlands": true,
-   "model": "keywords",
-   "summary": "Teaser Tekst Wil jij een belangrijke rol spelen in de ontwikkeling van de onderwijsorganisatie van een toonaangevend onderzoeksinstituut? Ben jij een verbindende en resultaatgerichte professional die overzicht houdt,…",
-   "why": "Matches: natuur · senior / management level · Off-profile: natuurkunde"
   },
   "source": "leiden",
   "source_id": "16847",
@@ -45257,17 +45092,6 @@
    "pass": true,
    "reason": "keyword: natuur"
   },
-  "score": {
-   "blockers": [],
-   "category": "conservation_zoo_ngo",
-   "deadline": "2026-09-13",
-   "dutch_required": "fluent",
-   "fit_score": 1,
-   "in_netherlands": true,
-   "model": "keywords",
-   "summary": "Ben jij een coachende leider die mensen in hun kracht zet? Als Teamleider Relatiemanagement help je een bevlogen team groeien en draag je bij aan duurzame relaties met grote gevers, nalaters en sponsors.",
-   "why": "Matches: biodiversit, natuur · senior / management level, nature organisation"
-  },
   "source": "sustainablejobs",
   "source_id": "109430",
   "title": "Teamleider Relatiemanagement",
@@ -49945,17 +49769,6 @@
   "prefilter": {
    "pass": true,
    "reason": "keyword: molecul"
-  },
-  "score": {
-   "blockers": [],
-   "category": "phd",
-   "deadline": "2026-09-13",
-   "dutch_required": "no",
-   "fit_score": 4,
-   "in_netherlands": true,
-   "model": "keywords",
-   "summary": "Your position will be in the Toxicology division of the Institute for Risk Assessment Sciences (IRAS), where you will be working on your PhD research in a team of motivated scientists and fellow PhD students who are all…",
-   "why": "Matches: nature, molecul, cell culture, life science · PhD position"
   },
   "source": "uu",
   "source_id": "phd-student-neurotoxicity-of-herbal-supplements",

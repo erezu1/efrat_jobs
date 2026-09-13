@@ -220,19 +220,23 @@ h1 .logo{width:40px;height:40px;border-radius:12px;background:linear-gradient(13
 .controls::before{content:"";position:absolute;top:0;bottom:0;left:-50vw;right:-50vw;background:var(--bg);z-index:-1;
   transition:background .25s}
 html,body{overflow-x:clip}
-/* once pinned: frosted glass — translucent + blur, extending below the bar and fading out smoothly.
-   The blur lives on this pseudo-layer, not on the sticky element itself (safer on Android Chrome). */
+/* Pinned-bar glass: a separate fixed layer (steadier than blurring the sticky bar itself while scrolling fast) */
+#glass{position:fixed;left:0;right:0;top:0;height:var(--gh,0px);z-index:4;pointer-events:none;opacity:0;
+  background:color-mix(in srgb,var(--bg) 70%,transparent);transition:opacity .2s,height .3s ease;
+  -webkit-mask-image:linear-gradient(to bottom,#000 0,#000 calc(100% - 34px),transparent 100%);
+  mask-image:linear-gradient(to bottom,#000 0,#000 calc(100% - 34px),transparent 100%)}
 @supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
-  .controls.stuck::before{bottom:-34px;background:color-mix(in srgb,var(--bg) 68%,transparent);
-    -webkit-backdrop-filter:blur(16px) saturate(1.5);backdrop-filter:blur(16px) saturate(1.5);
-    -webkit-mask-image:linear-gradient(to bottom,#000 0,#000 calc(100% - 34px),transparent 100%);
-    mask-image:linear-gradient(to bottom,#000 0,#000 calc(100% - 34px),transparent 100%)}
+  #glass{-webkit-backdrop-filter:blur(16px) saturate(1.5);backdrop-filter:blur(16px) saturate(1.5)}
 }
-@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
-  .controls::after{content:"";position:absolute;left:-50vw;right:-50vw;top:100%;height:28px;pointer-events:none;
-    background:linear-gradient(to bottom,var(--bg),transparent);opacity:0;transition:opacity .25s}
-  .controls.stuck::after{opacity:1}
-}
+body.stuck #glass{opacity:1}
+body.stuck .controls::before{background:transparent}
+.controls{transform:translateZ(0);transition:top .3s ease}
+/* scrolling up reveals the title + tabs above the pinned search bar; scrolling down tucks them away */
+header{position:sticky;top:0;z-index:6;transition:transform .3s ease}
+header::before{content:"";position:absolute;inset:0 -50vw;z-index:-1;background:var(--bg);transition:background .2s}
+body.stuck header::before{background:transparent}
+body.stuck:not(.reveal) header{transform:translateY(-105%);pointer-events:none}
+body.reveal .controls{top:var(--hh,0px)}
 input[type=search],select{border:0;border-radius:12px;box-shadow:var(--e1);padding:9px 12px}
 select{-webkit-appearance:none;appearance:none;padding-right:34px;cursor:pointer;
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5l5 5 5-5' fill='none' stroke='%237b2d8e' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
@@ -293,7 +297,7 @@ input[type=search]:focus,select:focus{outline:2px solid var(--accent);outline-of
 .card.liked.stripe-in{animation:stripeIn .45s cubic-bezier(.25,.8,.3,1) both}
 .card.liked.stripe-out{animation:stripeIn .32s cubic-bezier(.25,.8,.3,1) reverse both}
 @keyframes stripeIn{from{box-shadow:var(--e1),inset 0 0 0 var(--accent)}to{box-shadow:var(--e1),inset 4px 0 0 var(--accent)}}
-.card.dragging,.card.moving{z-index:30}   /* above other cards and the pinned search bar (toast stays on top) */
+.card.dragging,.card.moving{z-index:3}   /* above other cards, below the pinned search bar */
 .card.dragging{user-select:none;cursor:grabbing}
 @property --p{syntax:"<number>";inherits:true;initial-value:0}
 /* swipe feedback scales continuously with drag progress --p (0..1) */
@@ -312,7 +316,7 @@ input[type=search]:focus,select:focus{outline:2px solid var(--accent);outline-of
 .toast button{border:0;border-radius:10px;background:transparent;color:#f08cc0;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:8px 12px;font-size:13px}
 .toast button:hover{background:rgba(255,255,255,.08)}
 @media (prefers-color-scheme: dark){.toast{background:#ece6ee;color:#241a28}.toast .mi,.toast button{color:#7b2d8e}}
-header{position:relative}
+/* header is sticky (see above), which also positions the sync panel */
 .toph{display:flex;align-items:center;justify-content:space-between;gap:12px}
 .iconbtn.syncbtn{display:inline-flex;flex:none;width:42px;height:42px;border-radius:14px;background:var(--panel)}
 .iconbtn.syncbtn .mi{font-size:22px}
@@ -1020,8 +1024,29 @@ function drawMap(rows){
 }
 $("placechip").onclick = () => setPlace(null);
 // show the small logo in the sticky bar once the page header has scrolled away
-new IntersectionObserver(([e]) => $("controls").classList.toggle("stuck", !e.isIntersecting))
-  .observe(document.querySelector("header"));
+(() => {   // pinned bar state: stuck once the header scrolls away; reveal header again when scrolling up
+  const hdr = document.querySelector("header"), ctl = $("controls"), body = document.body;
+  const glass = document.createElement("div"); glass.id = "glass"; body.appendChild(glass);
+  let lastY = scrollY, reveal = false, ticking = false, natH = hdr.offsetHeight;
+  const update = () => {
+    ticking = false;
+    const y = scrollY;
+    if (!body.classList.contains("stuck")) natH = hdr.offsetHeight;
+    const stuck = y > natH;
+    if (!stuck) reveal = false;
+    else if (y < lastY - 6) reveal = true;
+    else if (y > lastY + 6) reveal = false;
+    lastY = y;
+    body.classList.toggle("stuck", stuck);
+    body.classList.toggle("reveal", stuck && reveal);
+    ctl.classList.toggle("stuck", stuck && !reveal);          // mini logo only when the title is hidden
+    body.style.setProperty("--hh", natH + "px");
+    body.style.setProperty("--gh", (stuck ? (reveal ? natH : 0) + ctl.offsetHeight + 34 : 0) + "px");
+  };
+  addEventListener("scroll", () => { if (!ticking) { ticking = true; requestAnimationFrame(update); } }, {passive: true});
+  addEventListener("resize", () => { natH = body.classList.contains("stuck") ? natH : hdr.offsetHeight; update(); });
+  update();
+})();
 $("minilogo").onclick = e => { e.preventDefault(); window.scrollTo({top: 0, behavior: "smooth"}); };
 function setCat(c, scroll = true){   // show only this job type ("" = all types)
   cats = c ? new Set([c]) : new Set();
