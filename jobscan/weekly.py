@@ -23,7 +23,7 @@ from zoneinfo import ZoneInfo
 from .render import build_rows
 
 ROOT = Path(__file__).resolve().parent.parent
-LOGO = ROOT / "docs" / "icons" / "icon-192.png"
+HEADER = ROOT / "docs" / "icons" / "email-header.png"   # logo + wordmark, made by tools/make_email_header.py
 MIN_SCORE = int(os.environ.get("WEEKLY_MIN_SCORE", "5"))
 DEADLINE_DAYS = 14
 CATS = {"phd": "PhD", "technician_research": "Research & lab",
@@ -55,7 +55,7 @@ def _meta(r: dict) -> str:
     return " · ".join(b for b in bits if b)
 
 
-def build_email(new, closing, today: date, logo: str = "cid:biojobs-logo") -> tuple[str, str, str]:
+def build_email(new, closing, today: date, header_src: str = "cid:biojobs-header") -> tuple[str, str, str]:
     page = os.environ.get("PAGE_URL", "")
     subject = f"BioJobs — {len(new)} new position{'s' if len(new) != 1 else ''}, " \
               f"{len(closing)} deadline{'s' if len(closing) != 1 else ''} soon ({today:%d %b})"
@@ -127,13 +127,8 @@ def build_email(new, closing, today: date, logo: str = "cid:biojobs-logo") -> tu
     body = f"""<div style="background:{GROUND};padding:24px 12px;font-family:{FONT}">
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:640px;margin:0 auto">
  <tr><td style="padding:0 4px 6px">
-  <table role="presentation" cellpadding="0" cellspacing="0"><tr>
-   {f'<td style="padding-right:12px"><a href="{e(page)}" style="text-decoration:none"><img src="{e(logo)}" width="44" height="44" alt="BioJobs" style="display:block;border-radius:12px;border:0"></a></td>' if logo else ""}
-   <td>
-    <a href="{e(page)}" style="font-family:{FONT};font-size:22px;font-weight:700;color:{PURPLE};letter-spacing:-.01em;text-decoration:none">BioJobs</a>
-    <div style="font-size:13px;color:{MUTED}">Your weekly update · {today:%d %B %Y}</div>
-   </td>
-  </tr></table>
+  <a href="{e(page)}" style="text-decoration:none;display:inline-block"><img src="{e(header_src)}" width="189" height="44" alt="BioJobs" style="display:block;border:0;width:189px;height:44px"></a>
+  <div style="font-size:13px;color:{MUTED};margin-top:6px">Your weekly update · {today:%d %B %Y}</div>
  </td></tr>
  <tr><td style="padding:0 4px">
   {section("New positions this week", len(new), "".join(card(r) for r in new))}
@@ -160,8 +155,8 @@ def main() -> int:
     state = json.loads((ROOT / "data" / "jobs.json").read_text())
     new, closing = collect(state, now.date())
     if args.dry_run:
-        data_uri = "data:image/png;base64," + base64.b64encode(LOGO.read_bytes()).decode()
-        subject, text, body = build_email(new, closing, now.date(), logo=data_uri)
+        data_uri = "data:image/png;base64," + base64.b64encode(HEADER.read_bytes()).decode()
+        subject, text, body = build_email(new, closing, now.date(), header_src=data_uri)
         print(subject, "\n", text, sep="")
         (ROOT / "data" / "weekly_preview.html").write_text('<meta charset="utf-8">' + body)
         return 0
@@ -177,8 +172,8 @@ def main() -> int:
     msg["Subject"], msg["From"], msg["To"] = subject, user, to
     msg.set_content(text)
     msg.add_alternative(body, subtype="html")
-    # embed the logo in the message so it shows even when remote images are blocked
-    msg.get_payload()[1].add_related(LOGO.read_bytes(), "image", "png", cid="<biojobs-logo>")
+    # embed the header image in the message so it shows even when remote images are blocked
+    msg.get_payload()[1].add_related(HEADER.read_bytes(), "image", "png", cid="<biojobs-header>")
     with smtplib.SMTP_SSL(host, int(os.environ.get("SMTP_PORT") or "465")) as s:
         s.login(user, pw)
         s.send_message(msg)

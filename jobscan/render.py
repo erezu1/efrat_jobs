@@ -205,7 +205,7 @@ h1{display:flex;align-items:center;gap:12px;font-family:"Sora",-apple-system,Bli
 h1 .name{background:linear-gradient(135deg,#7b2d8e,#d6409f);-webkit-background-clip:text;background-clip:text;color:transparent}
 @media (prefers-color-scheme: dark){h1 .name{background-image:linear-gradient(135deg,#d59ce6,#f08cc0)}}
 h1 .logo{width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg,#7b2d8e,#d6409f);color:#fff;display:flex;align-items:center;justify-content:center;box-shadow:var(--e2)}
-h1 .logo .mi{font-size:24px}
+.helix{width:100%;height:100%;display:block}
 .stat{border:0;border-radius:16px;padding:12px 16px;box-shadow:var(--e1);transition:box-shadow .2s,transform .2s}
 .stat:hover{box-shadow:var(--e3);transform:translateY(-1px)}
 .stat.on{background:var(--accent);color:var(--on-accent);box-shadow:var(--e2)}
@@ -302,13 +302,13 @@ details.srcs{background:var(--panel);border-radius:16px;box-shadow:var(--e1);pad
 </head>
 <body>
 <header>
-  <h1><span class="logo"><span class="mi">genetics</span></span><span class="name">BioJobs</span></h1>
+  <h1><span class="logo"><svg class="helix" viewBox="0 0 64 64" aria-hidden="true"><g fill="none" stroke="#fff" stroke-width="4.5" stroke-linecap="round"><path d="M21 10C21 23 43 23 43 32S21 41 21 54"/><path d="M43 10C43 23 21 23 21 32S43 41 43 54"/></g><g stroke="#fff" stroke-width="3" stroke-linecap="round" opacity=".8"><path d="M25 15h14M25 49h14M29 22h6M29 42h6"/></g></svg></span><span class="name">BioJobs</span></h1>
   <div class="stats" id="stats"></div>
 </header>
 <main>
   <div class="controls" id="controls">
     <div class="toprow">
-      <a class="minilogo" href="#" id="minilogo" title="Back to top"><span class="mi">genetics</span></a>
+      <a class="minilogo" href="#" id="minilogo" title="Back to top"><svg class="helix" viewBox="0 0 64 64" aria-hidden="true"><g fill="none" stroke="#fff" stroke-width="4.5" stroke-linecap="round"><path d="M21 10C21 23 43 23 43 32S21 41 21 54"/><path d="M43 10C43 23 21 23 21 32S43 41 43 54"/></g><g stroke="#fff" stroke-width="3" stroke-linecap="round" opacity=".8"><path d="M25 15h14M25 49h14M29 22h6M29 42h6"/></g></svg></a>
       <input type="search" id="q" placeholder="Search jobs…">
       <button class="iconbtn" id="btnFilters" title="Filters" aria-expanded="false"><span class="mi">tune</span><span class="fdot" id="fdot" hidden></span></button>
     </div>
