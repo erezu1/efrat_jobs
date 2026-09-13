@@ -212,9 +212,12 @@ h1 .logo .mi{font-size:24px}
 .stat.on span{color:var(--on-accent);opacity:.85}
 :root{--on-accent:#fff}
 @media (prefers-color-scheme: dark){:root{--on-accent:#1f0f26}}
-.controls{border-bottom:0;background:var(--bg);padding-top:max(12px,env(safe-area-inset-top));transition:box-shadow .2s}
+.controls{border-bottom:0;background:transparent;padding-top:max(12px,env(safe-area-inset-top))}
+/* full-width solid backing so nothing (incl. card shadows in the side margins) shows beside the bar */
+.controls::before{content:"";position:absolute;top:0;bottom:0;left:-50vw;right:-50vw;background:var(--bg);z-index:-1}
+html,body{overflow-x:clip}
 /* soft fade under the pinned bar: cards dissolve instead of being cut off */
-.controls::after{content:"";position:absolute;left:-20px;right:-20px;top:100%;height:28px;pointer-events:none;
+.controls::after{content:"";position:absolute;left:-50vw;right:-50vw;top:100%;height:28px;pointer-events:none;
   background:linear-gradient(to bottom,var(--bg) 0%,color-mix(in srgb,var(--bg) 70%,transparent) 40%,transparent 100%);
   opacity:0;transition:opacity .25s}
 .controls.stuck::after{opacity:1}
