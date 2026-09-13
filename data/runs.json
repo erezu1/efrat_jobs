@@ -1,0 +1,30 @@
+[
+ {
+  "time": "2026-09-13T17:31:30+00:00",
+  "sources": {
+   "academictransfer": {
+    "ok": true,
+    "count": 150,
+    "new": 150,
+    "seconds": 4.2
+   }
+  },
+  "new": 150,
+  "scored": 89,
+  "errors": []
+ },
+ {
+  "time": "2026-09-13T17:32:07+00:00",
+  "sources": {
+   "academictransfer": {
+    "ok": true,
+    "count": 150,
+    "new": 0,
+    "seconds": 4.0
+   }
+  },
+  "new": 0,
+  "scored": 89,
+  "errors": []
+ }
+]

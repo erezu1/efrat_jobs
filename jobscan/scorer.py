@@ -24,7 +24,7 @@ TOPICS = [
     (r"\beDNA\b|environmental\s+DNA", 4, 2),
     (r"\bfish|\bvis\b|vissen|visserij|fisheries|ichthy|aquacult|aquacultuur|salmon|zalm", 4, 2),
     # Strong
-    (r"genetic|genetica|genetisch", 3, 1.5),
+    (r"(?<![a-z])genetic|(?<![a-z])genetica|(?<![a-z])genetisch", 3, 1.5),   # not "optogenetic"
     (r"genomic|genomics|genoom|genome", 3, 1.5),
     (r"animal\s+breeding|fokkerij|breeding\s+value|quantitative\s+genetic", 3, 1.5),
     (r"evolution|evolutie|phylogen|fylogen", 2.5, 1),
@@ -40,6 +40,8 @@ TOPICS = [
     (r"\bbiolog|life\s+science|levenswetenschap", 1, 0.5),
 ]
 
+DESC_CAP = 4.0   # max points from topic words that appear only in the description
+
 # Off-profile topics: (regex, penalty if in title, penalty if only in description)
 OFF_TOPICS = [
     (r"patient|pati[eë]nt|clinical|klinisch|hospital|ziekenhuis|cancer|kanker|tumou?r|oncolog", 3, 1),
@@ -54,9 +56,9 @@ OFF_TOPICS = [
 
 # Job-type adjustments on the title
 TYPE_ADJ = [
-    (r"\bph\.?d\b|promovend|doctoral\s+candidate", +1.5, "PhD position"),
+    (r"\bph\.?d\b|promovend|doctoral\s+candidate", +1, "PhD position"),
     (r"technician|technicus|analist|analyst|laborant|research\s+assistant|onderzoeksassistent|"
-     r"junior\s+(researcher|onderzoeker|scientist)", +1.5, "technician / research role"),
+     r"researcher|onderzoeker", +1, "technician / research role"),
     (r"\bsenior\b|\bmanager\b|director|directeur|\bhead\b|\bhoofd\b|teamleider|team\s+lead|"
      r"\blead\b|principal", -2, "senior / management level"),
 ]
@@ -120,15 +122,16 @@ def summary(text: str, limit: int = 220) -> str:
 
 def score(job: Job) -> dict:
     title, text = job.title, job.description or ""
-    raw, hits = 0.0, []
+    t_pts, d_pts, hits = 0.0, 0.0, []
     for rx, in_title, in_desc in _TOPICS:
         if rx.search(title):
-            raw += in_title
+            t_pts += in_title
             hits.append(_label(rx, title))
         elif rx.search(text):
-            raw += in_desc
+            d_pts += in_desc
             hits.append(_label(rx, text))
-    raw = min(raw, 9.0)   # diminishing returns: many weak matches shouldn't beat one strong one
+    # A relevant title matters most; words deep in the ad text can only add a little.
+    raw = min(t_pts + min(d_pts, DESC_CAP), 9.0)
 
     minus = []
     for rx, in_title, in_desc in _OFF:
@@ -171,7 +174,7 @@ def score(job: Job) -> dict:
     raw -= 2 * len(blockers)
     if dutch == "fluent":
         raw -= 0.5
-    fit = max(0, min(10, round(raw)))
+    fit = max(0, min(10, int(raw + 0.5)))
 
     in_nl = not FOREIGN_IN_TITLE.search(title)
     if not in_nl:

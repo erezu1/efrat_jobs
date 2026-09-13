@@ -44,8 +44,14 @@ jobs:
           git config user.name "job-scout-bot"
           git config user.email "job-scout-bot@users.noreply.github.com"
           git add data docs
-          git diff --cached --quiet || git commit -m "Daily scan $(date -u +%F)"
-          git push
+          git diff --cached --quiet && exit 0
+          git commit -m "Daily scan $(date -u +%F)"
+          # the repo may have changed while scanning: replay our commit on top, preferring scan output
+          for i in 1 2 3; do
+            git pull --rebase -X theirs && git push && exit 0
+            sleep 10
+          done
+          exit 1
 
       - name: Open digest issue (GitHub emails repo watchers)
         if: vars.DIGEST_ISSUES == 'true'

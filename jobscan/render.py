@@ -198,6 +198,7 @@ const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt
 
 function base(){
   const min = +$("minscore").value;
+  if (view === "all") return DATA.rows;        // every open job found, unfiltered
   return DATA.rows.filter(r => {
     if (!r.pre) return $("showfiltered").checked;
     if (r.score == null) return true;          // unscored (no API key yet) — show
@@ -209,12 +210,17 @@ const VIEWS = {
   new: {label:"New this week", f: r => daysSince(r.first_seen) <= 7},
   closing: {label:"Closing in 14 days", f: r => { const d = daysTo(r.deadline); return d !== null && d >= 0 && d <= 14; }},
   saved: {label:"Saved", f: r => marks[r.key] === "saved"},
+  all: {label:"All found (unfiltered)", f: r => true},
 };
 
 function renderStats(){
-  const b = base().filter(r => marks[r.key] !== "hidden");
-  $("stats").innerHTML = Object.entries(VIEWS).map(([k,v]) =>
-    `<div class="stat ${k===view?"on":""}" data-v="${k}"><b>${b.filter(v.f).length}</b><span>${v.label}</span></div>`).join("");
+  const cur = view;
+  $("stats").innerHTML = Object.entries(VIEWS).map(([k,v]) => {
+    view = k;   // base() depends on the view
+    const n = base().filter(r => marks[r.key] !== "hidden").filter(v.f).length;
+    return `<div class="stat ${k===cur?"on":""}" data-v="${k}"><b>${n}</b><span>${v.label}</span></div>`;
+  }).join("");
+  view = cur;
   $("stats").querySelectorAll(".stat").forEach(el => el.onclick = () => { view = el.dataset.v; draw(); });
 }
 
@@ -259,7 +265,8 @@ function draw(){
   rows.sort((a,b) => s === "deadline" ? dlKey(a)-dlKey(b) || (b.score??-1)-(a.score??-1)
     : s === "new" ? (b.first_seen||"").localeCompare(a.first_seen||"") || (b.score??-1)-(a.score??-1)
     : (b.score??-1)-(a.score??-1) || dlKey(a)-dlKey(b));
-  $("count").textContent = `${rows.length} job${rows.length===1?"":"s"}`;
+  $("count").textContent = `${rows.length} job${rows.length===1?"":"s"}` +
+    (view === "all" ? " — everything the scan found, including jobs the filter would hide (reason shown on each)" : "");
   $("list").innerHTML = rows.length ? rows.map(card).join("") : `<div class="empty">Nothing here right now.</div>`;
   $("list").querySelectorAll(".actions button").forEach(b => b.onclick = () => {
     const k = b.dataset.k; marks[k] = marks[k] === b.dataset.m ? undefined : b.dataset.m;
