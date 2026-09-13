@@ -234,9 +234,27 @@ input[type=search]:focus,select:focus{outline:2px solid var(--accent);outline-of
 .meta .mi{font-size:16px;margin-right:2px;vertical-align:-3px}
 .blockers .mi{font-size:17px;vertical-align:-3px}
 .actions button{border:0;border-radius:999px;padding:5px 12px 5px 9px;background:var(--chip);display:inline-flex;align-items:center;gap:4px;transition:box-shadow .15s,background .15s}
+.actions{align-items:center}
+.actions .vote{width:38px;height:38px;padding:0;justify-content:center;border-radius:50%}
+.actions .vote .mi{font-size:22px}
+.actions .vote.yes.on{background:var(--accent);color:var(--on-accent)}
+.actions .vote.no.on{background:var(--danger);color:#fff}
+.applybox{display:inline-flex;align-items:center;gap:4px;margin-left:4px;padding:6px 12px 6px 9px;border-radius:999px;background:var(--chip);font-size:13px;cursor:pointer;user-select:none}
+.applybox input{display:none}
+.applybox .mi{font-size:18px}
+.applybox.on{background:var(--accent-soft);color:var(--accent);font-weight:600}
+.card{position:relative;touch-action:pan-y}
+.card.liked{box-shadow:var(--e1),inset 4px 0 0 var(--accent)}
+.card.dragging{user-select:none;cursor:grabbing;z-index:2}
+.card[data-swipe]::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;opacity:0;transition:opacity .15s;
+  display:flex;align-items:center;font:700 15px/1 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;padding:0 22px}
+.card[data-swipe="yes"]::after{content:"✓ Interested";opacity:1;justify-content:flex-start;color:var(--accent);
+  background:linear-gradient(to right,color-mix(in srgb,var(--accent) 22%,transparent),transparent 60%)}
+.card[data-swipe="no"]::after{content:"✕ Not interested";opacity:1;justify-content:flex-end;color:var(--danger);
+  background:linear-gradient(to left,color-mix(in srgb,var(--danger) 18%,transparent),transparent 60%)}
 .actions button:hover{box-shadow:var(--e1)}
 .actions button .mi{font-size:18px}
-.actions button.on{background:var(--accent-soft);color:var(--accent)}
+
 .seg{border:0;border-radius:999px;box-shadow:var(--e1);background:var(--panel);padding:3px}
 .seg button{border-radius:999px;display:inline-flex;align-items:center;gap:6px;padding:6px 14px;background:transparent}
 .seg button.on{background:var(--accent);color:#fff;box-shadow:var(--e1)}
@@ -345,9 +363,23 @@ const today = new Date(); today.setHours(0,0,0,0);
 const daysTo = d => d ? Math.round((new Date(d+"T00:00:00") - today)/864e5) : null;
 const daysSince = d => d ? Math.round((today - new Date(d+"T00:00:00"))/864e5) : 999;
 
-let marks = {};
+// marks[key] = "interested" | "hidden" (not interested) — mutually exclusive; applied[key] = true
+let marks = {}, applied = {};
 try { marks = JSON.parse(localStorage.getItem("marks") || "{}"); } catch(e) {}
-const saveMarks = () => { try { localStorage.setItem("marks", JSON.stringify(marks)); } catch(e) {} };
+try { applied = JSON.parse(localStorage.getItem("applied") || "{}"); } catch(e) {}
+for (const [k, m] of Object.entries(marks)) {          // migrate older "saved"/"applied" marks
+  if (m === "saved") marks[k] = "interested";
+  if (m === "applied") { marks[k] = "interested"; applied[k] = true; }
+}
+const saveMarks = () => { try {
+  localStorage.setItem("marks", JSON.stringify(marks)); localStorage.setItem("applied", JSON.stringify(applied));
+} catch(e) {} };
+saveMarks();
+function setMark(k, m, force = false){   // tap toggles; swipe (force) always sets
+  if (!force && marks[k] === m) delete marks[k]; else marks[k] = m;
+  if (marks[k] !== "interested") delete applied[k];
+  saveMarks(); draw();
+}
 
 let view = "matches", cats = new Set();
 let place = null;   // {key, label}: show only jobs from one location
@@ -364,7 +396,7 @@ const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt
 function base(){
   const min = +$("minscore").value;
   // every open job found, unfiltered; saved/applied also ignore the score filter
-  if (view === "all" || view === "saved" || view === "applied") return DATA.rows;
+  if (view === "all" || view === "interested" || view === "applied") return DATA.rows;
   return DATA.rows.filter(r => {
     if (!r.pre) return $("showfiltered").checked;
     if (r.score == null) return true;          // unscored (no API key yet) — show
@@ -375,8 +407,8 @@ const VIEWS = {
   matches: {label:"Matches", f: r => true},
   new: {label:"New this week", f: r => daysSince(r.first_seen) <= 7},
   closing: {label:"Closing in 14 days", f: r => { const d = daysTo(r.deadline); return d !== null && d >= 0 && d <= 14; }},
-  saved: {label:"Saved", f: r => marks[r.key] === "saved"},
-  applied: {label:"Applied", f: r => marks[r.key] === "applied"},
+  interested: {label:"Interested", f: r => marks[r.key] === "interested"},
+  applied: {label:"Applied", f: r => marks[r.key] === "interested" && applied[r.key]},
   all: {label:"All found (unfiltered)", f: r => true},
 };
 
@@ -403,7 +435,7 @@ function card(r){
   tags.push(`<span class="tag"><span class="mi">link</span>via ${esc(r.source)}${r.also.map(a=>`, <a href="${esc(a.url)}" target="_blank" rel="noopener">${esc(a.source)}</a>`).join("")}</span>`);
   if (!r.pre) tags.push(`<span class="tag">filtered: ${esc(r.pre_reason)}</span>`);
   const m = marks[r.key];
-  return `<article class="card ${m==="hidden"?"dim":""}">
+  return `<article class="card ${m==="hidden"?"dim":""} ${m==="interested"?"liked":""}" data-k="${esc(r.key)}">
     <div class="score ${sc==null?"na":""}" style="${col?`background:${col}`:""}" title="Fit score (0-10)">${sc==null?"–":sc}</div>
     <div>
       <a class="title" href="${esc(r.url)}" target="_blank" rel="noopener">${esc(r.title)}</a>
@@ -413,9 +445,9 @@ function card(r){
       ${r.why?`<p class="why">${esc(r.why)}</p>`:""}
       ${r.blockers?.length?`<p class="blockers"><span class="mi">warning</span> ${r.blockers.map(esc).join(" · ")}</p>`:""}
       <div class="actions">
-        <button data-k="${esc(r.key)}" data-m="saved" class="${m==="saved"?"on":""}"><span class="mi ${m==="saved"?"fill":""}">bookmark</span>Save</button>
-        <button data-k="${esc(r.key)}" data-m="applied" class="${m==="applied"?"on":""}"><span class="mi">check_circle</span>Applied</button>
-        <button data-k="${esc(r.key)}" data-m="hidden" class="${m==="hidden"?"on":""}"><span class="mi">block</span>Not interested</button>
+        <button class="vote yes ${m==="interested"?"on":""}" data-k="${esc(r.key)}" data-m="interested" title="Interested (or swipe right)" aria-label="Interested"><span class="mi">check</span></button>
+        <button class="vote no ${m==="hidden"?"on":""}" data-k="${esc(r.key)}" data-m="hidden" title="Not interested (or swipe left)" aria-label="Not interested"><span class="mi">close</span></button>
+        ${m==="interested" ? `<label class="applybox ${applied[r.key]?"on":""}"><input type="checkbox" data-k="${esc(r.key)}" ${applied[r.key]?"checked":""}><span class="mi">${applied[r.key]?"task_alt":"radio_button_unchecked"}</span>Applied</label>` : ""}
       </div>
     </div></article>`;
 }
@@ -440,10 +472,50 @@ function draw(){
   $("list").innerHTML = rows.length ? rows.map(card).join("") : `<div class="empty">Nothing here right now.</div>`;
   $("list").querySelectorAll(".cattag").forEach(a => a.onclick = e => { e.preventDefault(); setCat(a.dataset.c); });
   $("list").querySelectorAll(".placelink").forEach(a => a.onclick = e => { e.preventDefault(); setPlace(a.dataset.place, a.dataset.label); });
-  $("list").querySelectorAll(".actions button").forEach(b => b.onclick = () => {
-    const k = b.dataset.k; marks[k] = marks[k] === b.dataset.m ? undefined : b.dataset.m;
-    if (!marks[k]) delete marks[k]; saveMarks(); draw();
+  $("list").querySelectorAll(".vote").forEach(b => b.onclick = () => setMark(b.dataset.k, b.dataset.m));
+  $("list").querySelectorAll(".applybox input").forEach(cb => cb.onchange = () => {
+    if (cb.checked) applied[cb.dataset.k] = true; else delete applied[cb.dataset.k];
+    saveMarks(); draw();
   });
+  $("list").querySelectorAll(".card").forEach(wireSwipe);
+}
+
+// Swipe a card: right = interested, left = not interested
+function wireSwipe(el){
+  const k = el.dataset.k;
+  let x0 = 0, y0 = 0, dx = 0, tracking = false, dragging = false;
+  const reset = () => { el.style.transition = "transform .2s ease"; el.style.transform = ""; el.dataset.swipe = "";
+                        setTimeout(() => { el.style.transition = ""; }, 220); };
+  el.addEventListener("pointerdown", e => {
+    if (e.button !== 0 || e.target.closest("a,button,input,label,select")) return;
+    x0 = e.clientX; y0 = e.clientY; dx = 0; tracking = true; dragging = false;
+  });
+  el.addEventListener("pointermove", e => {
+    if (!tracking) return;
+    const mx = e.clientX - x0, my = e.clientY - y0;
+    if (!dragging) {
+      if (Math.abs(mx) < 10 && Math.abs(my) < 10) return;
+      if (Math.abs(my) > Math.abs(mx)) { tracking = false; return; }   // vertical: let the page scroll
+      dragging = true; try { el.setPointerCapture(e.pointerId); } catch (_) {} el.classList.add("dragging");
+    }
+    dx = mx;
+    el.style.transform = `translateX(${dx}px) rotate(${dx / 45}deg)`;
+    el.dataset.swipe = dx > 50 ? "yes" : dx < -50 ? "no" : "";
+  });
+  const end = () => {
+    if (!tracking) return;
+    tracking = false;
+    if (!dragging) return;
+    el.classList.remove("dragging");
+    if (dx > 90) { reset(); setTimeout(() => setMark(k, "interested", true), 180); }
+    else if (dx < -90) {
+      el.style.transition = "transform .22s ease, opacity .22s ease";
+      el.style.transform = "translateX(-120%) rotate(-8deg)"; el.style.opacity = "0";
+      setTimeout(() => setMark(k, "hidden", true), 200);
+    } else reset();
+  };
+  el.addEventListener("pointerup", end);
+  el.addEventListener("pointercancel", () => { tracking = false; el.classList.remove("dragging"); reset(); });
 }
 
 let mapMode = false, map = null, layer = null;
