@@ -235,6 +235,8 @@ details.srcs{background:var(--panel);border-radius:16px;box-shadow:var(--e1);pad
 .placechip .mi{font-size:16px}
 .onlyhere{margin:2px 0 6px;border:0;border-radius:999px;background:var(--accent);color:#fff;padding:4px 10px 4px 7px;font-size:12px;display:inline-flex;align-items:center;gap:3px;cursor:pointer}
 .onlyhere .mi{font-size:16px}
+.ctlrow{flex-basis:100%;display:flex;justify-content:space-between;align-items:center;gap:8px}
+.ctlrow .count{margin:0}
 .leaflet-popup-content-wrapper{border-radius:14px;box-shadow:var(--e3)}
 </style>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,400,0..1,0&display=block">
@@ -257,12 +259,12 @@ details.srcs{background:var(--panel);border-radius:16px;box-shadow:var(--e1);pad
     <span class="chip on placechip" id="placechip" hidden><span class="mi">location_on</span><span id="placename"></span><span class="mi">close</span></span>
     <label class="tog"><input type="checkbox" id="showhidden"> show dismissed</label>
     <label class="tog"><input type="checkbox" id="showfiltered"> show keyword-filtered</label>
+    <div class="ctlrow">
+      <div class="count" id="count"></div>
+      <div class="seg"><button id="btnList" class="on"><span class="mi">view_agenda</span>List</button><button id="btnMap"><span class="mi">map</span>Map</button></div>
+    </div>
   </div>
   <div class="notice" id="unscored" hidden>Some jobs have no score yet. They'll be scored on the next daily run.</div>
-  <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap">
-    <div class="count" id="count"></div>
-    <div class="seg"><button id="btnList" class="on"><span class="mi">view_agenda</span>List</button><button id="btnMap"><span class="mi">map</span>Map</button></div>
-  </div>
   <div id="map" hidden></div>
   <div class="nomap" id="nomap" hidden></div>
   <div id="list"></div>
