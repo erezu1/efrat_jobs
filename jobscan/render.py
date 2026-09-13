@@ -556,13 +556,13 @@ const saveMarks = (changedKey) => {
   } catch(e) {}
   if (changedKey) Sync.schedulePush();
 };
-let justLiked = null;
+let justLiked = null, flipNext = false;
 function setMark(k, m, force = false){   // tap toggles; swipe (force) always sets
   const before = {mark: marks[k], applied: !!applied[k]};
   if (!force && marks[k] === m) delete marks[k]; else marks[k] = m;
   if (marks[k] !== "interested") delete applied[k];
   justLiked = marks[k] === "interested" && before.mark !== "interested" ? k : null;
-  saveMarks(k); draw(); justLiked = null;
+  saveMarks(k); flipNext = true; draw(); justLiked = null;
   if (marks[k] === "hidden" && before.mark !== "hidden") showUndo(k, before);
 }
 
@@ -689,7 +689,7 @@ function showUndo(k, before){
   t.querySelector("button").onclick = () => {
     if (before.mark) marks[k] = before.mark; else delete marks[k];
     if (before.applied) applied[k] = true; else delete applied[k];
-    saveMarks(k); hideUndo(); draw();
+    saveMarks(k); hideUndo(); flipNext = true; draw();
   };
   t.classList.remove("out"); t.hidden = false;
   requestAnimationFrame(() => t.classList.add("in"));
@@ -830,7 +830,30 @@ function draw(){
   $("qClosing").classList.toggle("on", onlyClosing); $("qClosing").setAttribute("aria-pressed", onlyClosing);
   $("map").hidden = !mapMode; $("list").hidden = mapMode; $("nomap").hidden = !mapMode;
   if (mapMode) return drawMap(rows);
+  // FLIP: remember where cards were, so after re-rendering they glide to their new places
+  const before = new Map();
+  if (flipNext) $("list").querySelectorAll(".card").forEach(c => before.set(c.dataset.k, c.getBoundingClientRect().top));
+  const doFlip = flipNext; flipNext = false;
   $("list").innerHTML = rows.length ? rows.map(card).join("") : `<div class="empty">Nothing here right now.</div>`;
+  if (doFlip) {
+    const moved = [];
+    $("list").querySelectorAll(".card").forEach(c => {
+      const prev = before.get(c.dataset.k), now = c.getBoundingClientRect().top;
+      if (prev == null) {                       // newly shown (e.g. undo): fade in
+        c.style.opacity = "0"; c.style.transform = "scale(.97)"; moved.push(c);
+      } else if (Math.abs(prev - now) > 1) {
+        c.style.transform = `translateY(${prev - now}px)`; moved.push(c);
+      }
+    });
+    if (moved.length) {
+      void $("list").offsetHeight;          // commit the "old position" frame, then animate to the new one
+      moved.forEach(c => {
+        c.style.transition = "transform .38s cubic-bezier(.25,.8,.3,1), opacity .3s ease";
+        c.style.transform = ""; c.style.opacity = "";
+        setTimeout(() => { if (!c.classList.contains("dragging")) c.style.transition = ""; }, 400);
+      });
+    }
+  }
   $("list").querySelectorAll(".dltag").forEach(b => b.onclick = e => { e.stopPropagation(); showDeadline(b); });
   $("list").querySelectorAll(".cattag").forEach(a => a.onclick = e => { e.preventDefault(); setCat(a.dataset.c); });
   $("list").querySelectorAll(".placelink").forEach(a => a.onclick = e => { e.preventDefault(); setPlace(a.dataset.place, a.dataset.label); });
@@ -853,7 +876,12 @@ function draw(){
   });
   $("list").querySelectorAll(".applybox input").forEach(cb => cb.onchange = () => {
     if (cb.checked) applied[cb.dataset.k] = true; else delete applied[cb.dataset.k];
-    saveMarks(cb.dataset.k); draw();
+    const c = cb.closest(".card");
+    if (view === "interested" || view === "applied") {             // card moves to the other tab
+      leave(c, 1);
+      return setTimeout(() => { saveMarks(cb.dataset.k); flipNext = true; draw(); }, 300);
+    }
+    saveMarks(cb.dataset.k); flipNext = true; draw();
   });
   $("list").querySelectorAll(".card").forEach(c => {
     wireSwipe(c);
