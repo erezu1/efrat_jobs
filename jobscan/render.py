@@ -208,7 +208,8 @@ h1 .logo .mi{font-size:24px}
 .stat.on span{color:var(--on-accent);opacity:.85}
 :root{--on-accent:#fff}
 @media (prefers-color-scheme: dark){:root{--on-accent:#1f0f26}}
-.controls{border-bottom:0;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(8px)}
+.controls{border-bottom:0;background:var(--bg);padding-top:max(12px,env(safe-area-inset-top));transition:box-shadow .2s}
+.controls.stuck{box-shadow:0 6px 10px -8px rgba(40,20,45,.35)}
 input[type=search],select{border:0;border-radius:12px;box-shadow:var(--e1);padding:9px 12px}
 input[type=search]:focus,select:focus{outline:2px solid var(--accent);outline-offset:0}
 .chip{border:0;box-shadow:var(--e1);background:var(--panel);padding:6px 12px;transition:box-shadow .15s}
