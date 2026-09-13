@@ -424,7 +424,11 @@ function setCat(c){   // show only this job type (same as selecting just that ch
 function wirePopups(){
   map.on("popupopen", e => {
     const b = e.popup.getElement().querySelector(".onlyhere");
-    if (b) b.onclick = () => { map.closePopup(); setPlace(b.dataset.place, b.dataset.label); };
+    if (b) b.onclick = () => {
+      map.closePopup();
+      mapMode = false; $("btnList").classList.add("on"); $("btnMap").classList.remove("on");
+      setPlace(b.dataset.place, b.dataset.label);
+    };
   });
 }
 $("btnList").onclick = () => { mapMode = false; $("btnList").classList.add("on"); $("btnMap").classList.remove("on"); draw(); };
