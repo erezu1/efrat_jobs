@@ -244,6 +244,8 @@ select{-webkit-appearance:none;appearance:none;padding-right:34px;cursor:pointer
 select:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 .iconbtn.langbtn{display:inline-flex;width:auto;padding:0 10px;gap:3px;font-size:12px;background:var(--panel)}
 .iconbtn.langbtn .mi{font-size:19px}
+.iconbtn.langbtn{transition:background .2s,color .2s,box-shadow .2s}
+.iconbtn.langbtn.on{background:var(--accent);color:var(--on-accent);box-shadow:var(--e2)}
 .trtag{text-decoration:none;color:var(--accent)!important}
 input[type=search]:focus,select:focus{outline:2px solid var(--accent);outline-offset:0}
 .chip{border:0;box-shadow:var(--e1);background:var(--panel);padding:6px 12px;transition:box-shadow .15s}
@@ -1088,6 +1090,7 @@ function setCat(c, scroll = true){   // show only this job type ("" = all types)
 $("typechip").onclick = () => setCat("", false);
 function updateLangBtn(){
   $("langlabel").textContent = lang === "en" ? "EN" : "NL";
+  $("btnLang").classList.toggle("on", lang === "en"); $("btnLang").setAttribute("aria-pressed", lang === "en");
   $("btnLang").title = lang === "en" ? "Showing English translations — tap for original Dutch" : "Showing original Dutch — tap for English";
 }
 $("btnLang").onclick = () => { lang = lang === "en" ? "nl" : "en"; try { localStorage.setItem("lang", lang); } catch(e) {} updateLangBtn(); draw(); };
