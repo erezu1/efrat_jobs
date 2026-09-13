@@ -196,7 +196,10 @@ h1 .logo{width:40px;height:40px;border-radius:12px;background:var(--accent);colo
 h1 .logo .mi{font-size:24px}
 .stat{border:0;border-radius:16px;padding:12px 16px;box-shadow:var(--e1);transition:box-shadow .2s,transform .2s}
 .stat:hover{box-shadow:var(--e3);transform:translateY(-1px)}
-.stat.on{box-shadow:var(--e2),inset 0 -3px 0 var(--accent)}
+.stat.on{background:var(--accent);color:var(--on-accent);box-shadow:var(--e2)}
+.stat.on span{color:var(--on-accent);opacity:.85}
+:root{--on-accent:#fff}
+@media (prefers-color-scheme: dark){:root{--on-accent:#0d1a14}}
 .controls{border-bottom:0;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(8px)}
 input[type=search],select{border:0;border-radius:12px;box-shadow:var(--e1);padding:9px 12px}
 input[type=search]:focus,select:focus{outline:2px solid var(--accent);outline-offset:0}
