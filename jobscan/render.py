@@ -301,7 +301,7 @@ function card(r){
   const col = sc == null ? "" : sc >= 7 ? "var(--s-hi)" : sc >= 5 ? "var(--s-mid)" : "var(--s-lo)";
   const dl = daysTo(r.deadline);
   const tags = [];
-  if (daysSince(r.first_seen) <= 2) tags.push(`<span class="tag new"><span class="mi fill">fiber_new</span>NEW</span>`);
+  if (daysSince(r.first_seen) <= 2) tags.push(`<span class="tag new">NEW</span>`);
   if (dl !== null && dl >= 0) tags.push(`<span class="tag ${dl<=7?"urgent":"dl"}"><span class="mi">schedule</span>Deadline ${r.deadline} · ${dl===0?"today":dl+" day"+(dl===1?"":"s")}</span>`);
   if (r.cat) tags.push(`<span class="tag">${CATS[r.cat]||r.cat}</span>`);
   if (DUTCH[r.dutch]) tags.push(`<span class="tag">${DUTCH[r.dutch]}</span>`);
