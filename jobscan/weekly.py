@@ -128,9 +128,9 @@ def build_email(new, closing, today: date, logo: str = "cid:biojobs-logo") -> tu
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:640px;margin:0 auto">
  <tr><td style="padding:0 4px 6px">
   <table role="presentation" cellpadding="0" cellspacing="0"><tr>
-   {f'<td style="padding-right:12px"><img src="{e(logo)}" width="44" height="44" alt="" style="display:block;border-radius:12px"></td>' if logo else ""}
+   {f'<td style="padding-right:12px"><a href="{e(page)}" style="text-decoration:none"><img src="{e(logo)}" width="44" height="44" alt="BioJobs" style="display:block;border-radius:12px;border:0"></a></td>' if logo else ""}
    <td>
-    <div style="font-family:{FONT};font-size:22px;font-weight:700;color:{INK};letter-spacing:-.01em">BioJobs</div>
+    <a href="{e(page)}" style="font-family:{FONT};font-size:22px;font-weight:700;color:{PURPLE};letter-spacing:-.01em;text-decoration:none">BioJobs</a>
     <div style="font-size:13px;color:{MUTED}">Your weekly update · {today:%d %B %Y}</div>
    </td>
   </tr></table>
