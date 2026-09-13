@@ -213,14 +213,23 @@ h1 .logo{width:40px;height:40px;border-radius:12px;background:linear-gradient(13
 :root{--on-accent:#fff}
 @media (prefers-color-scheme: dark){:root{--on-accent:#1f0f26}}
 .controls{border-bottom:0;background:transparent;padding-top:max(12px,env(safe-area-inset-top))}
-/* full-width solid backing so nothing (incl. card shadows in the side margins) shows beside the bar */
-.controls::before{content:"";position:absolute;top:0;bottom:0;left:-50vw;right:-50vw;background:var(--bg);z-index:-1}
+/* full-width backing behind the pinned bar (so card shadows never peek out at the sides) */
+.controls::before{content:"";position:absolute;top:0;bottom:0;left:-50vw;right:-50vw;background:var(--bg);z-index:-1;
+  transition:background .25s}
 html,body{overflow-x:clip}
-/* soft fade under the pinned bar: cards dissolve instead of being cut off */
-.controls::after{content:"";position:absolute;left:-50vw;right:-50vw;top:100%;height:28px;pointer-events:none;
-  background:linear-gradient(to bottom,var(--bg) 0%,color-mix(in srgb,var(--bg) 70%,transparent) 40%,transparent 100%);
-  opacity:0;transition:opacity .25s}
-.controls.stuck::after{opacity:1}
+/* once pinned: frosted glass — translucent + blur, extending below the bar and fading out smoothly.
+   The blur lives on this pseudo-layer, not on the sticky element itself (safer on Android Chrome). */
+@supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .controls.stuck::before{bottom:-34px;background:color-mix(in srgb,var(--bg) 68%,transparent);
+    -webkit-backdrop-filter:blur(16px) saturate(1.5);backdrop-filter:blur(16px) saturate(1.5);
+    -webkit-mask-image:linear-gradient(to bottom,#000 0,#000 calc(100% - 34px),transparent 100%);
+    mask-image:linear-gradient(to bottom,#000 0,#000 calc(100% - 34px),transparent 100%)}
+}
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .controls::after{content:"";position:absolute;left:-50vw;right:-50vw;top:100%;height:28px;pointer-events:none;
+    background:linear-gradient(to bottom,var(--bg),transparent);opacity:0;transition:opacity .25s}
+  .controls.stuck::after{opacity:1}
+}
 input[type=search],select{border:0;border-radius:12px;box-shadow:var(--e1);padding:9px 12px}
 input[type=search]:focus,select:focus{outline:2px solid var(--accent);outline-offset:0}
 .chip{border:0;box-shadow:var(--e1);background:var(--panel);padding:6px 12px;transition:box-shadow .15s}
