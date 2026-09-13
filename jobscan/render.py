@@ -787,25 +787,36 @@ function wireSwipe(el){
   const paint = (p, dir, ms = 0) => {   // tint + matching button scale continuously with drag progress p (0..1)
     const tr = ms ? `all ${ms}ms ease` : "none";
     el.dataset.dir = dir; el.style.setProperty("--p", p);
+    // the matching button grows and fills; the other one shrinks away, so the group stays centered
     el.querySelectorAll(".vote").forEach(b => {
-      const mine = b.classList.contains(dir), q = mine ? p : 0, f = b.querySelector(".fill"), i = b.querySelector(".mi");
-      if (b.classList.contains("on") && !mine) return;
-      b.style.transition = tr; f.style.transition = tr; i.style.transition = tr;
-      f.style.opacity = b.classList.contains("on") ? 1 : q;
-      b.style.transform = `scale(${1 + .2 * q})`;
-      i.style.color = (q > .45 || b.classList.contains("on")) ? "#fff" : "";
+      const mine = b.classList.contains(dir), on = b.classList.contains("on");
+      const f = b.querySelector(".fill"), i = b.querySelector(".mi");
+      [b, f, i].forEach(x => x.style.transition = tr);
+      if (mine) {
+        f.style.opacity = on ? 1 : p;
+        i.style.color = (p > .45 || on) ? "#fff" : "";
+        b.style.transform = `scale(${1 + .3 * p})`;
+        b.style.opacity = ""; b.style.width = ""; b.style.margin = "";
+      } else {
+        b.style.transform = `scale(${1 - .6 * p})`;
+        b.style.opacity = 1 - p;
+        b.style.width = `${48 * (1 - p)}px`;
+        b.style.margin = b.classList.contains("yes") ? `0 ${-12 * p}px 0 0` : `0 0 0 ${-12 * p}px`;
+      }
     });
   };
-  // interested: ✓ lights up, card springs back (a small nudge right when triggered by the button)
+  // interested: from a swipe the card springs back as ✓ lights up; from a tap only the ✓ fills
   el.animateInterested = (fromSwipe = false) => {
     el.classList.add("moving");
-    if (!fromSwipe) {
-      el.style.transition = "transform .18s ease"; el.style.transform = "translateX(28px) rotate(.6deg)";
-      paint(1, "yes", 180);
-    } else paint(1, "yes", 120);
-    setTimeout(() => {
-      el.style.transition = "transform .35s cubic-bezier(.2,1.4,.4,1)"; el.style.transform = "";
-    }, fromSwipe ? 0 : 180);
+    if (!fromSwipe) {                    // plain tap: just fill the ✓, no card movement
+      const yes = el.querySelector(".vote.yes"), f = yes.querySelector(".fill"), i = yes.querySelector(".mi");
+      [f, i].forEach(x => x.style.transition = "all .2s ease");
+      f.style.opacity = 1; i.style.color = "#fff"; yes.classList.add("on");
+      setTimeout(() => setMark(k, "interested", true), 200);
+      return;
+    }
+    paint(1, "yes", 120);
+    el.style.transition = "transform .35s cubic-bezier(.2,1.4,.4,1)"; el.style.transform = "";
     setTimeout(() => { el.querySelector(".vote.yes")?.classList.add("on"); paint(0, "yes", 300); }, 260);
     setTimeout(() => setMark(k, "interested", true), 560);
   };
