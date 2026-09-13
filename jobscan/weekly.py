@@ -128,7 +128,7 @@ def main() -> int:
     msg["Subject"], msg["From"], msg["To"] = subject, user, to
     msg.set_content(text)
     msg.add_alternative(body, subtype="html")
-    with smtplib.SMTP_SSL(host, int(os.environ.get("SMTP_PORT", "465"))) as s:
+    with smtplib.SMTP_SSL(host, int(os.environ.get("SMTP_PORT") or "465")) as s:
         s.login(user, pw)
         s.send_message(msg)
     print(f"weekly mail sent ({len(new)} new, {len(closing)} closing)")
