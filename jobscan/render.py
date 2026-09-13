@@ -234,11 +234,11 @@ input[type=search]:focus,select:focus{outline:2px solid var(--accent);outline-of
 .meta .mi{font-size:16px;margin-right:2px;vertical-align:-3px}
 .blockers .mi{font-size:17px;vertical-align:-3px}
 .actions button{border:0;border-radius:999px;padding:5px 12px 5px 9px;background:var(--chip);display:inline-flex;align-items:center;gap:4px;transition:box-shadow .15s,background .15s}
-.actions{align-items:center}
-.actions .vote{width:38px;height:38px;padding:0;justify-content:center;border-radius:50%}
-.actions .vote .mi{font-size:22px}
-.actions .vote.yes.on{background:var(--accent);color:var(--on-accent)}
-.actions .vote.no.on{background:var(--danger);color:#fff}
+.actions{align-items:center;justify-content:center;gap:12px;margin-top:14px}
+.actions .vote{width:48px;height:48px;padding:0;justify-content:center;border-radius:50%;transition:transform .15s,background .15s,box-shadow .15s}
+.actions .vote .mi{font-size:28px;font-variation-settings:"FILL" 0,"wght" 600,"GRAD" 0,"opsz" 24}
+.actions .vote.on{box-shadow:var(--e2)}
+
 .applybox{display:inline-flex;align-items:center;gap:4px;margin-left:4px;padding:6px 12px 6px 9px;border-radius:999px;background:var(--chip);font-size:13px;cursor:pointer;user-select:none}
 .applybox input{display:none}
 .applybox .mi{font-size:18px}
@@ -246,12 +246,26 @@ input[type=search]:focus,select:focus{outline:2px solid var(--accent);outline-of
 .card{position:relative;touch-action:pan-y}
 .card.liked{box-shadow:var(--e1),inset 4px 0 0 var(--accent)}
 .card.dragging{user-select:none;cursor:grabbing;z-index:2}
-.card[data-swipe]::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;opacity:0;transition:opacity .15s;
-  display:flex;align-items:center;font:700 15px/1 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;padding:0 22px}
-.card[data-swipe="yes"]::after{content:"✓ Interested";opacity:1;justify-content:flex-start;color:var(--accent);
-  background:linear-gradient(to right,color-mix(in srgb,var(--accent) 22%,transparent),transparent 60%)}
-.card[data-swipe="no"]::after{content:"✕ Not interested";opacity:1;justify-content:flex-end;color:var(--danger);
-  background:linear-gradient(to left,color-mix(in srgb,var(--danger) 18%,transparent),transparent 60%)}
+@property --p{syntax:"<number>";inherits:true;initial-value:0}
+/* swipe feedback scales continuously with drag progress --p (0..1) */
+.card::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;opacity:calc(var(--p) * .92);
+  background:color-mix(in srgb,var(--panel) 62%,transparent)}
+.card[data-dir="yes"]::after{background:linear-gradient(to right,color-mix(in srgb,var(--accent) 26%,var(--panel)) 0%,color-mix(in srgb,var(--panel) 60%,transparent) 70%)}
+.card[data-dir="no"]::after{background:linear-gradient(to left,color-mix(in srgb,var(--danger) 22%,var(--panel)) 0%,color-mix(in srgb,var(--panel) 60%,transparent) 70%)}
+.card::after{z-index:2}
+.card .actions{position:relative;z-index:3}
+.swipebadge{position:absolute;top:50%;z-index:3;width:84px;height:84px;margin-top:-42px;border-radius:50%;pointer-events:none;
+  display:flex;align-items:center;justify-content:center;color:#fff;box-shadow:0 8px 24px rgba(40,20,45,.35);opacity:0;transform:scale(.3)}
+.swipebadge .mi{font-size:54px;font-variation-settings:"FILL" 1,"wght" 700,"GRAD" 0,"opsz" 48}
+.swipebadge.yes{left:24px;background:linear-gradient(135deg,#7b2d8e,#d6409f)}
+.swipebadge.no{right:24px;background:var(--danger)}
+.vote{position:relative;overflow:hidden}
+.vote .fill{position:absolute;inset:0;border-radius:50%;opacity:0;pointer-events:none}
+.vote.yes .fill{background:linear-gradient(135deg,#7b2d8e,#d6409f)}
+.vote.no .fill{background:var(--danger)}
+.vote .mi{position:relative}
+.vote.on .fill{opacity:1}
+.vote.on .mi{color:#fff}
 .actions button:hover{box-shadow:var(--e1)}
 .actions button .mi{font-size:18px}
 
@@ -445,8 +459,8 @@ function card(r){
       ${r.why?`<p class="why">${esc(r.why)}</p>`:""}
       ${r.blockers?.length?`<p class="blockers"><span class="mi">warning</span> ${r.blockers.map(esc).join(" · ")}</p>`:""}
       <div class="actions">
-        <button class="vote yes ${m==="interested"?"on":""}" data-k="${esc(r.key)}" data-m="interested" title="Interested (or swipe right)" aria-label="Interested"><span class="mi">check</span></button>
-        <button class="vote no ${m==="hidden"?"on":""}" data-k="${esc(r.key)}" data-m="hidden" title="Not interested (or swipe left)" aria-label="Not interested"><span class="mi">close</span></button>
+        <button class="vote yes ${m==="interested"?"on":""}" data-k="${esc(r.key)}" data-m="interested" title="Interested (or swipe right)" aria-label="Interested"><span class="fill"></span><span class="mi">check</span></button>
+        <button class="vote no ${m==="hidden"?"on":""}" data-k="${esc(r.key)}" data-m="hidden" title="Not interested (or swipe left)" aria-label="Not interested"><span class="fill"></span><span class="mi">close</span></button>
         ${m==="interested" ? `<label class="applybox ${applied[r.key]?"on":""}"><input type="checkbox" data-k="${esc(r.key)}" ${applied[r.key]?"checked":""}><span class="mi">${applied[r.key]?"task_alt":"radio_button_unchecked"}</span>Applied</label>` : ""}
       </div>
     </div></article>`;
@@ -484,8 +498,27 @@ function draw(){
 function wireSwipe(el){
   const k = el.dataset.k;
   let x0 = 0, y0 = 0, dx = 0, tracking = false, dragging = false;
-  const reset = () => { el.style.transition = "transform .2s ease"; el.style.transform = ""; el.dataset.swipe = "";
-                        setTimeout(() => { el.style.transition = ""; }, 220); };
+  let badge = null;
+  const paint = (p, dir, ms = 0) => {   // everything scales continuously with drag progress p (0..1)
+    const tr = ms ? `all ${ms}ms ease` : "none";
+    if (!badge) { badge = document.createElement("div"); el.appendChild(badge); }
+    badge.className = `swipebadge ${dir}`;
+    badge.innerHTML = `<span class="mi">${dir === "yes" ? "check" : "close"}</span>`;
+    badge.style.transition = tr;
+    badge.style.opacity = p;
+    badge.style.transform = `scale(${.3 + .7 * p}) rotate(${(1 - p) * (dir === "yes" ? -30 : 30)}deg)`;
+    el.dataset.dir = dir; el.style.setProperty("--p", p);
+    el.querySelectorAll(".vote").forEach(b => {
+      const mine = b.classList.contains(dir), q = mine ? p : 0, f = b.querySelector(".fill"), i = b.querySelector(".mi");
+      if (b.classList.contains("on") && !mine) return;
+      b.style.transition = tr; f.style.transition = tr; i.style.transition = tr;
+      f.style.opacity = b.classList.contains("on") ? 1 : q;
+      b.style.transform = `scale(${1 + .2 * q})`;
+      i.style.color = (q > .45 || b.classList.contains("on")) ? "#fff" : "";
+    });
+  };
+  const reset = () => { el.style.transition = "transform .25s ease"; el.style.transform = "";
+                        paint(0, el.dataset.dir || "yes", 250); setTimeout(() => { el.style.transition = ""; }, 260); };
   el.addEventListener("pointerdown", e => {
     if (e.button !== 0 || e.target.closest("a,button,input,label,select")) return;
     x0 = e.clientX; y0 = e.clientY; dx = 0; tracking = true; dragging = false;
@@ -500,18 +533,25 @@ function wireSwipe(el){
     }
     dx = mx;
     el.style.transform = `translateX(${dx}px) rotate(${dx / 45}deg)`;
-    el.dataset.swipe = dx > 50 ? "yes" : dx < -50 ? "no" : "";
+    paint(Math.min(1, Math.abs(dx) / 110), dx >= 0 ? "yes" : "no");
   });
   const end = () => {
     if (!tracking) return;
     tracking = false;
     if (!dragging) return;
     el.classList.remove("dragging");
-    if (dx > 90) { reset(); setTimeout(() => setMark(k, "interested", true), 180); }
-    else if (dx < -90) {
-      el.style.transition = "transform .22s ease, opacity .22s ease";
-      el.style.transform = "translateX(-120%) rotate(-8deg)"; el.style.opacity = "0";
-      setTimeout(() => setMark(k, "hidden", true), 200);
+    if (dx > 90) {                       // interested: button lights up, card springs back
+      paint(1, "yes", 120);
+      el.style.transition = "transform .3s cubic-bezier(.2,1.4,.4,1)"; el.style.transform = "";
+      setTimeout(() => { el.querySelector(".vote.yes")?.classList.add("on"); paint(0, "yes", 300); }, 260);
+      setTimeout(() => setMark(k, "interested", true), 600);
+    }
+    else if (dx < -90) {                 // not interested: button lights up, card flies away
+      paint(1, "no", 100);
+      el.querySelector(".vote.no")?.classList.add("on");
+      el.style.transition = "transform .28s ease, opacity .28s ease";
+      el.style.transform = "translateX(-120%) rotate(-10deg)"; el.style.opacity = "0";
+      setTimeout(() => setMark(k, "hidden", true), 260);
     } else reset();
   };
   el.addEventListener("pointerup", end);
