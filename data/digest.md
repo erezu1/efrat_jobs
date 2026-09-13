@@ -1,4 +1,4 @@
-## 🆕 56 new matches
+## 🆕 58 new matches
 
 - **[10/10] [Research Technician](https://www.academictransfer.com/en/jobs/363550/research-technician/)** — Universiteit Utrecht — deadline 2026-09-14
   Join our team as a research technician and work with cutting-edge technologies including organ-on-chip systems, kidney organoids, stem cell cultures and functional assays.
@@ -46,6 +46,8 @@
   Are you a systems thinker passionate about bending the curve of biodiversity loss in agroecosystems? Are you looking for a meaningful research path with impact on the ground? Are you eager to join a stimulating…
 - **[7/10] [Plankton Laboratory Technician](https://www.academictransfer.com/en/jobs/363564/plankton-laboratory-technician/)** — Wageningen University & Research — deadline 2026-09-20
   As a laboratory technician, you will process plankton samples in the laboratory that have been collected during surveys at sea. These samples consist of fish eggs, larvae and fish gonads (reproductive organs).
+- **[7/10] [PhD position in the Artegiani & Hendriks group VISI-ON-BRAIN project](https://euraxess.ec.europa.eu/jobs/458763)** — Prinses Máxima Centrum — deadline 2026-11-01
+  We are looking for a highly ambitious and enthusiastic PhD candidate who is eager to join our lab.
 - **[7/10] [Specialist - Large Molecule Biocritical Reagents](https://jobs.smartrecruiters.com/Eurofins/744000139621986)** — Eurofins
   JOB DESCRIPTION: We are looking for a Specialist to join the ATS-Bio Technical Life Cycle Management Biomaterials team.
 - **[7/10] [Teamleader Applied Genomic Technologies](https://www.werkenbijbejo.nl/vacatures/teamleader-applied-genomic-technologies-1309352)** — Bejo Zaden (vegetable seed breeding)
@@ -88,6 +90,8 @@
   The Erasmus MC Genomics Core Facility (CoFa) provides a broad range of genomics services to an international client base in both research and diagnostic settings.
 - **[6/10] [Klinisch Geneticus](https://www.werkenbijavl.nl/vacatures/klinisch-geneticus/)** — Netherlands Cancer Institute – Antoni van Leeuwenhoek
   Klinisch Geneticus Solliciteer Klinisch Geneticus 36 € 8.868 - € 15.392 wo Het Nederlands Kanker Instituut/ Antoni van Leeuwenhoek (NKI/AVL) is als enige comprehensive cancer center uniek in Nederland.
+- **[6/10] [PhD Position Molecular Modeling of Hydrogen Production Processes](https://euraxess.ec.europa.eu/jobs/460420)** — Delft University of Technology via AcademicTransfer — deadline 2026-09-20
+  If you are eager to perform cutting-edge molecular modeling to accelerate the development of green and low-carbon hydrogen technologies, then this is position is for you.
 - **[6/10] [Microbiologisch Analist](https://jobs.smartrecruiters.com/Eurofins/744000138664878)** — Eurofins
   VACATUREOMSCHRIJVING: De uitvoering en rapportage van microbiologische analyses op farmaceutische grondstoffen, halffabricaten, eindproducten en medical devices; Toepassen van diverse analysetechnieken, zoals bioburden…
 - **[6/10] [Analist Microbiologie](https://jobs.smartrecruiters.com/Eurofins/744000138827115)** — Eurofins
@@ -112,5 +116,3 @@
   Voor de Rijkswaterstaat Arnhem is FlexIntens op zoek naar een Adviseur Ecologie -Natuurwetgeving Realisatie KRW voor 24 tot 36 uur per week.
 - **[6/10] [Shift Laboratory Analyst](https://www.werk.nl/nl/vacatures/71303052)** — Talentmark
   - 50+ jaar ervaring in recruitment - Diepgaande vakkennis - Wereldwijd netwerk in Life Sciences Shift Laboratory Analyst - Laboratory - Netherlands, Amsterdam - 12 augustus 2026 - Fulltime - mbo-3, mbo-4, mbo, hbo -…
-
-Full list: https://erezu1.github.io/efrat_jobs/

@@ -98,7 +98,15 @@ def main() -> int:
             print(f"[{name}] FAILED: {e}", file=sys.stderr)
             traceback.print_exc()
             continue
-        ok_sources.add(name)
+        # sanity check: a sudden collapse (e.g. rate-limited mid-listing) must not close all its jobs
+        prev_active = sum(1 for r in state.values() if r["source"] == name and r.get("active"))
+        partial = prev_active >= 20 and len(jobs) < 0.4 * prev_active
+        if partial:
+            msg = f"only {len(jobs)} jobs (had {prev_active}); treating as partial, not closing any"
+            print(f"[{name}] WARNING: {msg}", file=sys.stderr)
+            run["errors"].append(name)
+        else:
+            ok_sources.add(name)
         new = 0
         domain_specific = getattr(mod, "DOMAIN_SPECIFIC", False)
         print(f"[{name}] {len(jobs)} listed, reading new ads…", flush=True)
@@ -136,8 +144,9 @@ def main() -> int:
                     rec["deadline"] = job.deadline
             rec["last_seen"] = today
             rec["active"] = True
-        run["sources"][name] = {"ok": True, "count": len(jobs), "new": new,
-                                "seconds": round(time.time() - t0, 1)}
+        run["sources"][name] = {"ok": not partial, "count": len(jobs), "new": new,
+                                "seconds": round(time.time() - t0, 1),
+                                **({"error": msg} if partial else {})}
         run["new"] += new
         print(f"[{name}] done: {len(jobs)} jobs, {new} new ({time.time() - t0:.0f}s)", flush=True)
         save(state)
