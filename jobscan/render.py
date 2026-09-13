@@ -853,7 +853,15 @@ $("type").addEventListener("input", () => setCat($("type").value, false));
 $("srcs").innerHTML = Object.entries(DATA.sources).map(([k,v]) =>
   `<tr><td>${esc(k)}</td><td>${v.ok?`${v.count} jobs, ${v.new} new`:`<span class="bad">failed: ${esc(v.error)}</span>`}</td></tr>`).join("");
 draw();
-if ("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js").catch(() => {});
+// Service worker: always look for a newer version (bypassing HTTP cache) and reload once when it takes over
+if ("serviceWorker" in navigator) {
+  const hadController = !!navigator.serviceWorker.controller;
+  navigator.serviceWorker.register("sw.js", {updateViaCache: "none"}).then(reg => reg.update()).catch(() => {});
+  let reloaded = false;
+  navigator.serviceWorker.addEventListener("controllerchange", () => {
+    if (hadController && !reloaded) { reloaded = true; location.reload(); }
+  });
+}
 </script>
 </body>
 </html>

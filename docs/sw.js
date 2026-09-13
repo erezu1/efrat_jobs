@@ -1,6 +1,6 @@
 // Service worker for the installable app. Network first, so the daily job list is always fresh
 // when online; the last copy is shown when offline.
-const CACHE = "biojobs-v5";
+const CACHE = "biojobs-v6";
 
 self.addEventListener("install", () => self.skipWaiting());
 self.addEventListener("activate", e => e.waitUntil(
