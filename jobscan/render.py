@@ -105,7 +105,9 @@ TEMPLATE = r"""<!doctype html>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
-<link rel="manifest" href="manifest.webmanifest">
+<link rel="manifest" href="app.webmanifest">
+<meta name="application-name" content="BioJobs">
+<meta name="apple-mobile-web-app-title" content="BioJobs">
 <meta name="theme-color" content="#7b2d8e">
 <meta name="mobile-web-app-capable" content="yes">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">

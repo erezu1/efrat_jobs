@@ -1,13 +1,16 @@
 // Service worker for the installable app. Network first, so the daily job list is always fresh
 // when online; the last copy is shown when offline.
-const CACHE = "biojobs-v3";
+const CACHE = "biojobs-v4";
 
 self.addEventListener("install", () => self.skipWaiting());
-self.addEventListener("activate", e => e.waitUntil(self.clients.claim()));
+self.addEventListener("activate", e => e.waitUntil(
+  caches.keys().then(keys => Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k))))
+    .then(() => self.clients.claim())));
 
 self.addEventListener("fetch", e => {
   const req = e.request;
   if (req.method !== "GET" || new URL(req.url).origin !== self.location.origin) return;
+  if (req.url.endsWith(".webmanifest")) return;   // always let the browser fetch the manifest fresh
   e.respondWith(
     fetch(req)
       .then(res => {
