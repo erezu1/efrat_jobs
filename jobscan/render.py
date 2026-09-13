@@ -201,7 +201,9 @@ details.srcs td{padding:2px 12px 2px 0}
   display:inline-block;vertical-align:middle;letter-spacing:normal;text-transform:none;white-space:nowrap;
   -webkit-font-feature-settings:"liga";font-feature-settings:"liga";font-variation-settings:"FILL" 0,"wght" 400,"GRAD" 0,"opsz" 20}
 .mi.fill{font-variation-settings:"FILL" 1,"wght" 400,"GRAD" 0,"opsz" 20}
-h1{display:flex;align-items:center;gap:10px;font-weight:650}
+h1{display:flex;align-items:center;gap:12px;font-family:"Sora",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;font-weight:800;font-size:28px;letter-spacing:-.03em;line-height:1}
+h1 .name{background:linear-gradient(135deg,#7b2d8e,#d6409f);-webkit-background-clip:text;background-clip:text;color:transparent}
+@media (prefers-color-scheme: dark){h1 .name{background-image:linear-gradient(135deg,#d59ce6,#f08cc0)}}
 h1 .logo{width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg,#7b2d8e,#d6409f);color:#fff;display:flex;align-items:center;justify-content:center;box-shadow:var(--e2)}
 h1 .logo .mi{font-size:24px}
 .stat{border:0;border-radius:16px;padding:12px 16px;box-shadow:var(--e1);transition:box-shadow .2s,transform .2s}
@@ -287,12 +289,13 @@ details.srcs{background:var(--panel);border-radius:16px;box-shadow:var(--e1);pad
 }
 .leaflet-popup-content-wrapper{border-radius:14px;box-shadow:var(--e3)}
 </style>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@700;800&display=swap">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,400,0..1,0&display=block">
 </head>
 <body>
 <header>
-  <h1><span class="logo"><span class="mi">genetics</span></span>BioJobs</h1>
-  <div class="sub">Genetics · conservation · aquaculture jobs in the Netherlands — updated daily. <span id="gen"></span></div>
+  <h1><span class="logo"><span class="mi">genetics</span></span><span class="name">BioJobs</span></h1>
   <div class="stats" id="stats"></div>
 </header>
 <main>
@@ -325,7 +328,7 @@ details.srcs{background:var(--panel);border-radius:16px;box-shadow:var(--e1);pad
   <div id="map" hidden></div>
   <div class="nomap" id="nomap" hidden></div>
   <div id="list"></div>
-  <details class="srcs"><summary>Sources in the last run</summary><table id="srcs"></table></details>
+  <details class="srcs"><summary>Sources in the last run · <span id="gen"></span></summary><table id="srcs"></table></details>
 </main>
 <script>
 const DATA = __DATA__;
@@ -516,7 +519,7 @@ $("btnList").onclick = () => { mapMode = false; $("btnList").classList.add("on")
 $("btnMap").onclick = () => { mapMode = true; $("btnMap").classList.add("on"); $("btnList").classList.remove("on"); draw(); };
 
 $("unscored").hidden = !DATA.rows.some(r => r.pre && r.score == null);
-$("gen").textContent ="Last update: " + new Date(DATA.generated).toLocaleString();
+$("gen").textContent = "updated " + new Date(DATA.generated).toLocaleString();
 $("type").insertAdjacentHTML("beforeend", Object.entries(CATS).map(([k,v]) => `<option value="${k}">${v}</option>`).join(""));
 $("type").addEventListener("input", () => setCat($("type").value, false));
 ["q","minscore","sort","showhidden","showfiltered"].forEach(id => $(id).addEventListener("input", () => { updateFilterDot(); draw(); }));
