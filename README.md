@@ -1,4 +1,4 @@
-# NL Biology Job Scout 🧬
+# BioJobs NL 🧬
 
 A free daily scanner for biology jobs in the Netherlands (genetics, population genetics, conservation,
 aquaculture). It collects vacancies from ~25 job sites and employers, drops unsuitable ones, scores the
@@ -28,7 +28,7 @@ scanned. Their NL ads often also appear on werk.nl / werkzoeken.nl or the employ
 ## Setup (one time, ~10 minutes)
 1. **Create a GitHub repository** and push this folder to it:
    ```bash
-   git init && git add . && git commit -m "Job scout"
+   git init && git add . && git commit -m "BioJobs NL"
    git remote add origin https://github.com/<you>/<repo>.git
    git push -u origin main
    ```

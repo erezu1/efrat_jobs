@@ -1,6 +1,6 @@
 {
-  "name": "NL Biology Job Scout",
-  "short_name": "Job Scout",
+  "name": "BioJobs NL",
+  "short_name": "BioJobs NL",
   "description": "Genetics, conservation and aquaculture jobs in the Netherlands, updated daily.",
   "start_url": "./",
   "scope": "./",

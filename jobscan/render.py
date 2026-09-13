@@ -109,7 +109,7 @@ TEMPLATE = r"""<!doctype html>
 <meta name="theme-color" content="#7b2d8e">
 <meta name="mobile-web-app-capable" content="yes">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
-<title>NL Biology Job Scout</title>
+<title>BioJobs NL</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><defs><linearGradient id='g' x1='0' y1='0' x2='1' y2='1'><stop offset='0' stop-color='%237b2d8e'/><stop offset='1' stop-color='%23d6409f'/></linearGradient></defs><rect width='64' height='64' rx='16' fill='url(%23g)'/><g fill='none' stroke='white' stroke-width='4.5' stroke-linecap='round'><path d='M21 10C21 23 43 23 43 32S21 41 21 54'/><path d='M43 10C43 23 21 23 21 32S43 41 43 54'/></g><g stroke='white' stroke-width='3' stroke-linecap='round' opacity='.8'><path d='M25 15h14M25 49h14M29 22h6M29 42h6'/></g></svg>">
@@ -235,6 +235,11 @@ details.srcs{background:var(--panel);border-radius:16px;box-shadow:var(--e1);pad
 .placechip .mi{font-size:16px}
 .onlyhere{margin:2px 0 6px;border:0;border-radius:999px;background:var(--accent);color:#fff;padding:4px 10px 4px 7px;font-size:12px;display:inline-flex;align-items:center;gap:3px;cursor:pointer}
 .onlyhere .mi{font-size:16px}
+.minilogo{width:0;height:38px;border-radius:12px;background:linear-gradient(135deg,#7b2d8e,#d6409f);color:#fff;
+  display:flex;align-items:center;justify-content:center;overflow:hidden;opacity:0;margin-right:-8px;
+  transition:width .2s,opacity .2s,margin .2s;box-shadow:var(--e1);text-decoration:none;flex:none}
+.minilogo .mi{font-size:22px}
+.controls.stuck .minilogo{width:38px;opacity:1;margin-right:0}
 .ctlrow{flex-basis:100%;display:flex;justify-content:space-between;align-items:center;gap:8px}
 .ctlrow .count{margin:0}
 .leaflet-popup-content-wrapper{border-radius:14px;box-shadow:var(--e3)}
@@ -243,12 +248,13 @@ details.srcs{background:var(--panel);border-radius:16px;box-shadow:var(--e1);pad
 </head>
 <body>
 <header>
-  <h1><span class="logo"><span class="mi">genetics</span></span>NL Biology Job Scout</h1>
+  <h1><span class="logo"><span class="mi">genetics</span></span>BioJobs NL</h1>
   <div class="sub">Genetics · conservation · aquaculture jobs in the Netherlands — updated daily. <span id="gen"></span></div>
   <div class="stats" id="stats"></div>
 </header>
 <main>
-  <div class="controls">
+  <div class="controls" id="controls">
+    <a class="minilogo" href="#" id="minilogo" title="Back to top"><span class="mi">genetics</span></a>
     <input type="search" id="q" placeholder="Search title, organization, summary…">
     <select id="minscore" title="Minimum fit score">
       <option value="7">Score ≥ 7</option><option value="5" selected>Score ≥ 5</option>
@@ -421,6 +427,10 @@ function drawMap(rows){
   $("nomap").textContent = missing ? `${missing} job${missing===1?"":"s"} without a known location aren't shown on the map.` : "";
 }
 $("placechip").onclick = () => setPlace(null);
+// show the small logo in the sticky bar once the page header has scrolled away
+new IntersectionObserver(([e]) => $("controls").classList.toggle("stuck", !e.isIntersecting))
+  .observe(document.querySelector("header"));
+$("minilogo").onclick = e => { e.preventDefault(); window.scrollTo({top: 0, behavior: "smooth"}); };
 function setCat(c){   // show only this job type (same as selecting just that chip)
   cats = new Set([c]);
   $("cats").querySelectorAll(".chip").forEach(ch => ch.classList.toggle("on", ch.dataset.c === c));

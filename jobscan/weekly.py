@@ -55,7 +55,7 @@ def _meta(r: dict) -> str:
 
 def build_email(new, closing, today: date) -> tuple[str, str, str]:
     page = os.environ.get("PAGE_URL", "")
-    subject = f"Job scout — {len(new)} new position{'s' if len(new) != 1 else ''}, " \
+    subject = f"BioJobs NL — {len(new)} new position{'s' if len(new) != 1 else ''}, " \
               f"{len(closing)} deadline{'s' if len(closing) != 1 else ''} soon ({today:%d %b})"
 
     # plain text
@@ -68,35 +68,77 @@ def build_email(new, closing, today: date) -> tuple[str, str, str]:
         lines += ["", f"All jobs: {page}"]
     text = "\n".join(lines)
 
-    # html
+    # html — same look as the app: purple→pink brand, rounded white cards on a soft purple ground.
+    # Email clients ignore most modern CSS, so this is table-based with inline styles
+    # (gradients/shadows degrade to flat colors / borders where unsupported).
     e = html.escape
+    PURPLE, PINK, INK, MUTED, GROUND, LINE, CHIP = "#7b2d8e", "#c2378a", "#241a28", "#6f6474", "#f7f3f8", "#ece3ef", "#f0e8f2"
+    FONT = "-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif"
+    logo = f"{page}icons/icon-192.png" if page else ""
 
-    def item(r, badge=""):
-        summary = (f'<div style="color:#444;font-size:13px;margin-top:4px">{e(r["summary"][:180])}</div>'
+    def pill(text, bg, fg):
+        return (f'<span style="display:inline-block;background:{bg};color:{fg};border-radius:8px;'
+                f'padding:2px 8px;font-size:12px;font-weight:600;margin:0 4px 4px 0">{e(text)}</span>')
+
+    def card(r, days_left=None):
+        score_bg = PURPLE if r["score"] >= 7 else PINK
+        tags = ""
+        if days_left is not None:
+            label = "Deadline today" if days_left == 0 else f"{days_left} day{'s' if days_left != 1 else ''} left"
+            tags += pill(label, "#b3261e" if days_left <= 7 else "#fbeadf", "#fff" if days_left <= 7 else "#b4541a")
+        elif r["deadline"]:
+            tags += pill(f"Deadline {r['deadline']}", "#fbeadf", "#b4541a")
+        if r["cat"]:
+            tags += pill(CATS.get(r["cat"], r["cat"]), CHIP, MUTED)
+        where = " · ".join(x for x in (r["org"], r["loc"]) if x)
+        summary = (f'<div style="color:#4a404e;font-size:13px;line-height:1.45;margin-top:6px">{e(r["summary"][:200])}</div>'
                    if r["summary"] else "")
-        return (f'<tr><td style="padding:10px 0;border-bottom:1px solid #eee;vertical-align:top;width:44px">'
-                f'<div style="background:{"#7b2d8e" if r["score"] >= 7 else "#c2378a"};color:#fff;border-radius:8px;'
-                f'width:36px;height:36px;line-height:36px;text-align:center;font-weight:700">{r["score"]}</div></td>'
-                f'<td style="padding:10px 0 10px 10px;border-bottom:1px solid #eee">'
-                f'{badge}<a href="{e(r["url"])}" style="color:#241a28;font-weight:600;font-size:15px">{e(r["title"])}</a>'
-                f'<div style="color:#6f6474;font-size:13px">{e(_meta(r))}</div>'
-                f'{summary}</td></tr>')
+        return f"""
+<tr><td style="padding:0 0 12px">
+ <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#ffffff;border:1px solid {LINE};border-radius:16px;box-shadow:0 1px 3px rgba(40,20,45,.10)">
+  <tr>
+   <td width="52" valign="top" style="padding:16px 0 16px 16px">
+    <div style="width:44px;height:44px;line-height:44px;border-radius:12px;background:{score_bg};color:#fff;text-align:center;font:700 18px {FONT}">{r["score"]}</div>
+   </td>
+   <td valign="top" style="padding:14px 16px 14px 12px;font-family:{FONT}">
+    <a href="{e(r["url"])}" style="color:{INK};font-weight:650;font-size:15px;line-height:1.35;text-decoration:none">{e(r["title"])}</a>
+    <div style="color:{MUTED};font-size:13px;margin:3px 0 7px">{e(where)}</div>
+    {tags}{summary}
+   </td>
+  </tr>
+ </table>
+</td></tr>"""
 
-    def dl_badge(d):
-        col = "#b3261e" if d <= 7 else "#b4541a"
-        return (f'<span style="background:{col};color:#fff;border-radius:5px;padding:1px 7px;font-size:12px;'
-                f'margin-right:6px">{"today" if d == 0 else f"{d} day" + ("s" if d != 1 else "") + " left"}</span>')
+    def section(title, count, cards_html):
+        body = (f'<table role="presentation" width="100%" cellpadding="0" cellspacing="0">{cards_html}</table>'
+                if count else f'<div style="color:{MUTED};font-size:14px;padding:4px 0 12px">Nothing this week.</div>')
+        return (f'<div style="font:700 17px {FONT};color:{INK};margin:22px 0 10px">{title} '
+                f'<span style="display:inline-block;background:{CHIP};color:{PURPLE};border-radius:999px;'
+                f'padding:1px 9px;font-size:13px;vertical-align:2px">{count}</span></div>{body}')
 
-    empty = '<p style="color:#6f6474">None this week.</p>'
-    body = f"""<div style="font-family:-apple-system,Segoe UI,Roboto,sans-serif;max-width:640px;margin:auto;color:#241a28">
-<h2 style="margin:0 0 4px">🧬 Weekly job scout</h2>
-<div style="color:#6f6474;font-size:13px;margin-bottom:18px">Biology jobs in the Netherlands · week ending {today:%d %B %Y}</div>
-<h3 style="margin:18px 0 4px">New positions this week ({len(new)})</h3>
-{f'<table style="width:100%;border-collapse:collapse">{"".join(item(r) for r in new)}</table>' if new else empty}
-<h3 style="margin:26px 0 4px">Deadlines in the next {DEADLINE_DAYS} days ({len(closing)})</h3>
-{f'<table style="width:100%;border-collapse:collapse">{"".join(item(r, dl_badge(d)) for d, r in closing)}</table>' if closing else empty}
-{f'<p style="margin-top:26px"><a href="{e(page)}" style="background:#7b2d8e;color:#fff;padding:9px 16px;border-radius:8px;text-decoration:none">Open all jobs</a></p>' if page else ""}
-<p style="color:#a397a8;font-size:12px;margin-top:22px">Only jobs with a fit score of {MIN_SCORE}+ are listed.</p>
+    button = (f'<table role="presentation" cellpadding="0" cellspacing="0" style="margin:18px auto 6px"><tr>'
+              f'<td style="border-radius:999px;background:{PURPLE};background-image:linear-gradient(135deg,{PURPLE},#d6409f)">'
+              f'<a href="{e(page)}" style="display:inline-block;padding:11px 24px;color:#fff;font:600 14px {FONT};'
+              f'text-decoration:none;border-radius:999px">Open BioJobs NL</a></td></tr></table>') if page else ""
+
+    body = f"""<div style="background:{GROUND};padding:24px 12px;font-family:{FONT}">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:640px;margin:0 auto">
+ <tr><td style="padding:0 4px 6px">
+  <table role="presentation" cellpadding="0" cellspacing="0"><tr>
+   {f'<td style="padding-right:12px"><img src="{e(logo)}" width="44" height="44" alt="" style="display:block;border-radius:12px"></td>' if logo else ""}
+   <td>
+    <div style="font:700 22px {FONT};color:{INK};letter-spacing:-.01em">BioJobs NL</div>
+    <div style="font-size:13px;color:{MUTED}">Your weekly update · {today:%d %B %Y}</div>
+   </td>
+  </tr></table>
+ </td></tr>
+ <tr><td style="padding:0 4px">
+  {section("New positions this week", len(new), "".join(card(r) for r in new))}
+  {section(f"Deadlines in the next {DEADLINE_DAYS} days", len(closing), "".join(card(r, d) for d, r in closing))}
+  {button}
+  <div style="color:#a397a8;font-size:12px;text-align:center;margin-top:14px">Showing jobs with a fit score of {MIN_SCORE} or more.</div>
+ </td></tr>
+</table>
 </div>"""
     return subject, text, body
 
