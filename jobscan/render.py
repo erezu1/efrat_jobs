@@ -330,7 +330,8 @@ details.srcs{background:var(--panel);border-radius:16px;box-shadow:var(--e1);pad
 .ctlrow .left{display:flex;align-items:center;gap:6px;flex-wrap:wrap;min-width:0}
 .toprow{flex-basis:100%;display:flex;gap:8px;align-items:center}
 .toprow input[type=search]{flex:1 1 auto;min-width:0}
-.filters{flex-basis:100%;display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.filters{flex-basis:100%}
+.filters-inner{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
 .iconbtn{position:relative;border:0;border-radius:12px;box-shadow:var(--e1);width:40px;height:38px;padding:0;display:none;align-items:center;justify-content:center;flex:none}
 .iconbtn.on{background:var(--accent);color:var(--on-accent)}
 .fdot{position:absolute;top:6px;right:7px;width:8px;height:8px;border-radius:50%;background:#d6409f;box-shadow:0 0 0 2px var(--panel)}
@@ -345,9 +346,15 @@ details.srcs{background:var(--panel);border-radius:16px;box-shadow:var(--e1);pad
   .stat{min-width:auto;flex:none;padding:8px 12px}
   .stat b{font-size:18px}
   .iconbtn{display:inline-flex}
-  .filters{display:none;padding:4px 0 2px}
-  .filters.open{display:flex}
-  .filters select{flex:1 1 30%}
+  /* collapsible filter panel: grid rows 0fr→1fr animates the real height, so open/close is continuous */
+  .filters{display:grid;grid-template-rows:0fr;margin-top:-8px;opacity:0;pointer-events:none;
+    transition:grid-template-rows .34s cubic-bezier(.4,0,.2,1),margin-top .34s cubic-bezier(.4,0,.2,1),opacity .26s ease}
+  .filters-inner{min-height:0;overflow:hidden;transform:translateY(-8px);transition:transform .34s cubic-bezier(.4,0,.2,1)}
+  .filters.open{grid-template-rows:1fr;margin-top:0;opacity:1;pointer-events:auto}
+  .filters.open .filters-inner{transform:none;padding:4px 0 2px}
+  .filters-inner select{flex:1 1 30%}
+  .iconbtn .mi{transition:transform .32s cubic-bezier(.2,.8,.2,1)}
+  #btnFilters.on .mi{transform:rotate(90deg)}
   .card{grid-template-columns:40px minmax(0,1fr);gap:10px;padding:14px}
   .meta{gap:4px 10px}
   .actions{flex-wrap:wrap}
@@ -389,14 +396,16 @@ details.srcs{background:var(--panel);border-radius:16px;box-shadow:var(--e1);pad
       <button class="iconbtn" id="btnFilters" title="Filters" aria-expanded="false"><span class="mi">tune</span><span class="fdot" id="fdot" hidden></span></button>
     </div>
     <div class="filters" id="filters">
-      <select id="type" title="Job type"><option value="">All job types</option></select>
-      <select id="minscore" title="Minimum fit score">
-        <option value="7">Score ≥ 7</option><option value="5" selected>Score ≥ 5</option>
-        <option value="3">Score ≥ 3</option><option value="0">All scores</option>
-      </select>
-      <select id="sort" title="Sort"><option value="score">Best fit</option><option value="deadline">Deadline</option><option value="new">Newest</option></select>
-      <label class="tog"><input type="checkbox" id="showhidden"> show dismissed</label>
-      <label class="tog"><input type="checkbox" id="showfiltered"> show keyword-filtered</label>
+      <div class="filters-inner">
+        <select id="type" title="Job type"><option value="">All job types</option></select>
+        <select id="minscore" title="Minimum fit score">
+          <option value="7">Score ≥ 7</option><option value="5" selected>Score ≥ 5</option>
+          <option value="3">Score ≥ 3</option><option value="0">All scores</option>
+        </select>
+        <select id="sort" title="Sort"><option value="score">Best fit</option><option value="deadline">Deadline</option><option value="new">Newest</option></select>
+        <label class="tog"><input type="checkbox" id="showhidden"> show dismissed</label>
+        <label class="tog"><input type="checkbox" id="showfiltered"> show keyword-filtered</label>
+      </div>
     </div>
     <div class="ctlrow">
       <div class="left">
