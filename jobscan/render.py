@@ -256,7 +256,7 @@ input[type=search]:focus,select:focus{outline:2px solid var(--accent);outline-of
 .actions button{border:0;border-radius:999px;padding:5px 12px 5px 9px;background:var(--chip);display:inline-flex;align-items:center;gap:4px;transition:box-shadow .15s,background .15s}
 .actions{align-items:center;justify-content:center;gap:12px;margin-top:14px}
 .actions{direction:ltr;flex-direction:row}
-.actions .vote.yes{order:1}.actions .vote.no{order:2}.actions .applybox{order:3}
+.actions .vote.no{order:1}.actions .vote.yes{order:2}.actions .applybox{order:3}   /* ✕ left, ✓ right (matches swipe directions) */
 .actions .vote{width:48px;height:48px;padding:0;justify-content:center;border-radius:50%;transition:transform .15s,background .15s,box-shadow .15s}
 .actions .vote .mi{font-size:28px;font-variation-settings:"FILL" 0,"wght" 600,"GRAD" 0,"opsz" 24}
 .actions .vote.on{box-shadow:var(--e2)}
@@ -931,7 +931,7 @@ function wireSwipe(el){
         b.style.transform = `scale(${1 - .6 * p})`;
         b.style.opacity = 1 - p;
         b.style.width = `${48 * (1 - p)}px`;
-        b.style.margin = b.classList.contains("yes") ? `0 ${-12 * p}px 0 0` : `0 0 0 ${-12 * p}px`;
+        b.style.margin = b.classList.contains("no") ? `0 ${-12 * p}px 0 0` : `0 0 0 ${-12 * p}px`;
       }
     });
   };
