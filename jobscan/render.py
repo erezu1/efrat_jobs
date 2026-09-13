@@ -326,7 +326,6 @@ header{position:relative}
 .syncpanel .row button.primary{background:linear-gradient(135deg,#7b2d8e,#d6409f);color:#fff}
 .syncpanel .row button .mi{font-size:17px}
 @media (max-width:760px){.syncpanel{right:14px;top:62px}}
-  display:flex;align-items:center;justify-content:center;color:#fff;box-shadow:0 8px 24px rgba(40,20,45,.35);opacity:0;transform:scale(.3)}
 .vote{position:relative;overflow:hidden}
 .vote .fill{position:absolute;inset:0;border-radius:50%;opacity:0;pointer-events:none}
 .vote.yes .fill{background:linear-gradient(135deg,#7b2d8e,#d6409f)}
