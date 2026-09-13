@@ -265,7 +265,9 @@ input[type=search]:focus,select:focus{outline:2px solid var(--accent);outline-of
 .toast button:hover{background:rgba(255,255,255,.08)}
 @media (prefers-color-scheme: dark){.toast{background:#ece6ee;color:#241a28}.toast .mi,.toast button{color:#7b2d8e}}
 header{position:relative}
-.syncbtn{display:inline-flex!important;position:absolute;top:26px;right:20px;background:var(--panel)}
+.toph{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.iconbtn.syncbtn{display:inline-flex;flex:none;width:42px;height:42px;border-radius:14px;background:var(--panel)}
+.iconbtn.syncbtn .mi{font-size:22px}
 .syncbtn.on{background:var(--panel);color:var(--accent)}
 .syncpanel{position:absolute;right:20px;top:72px;z-index:40;width:min(340px,calc(100vw - 28px));background:var(--panel);border-radius:18px;box-shadow:var(--e3);padding:14px 16px;font-size:14px}
 .syncpanel .head{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
@@ -279,7 +281,7 @@ header{position:relative}
 .syncpanel .row button{border:0;border-radius:999px;padding:7px 14px;background:var(--chip);display:inline-flex;align-items:center;gap:5px;font-size:13px}
 .syncpanel .row button.primary{background:linear-gradient(135deg,#7b2d8e,#d6409f);color:#fff}
 .syncpanel .row button .mi{font-size:17px}
-@media (max-width:760px){.syncbtn{top:16px;right:14px}.syncpanel{right:14px;top:62px}}
+@media (max-width:760px){.syncpanel{right:14px;top:62px}}
 .swipebadge{position:absolute;top:50%;z-index:3;width:84px;height:84px;margin-top:-42px;border-radius:50%;pointer-events:none;
   display:flex;align-items:center;justify-content:center;color:#fff;box-shadow:0 8px 24px rgba(40,20,45,.35);opacity:0;transform:scale(.3)}
 .swipebadge .mi{font-size:54px;font-variation-settings:"FILL" 1,"wght" 700,"GRAD" 0,"opsz" 48}
@@ -360,9 +362,11 @@ details.srcs{background:var(--panel);border-radius:16px;box-shadow:var(--e1);pad
 </head>
 <body>
 <header>
-  <h1><span class="logo"><svg class="helix" viewBox="0 0 64 64" aria-hidden="true"><g fill="none" stroke="#fff" stroke-width="4.5" stroke-linecap="round"><path d="M21 10C21 23 43 23 43 32S21 41 21 54"/><path d="M43 10C43 23 21 23 21 32S43 41 43 54"/></g><g stroke="#fff" stroke-width="3" stroke-linecap="round" opacity=".8"><path d="M25 15h14M25 49h14M29 22h6M29 42h6"/></g></svg></span><span class="name">BioJobs</span></h1>
+  <div class="toph">
+    <h1><span class="logo"><svg class="helix" viewBox="0 0 64 64" aria-hidden="true"><g fill="none" stroke="#fff" stroke-width="4.5" stroke-linecap="round"><path d="M21 10C21 23 43 23 43 32S21 41 21 54"/><path d="M43 10C43 23 21 23 21 32S43 41 43 54"/></g><g stroke="#fff" stroke-width="3" stroke-linecap="round" opacity=".8"><path d="M25 15h14M25 49h14M29 22h6M29 42h6"/></g></svg></span><span class="name">BioJobs</span></h1>
+    <button class="iconbtn syncbtn" id="syncbtn" title="Sync marks across devices"><span class="mi">cloud_off</span></button>
+  </div>
   <div class="stats" id="stats"></div>
-  <button class="iconbtn syncbtn" id="syncbtn" title="Sync marks across devices"><span class="mi">cloud_off</span></button>
   <div class="syncpanel" id="syncpanel" hidden>
     <div class="head"><b>Sync across devices</b><button class="x" id="syncclose" aria-label="Close"><span class="mi">close</span></button></div>
     <div class="body"></div>
