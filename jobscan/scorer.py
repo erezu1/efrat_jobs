@@ -68,7 +68,9 @@ OFF_TOPICS = [
     (r"koninklijke\s+marine|defensie|\bnavy\b", 4, 0),
     (r"energie|\benergy\b|riolering|vergunning|elektrotechn|werktuigbouw|bouwkund|civiel|civil\s+engineer", 2, 0),
     (r"\bpharmacist|apotheek|farmaceutisch\s+(consulent|assistent)", 2, 0),
-    (r"crop|gewas|plant\s+breeding|plantenveredeling|soil|bodem|\bplant", 1, 0),
+    # soil science is out for her (title: strong; recurring theme in the ad: also counts)
+    (r"\bsoils?\b|bodem|\bgrond(water)?\b|soil\s+(biolog|ecolog|health|quality|monitoring)", 6, 3),
+    (r"crop|gewas|plant\s+breeding|plantenveredeling|\bplant", 1, 0),
 ]
 
 # Job-type adjustments on the title

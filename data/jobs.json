@@ -2287,7 +2287,7 @@
    "category": "technician_research",
    "deadline": "2026-09-14",
    "dutch_required": "basic",
-   "fit_score": 6,
+   "fit_score": 1,
    "in_netherlands": true,
    "model": "keywords",
    "summary": "Are you interested in working in the Soil Biology Lab and collaborating with 100 pioneering farmers in the Netherlands? Do you have affinity with soil sampling and analyses related to the role of soil biota in…",
@@ -2334,7 +2334,7 @@
    "category": "technician_research",
    "deadline": "2026-09-14",
    "dutch_required": "basic",
-   "fit_score": 8,
+   "fit_score": 3,
    "in_netherlands": true,
    "model": "keywords",
    "summary": "Make an impact to sustainable soil and plant health. Are you an ambitious scientist with expertise in soil ecology and plant-soil interactions? Do you enjoy acquiring and leading research projects and collaborating with…",
@@ -11945,7 +11945,7 @@
    "category": "technician_research",
    "deadline": "2026-09-14",
    "dutch_required": "no",
-   "fit_score": 7,
+   "fit_score": 2,
    "in_netherlands": true,
    "model": "keywords",
    "summary": "Make an impact to sustainable soil and plant health. Are you an ambitious scientist with expertise in soil ecology and plant-soil interactions? Do you enjoy acquiring and leading research projects and collaborating with…",
@@ -12480,11 +12480,11 @@
    "category": "technician_research",
    "deadline": "2026-09-17",
    "dutch_required": "basic",
-   "fit_score": 3,
+   "fit_score": 0,
    "in_netherlands": true,
    "model": "keywords",
    "summary": "Junior Researcher – Data Collection & Reporting in Regenerative Farming Your job Are you interested to work with 1000 farmers in the Netherlands and do you have affinity with data collection tools? Within the project…",
-   "why": "Matches: nature, monitoring, laborator, biolog · research role"
+   "why": "Matches: nature, monitoring, laborator, biolog · research role · Off-profile: soil"
   },
   "source": "euraxess",
   "source_id": "462144",
@@ -16792,7 +16792,7 @@
    "category": "phd",
    "deadline": "2026-10-02",
    "dutch_required": "basic",
-   "fit_score": 1,
+   "fit_score": 0,
    "in_netherlands": true,
    "model": "keywords",
    "summary": "PhD: Modelling Impacts of Agricultural Practices on Soil Ecosystem Services Your job The Earth Systems and Global Change Group at Wageningen University and Research invites applications for a PhD position (4 years) in a…",
@@ -21664,7 +21664,7 @@
    "in_netherlands": true,
    "model": "keywords",
    "summary": "VACATUREOMSCHRIJVING: Hoe ziet jouw dag eruit? Je haalt de grond- en gewasmonsters uit de zak en controleert deze op volledigheid; Je geeft de monsters een unieke code door ze te scannen; Je maakt de monsters…",
-   "why": "Matches: laborator · Off-profile: productiemedewerker"
+   "why": "Matches: laborator · Off-profile: productiemedewerker, grond"
   },
   "source": "eurofins",
   "source_id": "744000146690909",
@@ -43317,7 +43317,7 @@
    "in_netherlands": true,
    "model": "keywords",
    "summary": "Senior rentmeester Zuid-Holland Solliciteer nu! Home › Vacatures › Senior rentmeester Zuid-Holland Den Haag, Schiedam wo 24 - 36 uur per week € 4818 - € 7094 Solliciteer nu! Vacature delen: Reageer voor 16 september…",
-   "why": "Matches: biodiversit, ecolog, natuur, monitoring · senior / management level, nature organisation"
+   "why": "Matches: biodiversit, ecolog, natuur, monitoring · senior / management level, nature organisation · Off-profile: grond"
   },
   "source": "nature_employers",
   "source_id": "sbb:1321095",
@@ -43347,11 +43347,11 @@
    "category": "conservation_zoo_ngo",
    "deadline": "2026-09-16",
    "dutch_required": "fluent",
-   "fit_score": 2,
+   "fit_score": 0,
    "in_netherlands": true,
    "model": "keywords",
    "summary": "Rentmeester Zuid-Holland Solliciteer nu! Home › Vacatures › Rentmeester Zuid-Holland Schiedam, Den Haag hbo, wo 24 - 36 uur per week € 4132 - € 6275 Solliciteer nu! Vacature delen: Reageer voor 16 september 2026 Word je…",
-   "why": "Matches: biodiversit, ecolog, natuur, monitoring · nature organisation"
+   "why": "Matches: biodiversit, ecolog, natuur, monitoring · nature organisation · Off-profile: grond"
   },
   "source": "nature_employers",
   "source_id": "sbb:1321108",
@@ -43385,7 +43385,7 @@
    "in_netherlands": true,
    "model": "keywords",
    "summary": "Senior medewerker grond en gebouwen Zuid-Holland Solliciteer nu! Home › Vacatures › Senior medewerker grond en gebouwen Zuid-Holland Schiedam hbo 24 - 36 uur per week € 3496 - € 5535 Solliciteer nu! Vacature delen:…",
-   "why": "Matches: biodiversit, ecolog, natuur, monitoring · senior / management level, nature organisation"
+   "why": "Matches: biodiversit, ecolog, natuur, monitoring · senior / management level, nature organisation · Off-profile: grond"
   },
   "source": "nature_employers",
   "source_id": "sbb:1321111",
@@ -60432,11 +60432,11 @@
    "category": "technician_research",
    "deadline": "2026-09-28",
    "dutch_required": "fluent",
-   "fit_score": 1,
+   "fit_score": 0,
    "in_netherlands": true,
    "model": "keywords",
    "summary": "Dit ga je doen Welke nieuwsgierige en multidisciplinair ingestelde onderzoeker wil ontdekken hoe mens, grondwater en landschap elkaar in het verleden beïnvloedden? Ontwikkel en gebruik innovatieve digitale…",
-   "why": "research role"
+   "why": "research role · Off-profile: grondwater"
   },
   "source": "werkenvoornederland",
   "source_id": "onderzoeker-landschapsarcheologie-mens-landschap-en-grondwater-OCW-2026-4989",
@@ -61688,11 +61688,11 @@
    "category": "other",
    "deadline": "2026-10-05",
    "dutch_required": "fluent",
-   "fit_score": 3,
+   "fit_score": 0,
    "in_netherlands": true,
    "model": "keywords",
    "summary": "Dit ga je doen Als projectleider en onderzoeker binnen het Landelijk Meetnet effecten Mestbeleid vertaal je complexe data over landbouw en waterkwaliteit naar onafhankelijke wetenschappelijke inzichten.",
-   "why": "Matches: visserij, ecolog, natuur, monitoring, laborator, biolog"
+   "why": "Matches: visserij, ecolog, natuur, monitoring, laborator, biolog · Off-profile: bodem"
   },
   "source": "werkenvoornederland",
   "source_id": "projectleider-landbouw-en-waterkwaliteit-RIVM-2026-2603",
@@ -70953,11 +70953,11 @@
    "category": "other",
    "deadline": null,
    "dutch_required": "fluent",
-   "fit_score": 1,
+   "fit_score": 0,
    "in_netherlands": true,
    "model": "keywords",
    "summary": "Wil jij jouw kennis van waterkwaliteit inzetten voor een duurzame leefomgeving? Als Adviseur Waterkwaliteit werk je aan projecten die bijdragen aan schoon oppervlakte- en grondwater.",
-   "why": "Matches: biodiversit, ecolog · Off-profile: adviseur"
+   "why": "Matches: biodiversit, ecolog · Off-profile: adviseur, grondwater"
   },
   "source": "werknl",
   "source_id": "70671190",
@@ -71033,7 +71033,7 @@
    "in_netherlands": true,
    "model": "keywords",
    "summary": "Wil jij werken aan schoon en gezond water met impact op de leefomgeving? Als Adviseur Waterkwaliteit zet je jouw kennis in voor uitdagende projecten op het gebied van ecologie, waterbeheer en duurzaamheid.",
-   "why": "Matches: ecolog, natuur · Off-profile: adviseur"
+   "why": "Matches: ecolog, natuur · Off-profile: adviseur, grondwater"
   },
   "source": "werknl",
   "source_id": "70671193",
@@ -73908,11 +73908,11 @@
    "category": "other",
    "deadline": null,
    "dutch_required": "fluent",
-   "fit_score": 1,
+   "fit_score": 0,
    "in_netherlands": true,
    "model": "keywords",
    "summary": "Direct contact? Bel 0318 495 317 of mail milieu@aatop.nl Vacature Projectleider integrale bodemprojecten 3.000 - 5.000,- 32 - 40 uur per week Utrecht Wil jij impact maken op bodem, beleid én buitenruimte? In deze rol…",
-   "why": "Matches: ecolog"
+   "why": "Matches: ecolog · Off-profile: bodem"
   },
   "source": "werknl",
   "source_id": "70900984",
@@ -75593,7 +75593,7 @@
    "category": "other",
    "deadline": null,
    "dutch_required": "fluent",
-   "fit_score": 1,
+   "fit_score": 0,
    "in_netherlands": true,
    "model": "keywords",
    "summary": "Projectleider Bodem én Ecologie Standplaats: Regio Wageningen Uren: 32 - 40 uur in de week Salaris: Een salaris vanaf €3600 tot en met €5000,- bruto per maand o.b.v. een 40-urige werkweek.",
@@ -75631,7 +75631,7 @@
    "category": "other",
    "deadline": null,
    "dutch_required": "fluent",
-   "fit_score": 1,
+   "fit_score": 0,
    "in_netherlands": true,
    "model": "keywords",
    "summary": "Direct contact? Bel 0318 495 317 of mail milieu@aatop.nl Projectleider bodem én ecologie Vacature Projectleider bodem én ecologie 3.300 - 4.500,- 32 - 40 uur per week Wageningen Draag bij aan een schone leefomgeving…",
@@ -76065,11 +76065,11 @@
    "category": "conservation_zoo_ngo",
    "deadline": null,
    "dutch_required": "fluent",
-   "fit_score": 1,
+   "fit_score": 0,
    "in_netherlands": true,
    "model": "keywords",
    "summary": "Direct contact? Bel 0318 495 317 of mail milieu@aatop.nl Vacature Senior adviseur water en klimaat 5.900 - 9.000,- 32 - 40 uur per week Hilversum Je staat aan de oever van een prachtige beek, je kijkt om je heen en ziet…",
-   "why": "Matches: biodiversit, natuur · Off-profile: adviseur"
+   "why": "Matches: biodiversit, natuur · Off-profile: adviseur, bodem"
   },
   "source": "werknl",
   "source_id": "71027639",
@@ -77362,11 +77362,11 @@
    "category": "technician_research",
    "deadline": "2026-09-17",
    "dutch_required": "basic",
-   "fit_score": 3,
+   "fit_score": 0,
    "in_netherlands": true,
    "model": "keywords",
    "summary": "Page contents 28 Aug 2026 Wageningen University & Research Research Field Agricultural sciences » Agronomics Agricultural sciences » Soil science Researcher Profile Recognised Researcher (R2) Application Deadline 17 Sep…",
-   "why": "Matches: nature, monitoring, biolog · research role"
+   "why": "Matches: nature, monitoring, biolog · research role · Off-profile: soil"
   },
   "source": "werknl",
   "source_id": "71085309",
@@ -85784,7 +85784,7 @@
    "in_netherlands": true,
    "model": "keywords",
    "summary": "Bij dit laboratorium in de regio van Berkel en Rodenrijs draait alles om de kwaliteit van water en bodem.",
-   "why": "Matches: laborator · technician / research role"
+   "why": "Matches: laborator · technician / research role · Off-profile: bodem"
   },
   "source": "werknl",
   "source_id": "71264680",
@@ -91429,7 +91429,7 @@
    "category": "technician_research",
    "deadline": "2026-09-15",
    "dutch_required": "basic",
-   "fit_score": 8,
+   "fit_score": 3,
    "in_netherlands": true,
    "model": "keywords",
    "summary": "Scientist Soil Ecology Your job Make an impact to sustainable soil and plant health.",
@@ -91508,7 +91508,7 @@
    "category": "technician_research",
    "deadline": "2026-09-15",
    "dutch_required": "basic",
-   "fit_score": 6,
+   "fit_score": 1,
    "in_netherlands": true,
    "model": "keywords",
    "summary": "Are you interested in working in the Soil Biology Lab and collaborating with 100 pioneering farmers in the Netherlands? Do you have affinity with soil sampling and analyses related to the role of soil biota in…",
@@ -91626,11 +91626,11 @@
    "category": "technician_research",
    "deadline": "2026-09-18",
    "dutch_required": "basic",
-   "fit_score": 3,
+   "fit_score": 0,
    "in_netherlands": true,
    "model": "keywords",
    "summary": "Junior Researcher – Data Collection & Reporting in Regenerative Farming Your job Are you interested to work with 1000 farmers in the Netherlands and do you have affinity with data collection tools? Within the project…",
-   "why": "Matches: nature, monitoring, laborator, biolog · research role"
+   "why": "Matches: nature, monitoring, laborator, biolog · research role · Off-profile: soil"
   },
   "source": "wur",
   "source_id": "16448",
@@ -92454,7 +92454,7 @@
    "category": "phd",
    "deadline": "2026-10-03",
    "dutch_required": "basic",
-   "fit_score": 1,
+   "fit_score": 0,
    "in_netherlands": true,
    "model": "keywords",
    "summary": "PhD: Modelling Impacts of Agricultural Practices on Soil Ecosystem Services Your job The Earth Systems and Global Change Group at Wageningen University and Research invites applications for a PhD position (4 years) in a…",

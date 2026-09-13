@@ -433,7 +433,7 @@ details.srcs{background:var(--panel);border-radius:16px;box-shadow:var(--e1);pad
 }
 
 /* quick filter chips (work in every tab) */
-.quick{flex-basis:100%;display:flex;gap:8px;overflow-x:auto;scrollbar-width:none}
+.quick{flex-basis:100%;display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;padding:3px 6px 7px;margin:-3px -6px -5px}
 .quick::-webkit-scrollbar{display:none}
 .qchip{flex:none;border:0;border-radius:999px;padding:6px 13px 6px 9px;display:inline-flex;align-items:center;gap:5px;
   font-size:13px;font-weight:600;background:var(--panel);color:var(--muted);box-shadow:var(--e1);transition:background .2s,color .2s,box-shadow .2s}
@@ -880,6 +880,22 @@ function wireSwipe(el){
   // interested: from a swipe the card springs back as ✓ lights up; from a tap only the ✓ fills
   el.animateInterested = (fromSwipe = false) => {
     el.classList.add("moving");
+    if (view !== "interested") {          // card is leaving this tab: same fly-out as a right swipe
+      const flyRight = () => {
+        const yes = el.querySelector(".vote.yes"); yes?.classList.add("on");
+        el.style.transition = "transform .32s cubic-bezier(.5,0,.75,0), opacity .32s ease";
+        el.style.transform = "translateX(120%) rotate(10deg)"; el.style.opacity = "0";
+        setTimeout(() => setMark(k, "interested", true), 300);
+      };
+      if (fromSwipe) { paint(1, "yes", 100); flyRight(); }
+      else {
+        // tap: run the drag animation quickly, then fly out
+        el.style.transition = "transform .22s ease"; el.style.transform = "translateX(70px) rotate(1.5deg)";
+        paint(1, "yes", 220);
+        setTimeout(flyRight, 230);
+      }
+      return;
+    }
     if (!fromSwipe) {                    // plain tap: just fill the ✓, no card movement
       const yes = el.querySelector(".vote.yes"), f = yes.querySelector(".fill"), i = yes.querySelector(".mi");
       [f, i].forEach(x => x.style.transition = "all .2s ease");

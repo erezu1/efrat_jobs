@@ -1,4 +1,4 @@
-## 🆕 58 new matches
+## 🆕 55 new matches
 
 - **[10/10] [Research Technician](https://www.academictransfer.com/en/jobs/363550/research-technician/)** — Universiteit Utrecht — deadline 2026-09-14
   Join our team as a research technician and work with cutting-edge technologies including organ-on-chip systems, kidney organoids, stem cell cultures and functional assays.
@@ -30,14 +30,10 @@
   Are you passionate about combining the directed evolution of diverse biomolecules with deep learning approaches and contributing to the development of better (bio)catalysts and drugs? We are offering three fully-funded,…
 - **[8/10] [PhD Candidate Bioengineering Autonomic Innervation & Optogenetic Control in 3D Tissue Models](https://www.academictransfer.com/en/jobs/363328/phd-candidate-bioengineering-autonomic-innervation-optogenetic-control-in-3d-tissue-models/)** — Maastricht University — deadline 2026-09-15
   Welcome to Maastricht University! Help us build the first optogenetically controllable model of sympathetic innervation in engineered 3D tissue, combining stem cell biology, genetic engineering, and advanced imaging.
-- **[8/10] [Scientist Soil Ecology](https://www.academictransfer.com/en/jobs/363468/scientist-soil-ecology/)** — Wageningen University & Research — deadline 2026-09-14
-  Make an impact to sustainable soil and plant health. Are you an ambitious scientist with expertise in soil ecology and plant-soil interactions? Do you enjoy acquiring and leading research projects and collaborating with…
 - **[8/10] [PhD in Modelling Offshore Windfarm Impacts on Marine Bird Populations](https://www.academictransfer.com/en/jobs/363488/phd-in-modelling-offshore-windfarm-impacts-on-marine-bird-populations/)** — UvA — deadline 2026-09-30
   Are you interested in exploring the potential consequences of offshore wind farms for marine bird populations using mathematical and computational approaches? The Institute of Biodiversity and Ecosystem Dynamics is…
 - **[8/10] [PhD position: Exposing the contribution of epialleles to heritable variation in plants](https://www.academictransfer.com/en/jobs/363554/phd-position-exposing-the-contribution-of-epialleles-to-heritable-variation-in-plants/)** — NIOO-KNAW — deadline 2026-10-01
   To face climate change and other environmental challenges, the capacity for rapid adaptation is crucial for both natural plant populations and crops. Heritable trait variation fuels such adaptation.
-- **[8/10] [Scientist Soil Ecology](https://www.wur.nl/en/vacancy/scientist-soil-ecology)** — Wageningen University & Research — Bio Interacties en Plantgezondheid — deadline 2026-09-15
-  Scientist Soil Ecology Your job Make an impact to sustainable soil and plant health.
 - **[7/10] [Scientist Biological control based on microbiology](https://www.academictransfer.com/en/jobs/363070/scientist-biological-control-based-on-microbiology/)** — Wageningen University & Research — deadline 2026-09-14
   Make an impact on sustainable agriculture! Are you an ambitious scientist with expertise in biological control and crop protection? Do you enjoy leading research projects and collaborating with partners across science,…
 - **[7/10] [Saltmarsh Ecology Researcher](https://www.academictransfer.com/en/jobs/363526/saltmarsh-ecology-researcher/)** — Wageningen University & Research — deadline 2026-09-20
@@ -74,8 +70,6 @@
   Wetenschappelijk Laboratoriummedewerker Doctoraat Wat ga je doen? Als wetenschappelijk laboratorium medewerker in de genoomdiagnostiek ben je verantwoordelijk voor (complexe) genetische diagnostiek en innovatie binnen…
 - **[7/10] [Analist QC Immunologie (8445)](https://www.werk.nl/nl/vacatures/71277441)** — CheckMark | Expert in food, chemie & life sciences
   In deze functie als Analist QC Immunologie speel je een belangrijke rol in de uitvoering van een complexe immunologische analyse ten behoeve van de kwaliteitscontrole.
-- **[6/10] [Lab Research Assistant – Soil Monitoring in Regenerative Agriculture](https://www.academictransfer.com/en/jobs/363466/lab-research-assistant-soil-monitoring-in-regenerative-agriculture/)** — Wageningen University & Research — deadline 2026-09-14
-  Are you interested in working in the Soil Biology Lab and collaborating with 100 pioneering farmers in the Netherlands? Do you have affinity with soil sampling and analyses related to the role of soil biota in…
 - **[6/10] [Onderzoeker kwelderecologie](https://www.academictransfer.com/en/jobs/363504/onderzoeker-kwelderecologie/)** — Wageningen University & Research — deadline 2026-09-20
   Als onderzoeker kwelderecologie werk je aan het kwelderonderzoek van Wageningen Marine Research (WMR).
 - **[6/10] [PhD Candidate Towards a tiered risk assessment strategy to evaluate the safety of herbal supplements](https://www.academictransfer.com/en/jobs/363532/phd-candidate-towards-a-tiered-risk-assessment-strategy-to-evaluate-the-safety-of-herbal-supplements/)** — Maastricht University — deadline 2026-09-20
