@@ -6,6 +6,8 @@ import re
 from datetime import date, datetime, timezone
 from pathlib import Path
 
+from . import geocode
+
 
 def _norm(t: str) -> str:
     return re.sub(r"[^a-z0-9]+", "", t.lower())
@@ -80,6 +82,9 @@ def build_rows(state: dict) -> list[dict]:
 
 def render(state: dict, runs: list[dict], out: Path) -> None:
     rows = build_rows(state)
+    coords = geocode.load_cache()
+    for row in rows:
+        row["ll"] = coords.get(geocode.norm_place(row["loc"]))
     last = runs[-1] if runs else {}
     payload = {
         "generated": datetime.now(timezone.utc).isoformat(timespec="minutes"),
@@ -98,6 +103,8 @@ TEMPLATE = r"""<!doctype html>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
 <title>NL Biology Job Scout</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧬</text></svg>">
 <style>
 :root{
@@ -155,6 +162,15 @@ details.srcs td{padding:2px 12px 2px 0}
 .empty{padding:40px;text-align:center;color:var(--muted)}
 .notice{margin:12px 0 0;padding:10px 14px;border-radius:10px;background:var(--warn-soft);color:var(--warn);font-size:13px}
 [hidden]{display:none!important}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.seg button{border:0;border-radius:0;padding:7px 12px}
+.seg button.on{background:var(--accent);color:#fff}
+#map{height:min(70vh,640px);border-radius:12px;border:1px solid var(--line);margin-top:10px;z-index:1}
+.pop{max-height:260px;overflow:auto;font-size:13px;min-width:220px}
+.pop h4{margin:0 0 6px;font-size:14px}
+.pop div{margin:5px 0}
+.pop b{display:inline-block;min-width:22px;text-align:center;border-radius:5px;color:#fff;margin-right:5px}
+.nomap{color:var(--muted);font-size:12px;margin-top:6px}
 </style>
 </head>
 <body>
@@ -176,7 +192,12 @@ details.srcs td{padding:2px 12px 2px 0}
     <label class="tog"><input type="checkbox" id="showfiltered"> show keyword-filtered</label>
   </div>
   <div class="notice" id="unscored" hidden>Some jobs have no score yet. They'll be scored on the next daily run.</div>
-  <div class="count" id="count"></div>
+  <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap">
+    <div class="count" id="count"></div>
+    <div class="seg"><button id="btnList" class="on">☰ List</button><button id="btnMap">🗺 Map</button></div>
+  </div>
+  <div id="map" hidden></div>
+  <div class="nomap" id="nomap" hidden></div>
   <div id="list"></div>
   <details class="srcs"><summary>Sources in the last run</summary><table id="srcs"></table></details>
 </main>
@@ -267,12 +288,56 @@ function draw(){
     : (b.score??-1)-(a.score??-1) || dlKey(a)-dlKey(b));
   $("count").textContent = `${rows.length} job${rows.length===1?"":"s"}` +
     (view === "all" ? " — everything the scan found, including jobs the filter would hide (reason shown on each)" : "");
+  $("map").hidden = !mapMode; $("list").hidden = mapMode; $("nomap").hidden = !mapMode;
+  if (mapMode) return drawMap(rows);
   $("list").innerHTML = rows.length ? rows.map(card).join("") : `<div class="empty">Nothing here right now.</div>`;
   $("list").querySelectorAll(".actions button").forEach(b => b.onclick = () => {
     const k = b.dataset.k; marks[k] = marks[k] === b.dataset.m ? undefined : b.dataset.m;
     if (!marks[k]) delete marks[k]; saveMarks(); draw();
   });
 }
+
+let mapMode = false, map = null, layer = null;
+const scoreCol = s => s == null ? "#a39e93" : s >= 7 ? "#1f6f5c" : s >= 5 ? "#7a8f2a" : "#a39e93";
+function drawMap(rows){
+  if (!window.L) { $("nomap").hidden = false; $("nomap").textContent = "The map library couldn't load."; return; }
+  if (!map) {
+    map = L.map("map").setView([52.2, 5.3], 7);
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+      {maxZoom: 18, attribution: "© OpenStreetMap contributors"}).addTo(map);
+  }
+  if (layer) layer.remove();
+  layer = L.layerGroup().addTo(map);
+  const places = new Map();
+  let missing = 0;
+  rows.forEach(r => {
+    if (!r.ll) { missing++; return; }
+    const k = r.ll.join(",");
+    if (!places.has(k)) places.set(k, []);
+    places.get(k).push(r);
+  });
+  places.forEach(list => {
+    list.sort((a,b) => (b.score??-1)-(a.score??-1));
+    const best = list[0].score;
+    const n = list.length;
+    const icon = L.divIcon({className: "", iconSize: null, html:
+      `<div style="background:${scoreCol(best)};color:#fff;border:2px solid #fff;border-radius:999px;
+        min-width:${n>9?30:24}px;height:24px;line-height:20px;text-align:center;font:600 12px sans-serif;
+        box-shadow:0 1px 4px rgba(0,0,0,.35);transform:translate(-50%,-50%);padding:0 4px">${n}</div>`});
+    const place = list[0].loc || "";
+    const html = `<div class="pop"><h4>${esc(place)} — ${n} job${n===1?"":"s"}</h4>` + list.map(r => {
+      const dl = daysTo(r.deadline);
+      return `<div><b style="background:${scoreCol(r.score)}">${r.score ?? "–"}</b>` +
+        `<a href="${esc(r.url)}" target="_blank" rel="noopener">${esc(r.title)}</a>` +
+        `<br><span style="color:#667069">${esc(r.org)}${dl!==null&&dl>=0?` · deadline in ${dl} d`:""}</span></div>`;
+    }).join("") + `</div>`;
+    L.marker(list[0].ll, {icon}).bindPopup(html, {maxWidth: 320}).addTo(layer);
+  });
+  setTimeout(() => map.invalidateSize(), 0);
+  $("nomap").textContent = missing ? `${missing} job${missing===1?"":"s"} without a known location aren't shown on the map.` : "";
+}
+$("btnList").onclick = () => { mapMode = false; $("btnList").classList.add("on"); $("btnMap").classList.remove("on"); draw(); };
+$("btnMap").onclick = () => { mapMode = true; $("btnMap").classList.add("on"); $("btnList").classList.remove("on"); draw(); };
 
 $("unscored").hidden = !DATA.rows.some(r => r.pre && r.score == null);
 $("gen").textContent ="Last update: " + new Date(DATA.generated).toLocaleString();

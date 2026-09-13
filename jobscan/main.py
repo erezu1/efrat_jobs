@@ -163,6 +163,11 @@ def main() -> int:
     runs = (runs + [run])[-60:]
     RUNS.write_text(json.dumps(runs, indent=1))
 
+    from . import geocode
+    try:
+        geocode.update(state)
+    except Exception as e:
+        print(f"geocoding skipped: {e}", file=sys.stderr)
     from .render import render
     render(state, runs, ROOT / "docs" / "index.html")
     from .notify import notify
