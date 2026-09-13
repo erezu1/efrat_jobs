@@ -434,6 +434,31 @@ details.srcs{background:var(--panel);border-radius:16px;box-shadow:var(--e1);pad
   .tabicon{width:46px;height:46px;border-radius:16px}
   .tabicon .mi{font-size:23px}
 }
+
+/* quick filter chips (work in every tab) */
+.quick{flex-basis:100%;display:flex;gap:8px;overflow-x:auto;scrollbar-width:none}
+.quick::-webkit-scrollbar{display:none}
+.qchip{flex:none;border:0;border-radius:999px;padding:6px 13px 6px 9px;display:inline-flex;align-items:center;gap:5px;
+  font-size:13px;font-weight:600;background:var(--panel);color:var(--muted);box-shadow:var(--e1);transition:background .2s,color .2s,box-shadow .2s}
+.qchip .mi{font-size:18px}
+.qchip.on{background:var(--accent);color:var(--on-accent);box-shadow:var(--e2)}
+@media (max-width:760px){ .tab{flex:1 1 0;min-width:0} .stats{-webkit-mask-image:none;mask-image:none;justify-content:space-between} }
+
+/* deadline: clock + time left; urgent ones pulse; tap for the full date */
+.dltag{border:0;display:inline-flex;align-items:center;gap:3px;font:600 12px/1 inherit;padding:3px 9px 3px 6px;border-radius:8px;cursor:pointer}
+.dltag .mi{font-size:15px}
+.dltag.later{background:var(--chip);color:var(--muted)}
+.dltag.soon{background:var(--warn-soft);color:var(--warn)}
+.dltag.urgent{background:var(--danger);color:#fff;animation:dlPulse 1.8s ease-out infinite}
+.dltag.urgent .mi{animation:dlTick 1.8s ease-in-out infinite}
+@keyframes dlPulse{0%{box-shadow:0 0 0 0 color-mix(in srgb,var(--danger) 70%,transparent)}60%,100%{box-shadow:0 0 0 9px transparent}}
+@keyframes dlTick{0%,40%,100%{transform:rotate(0)}10%{transform:rotate(-18deg)}20%{transform:rotate(14deg)}30%{transform:rotate(-8deg)}}
+#dlpop{position:fixed;z-index:60;display:flex;gap:10px;align-items:center;max-width:260px;padding:10px 14px;border-radius:14px;
+  background:var(--panel);color:var(--ink);box-shadow:var(--e3);font-size:13px;pointer-events:auto;
+  opacity:0;transform:translateY(-6px) scale(.96);transform-origin:top left;transition:opacity .18s,transform .18s;visibility:hidden}
+#dlpop.show{opacity:1;transform:none;visibility:visible}
+#dlpop .mi{font-size:24px;color:var(--accent)}
+#dlpop small{display:block;color:var(--muted);margin-top:2px}
 </style>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@700;800&display=swap">
@@ -464,12 +489,15 @@ details.srcs{background:var(--panel);border-radius:16px;box-shadow:var(--e1);pad
         <select id="type" title="Job type"><option value="">All job types</option></select>
         <select id="minscore" title="Minimum fit score">
           <option value="7">Score ≥ 7</option><option value="5" selected>Score ≥ 5</option>
-          <option value="3">Score ≥ 3</option><option value="0">All scores</option>
+          <option value="3">Score ≥ 3</option><option value="0">Any score</option>
         </select>
         <select id="sort" title="Sort"><option value="score">Best fit</option><option value="deadline">Deadline</option><option value="new">Newest</option></select>
-        <label class="tog"><input type="checkbox" id="showhidden"> show dismissed</label>
-        <label class="tog"><input type="checkbox" id="showfiltered"> show keyword-filtered</label>
+        <label class="tog"><input type="checkbox" id="showfiltered"> include keyword-filtered jobs</label>
       </div>
+    </div>
+    <div class="quick">
+      <button class="qchip" id="qNew" aria-pressed="false"><span class="mi">new_releases</span>New this week</button>
+      <button class="qchip" id="qClosing" aria-pressed="false"><span class="mi">hourglass_bottom</span>Closing soon</button>
     </div>
     <div class="ctlrow">
       <div class="left">
@@ -659,7 +687,8 @@ function hideUndo(){
   setTimeout(() => { if (t.classList.contains("out")) t.hidden = true; }, 250);
 }
 
-let view = "matches", cats = new Set();
+let view = "review", cats = new Set();
+let onlyNew = false, onlyClosing = false;   // quick filters, work in every tab
 let lang = "en";   // "en" = show English translations of Dutch ads, "nl" = original text
 try { lang = localStorage.getItem("lang") || "en"; } catch(e) {}
 let place = null;   // {key, label}: show only jobs from one location
@@ -673,40 +702,49 @@ function setPlace(key, label){
 const $ = id => document.getElementById(id);
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 
-function base(){
-  const min = +$("minscore").value;
-  // every open job found, unfiltered; saved/applied also ignore the score filter
-  if (view === "all" || view === "interested" || view === "applied" || view === "rejected") return DATA.rows;
-  return DATA.rows.filter(r => {
-    if (!r.pre) return $("showfiltered").checked;
-    if (r.score == null) return true;          // unscored (no API key yet) — show
-    return r.score >= min && r.nl !== false;
-  });
-}
+// Tabs = where a job stands with her. Filters (score, new, closing, type, place, search) narrow any tab.
+// The score/keyword filter only applies to jobs she hasn't decided on: her own marks always show.
 const VIEWS = {
-  matches:    {label:"Matches",    icon:"auto_awesome",     hue:"#7b2d8e", tip:"Good matches for her profile", f: r => true},
-  new:        {label:"New",        icon:"new_releases",     hue:"#d6409f", tip:"New this week", f: r => daysSince(r.first_seen) <= 7},
-  closing:    {label:"Closing",    icon:"hourglass_bottom", hue:"#e07a1f", tip:"Deadline in the next 14 days", f: r => { const d = daysTo(r.deadline); return d !== null && d >= 0 && d <= 14; }},
-  interested: {label:"Interested", icon:"favorite",         hue:"#e0447a", tip:"Marked interested", f: r => marks[r.key] === "interested"},
-  applied:    {label:"Applied",    icon:"send",             hue:"#2f7dd1", tip:"Applied", f: r => marks[r.key] === "interested" && applied[r.key]},
-  rejected:   {label:"Rejected",   icon:"thumb_down",       hue:"#8a7f90", tip:"Marked not interested", f: r => marks[r.key] === "hidden"},
-  all:        {label:"All",        icon:"travel_explore",   hue:"#1f9a8a", tip:"Everything the scan found (unfiltered)", f: r => true},
+  review:     {label:"To review",  icon:"auto_awesome", hue:"#7b2d8e", tip:"Not decided yet", f: r => !marks[r.key]},
+  interested: {label:"Interested", icon:"favorite",     hue:"#e0447a", tip:"Marked interested (not applied yet)", f: r => marks[r.key] === "interested" && !applied[r.key]},
+  applied:    {label:"Applied",    icon:"send",         hue:"#2f7dd1", tip:"Applied", f: r => marks[r.key] === "interested" && !!applied[r.key]},
+  rejected:   {label:"Rejected",   icon:"thumb_down",   hue:"#8a7f90", tip:"Marked not interested", f: r => marks[r.key] === "hidden"},
 };
+function passesFilters(r, v){
+  if (v === "review") {
+    if (!r.pre && !$("showfiltered").checked) return false;
+    if (r.pre && r.score != null && (r.score < +$("minscore").value || r.nl === false)) return false;
+  }
+  if (onlyNew && daysSince(r.first_seen) > 7) return false;
+  if (onlyClosing) { const d = daysTo(r.deadline); if (d === null || d < 0 || d > 14) return false; }
+  if (cats.size && !cats.has(r.cat)) return false;
+  if (place && placeKey(r) !== place.key) return false;
+  const q = $("q").value.trim().toLowerCase();
+  if (q && ![r.title,r.title_en,r.org,r.summary,r.summary_en,r.loc].join(" ").toLowerCase().includes(q)) return false;
+  return true;
+}
 
 function renderStats(){
   const cur = view;
   $("stats").innerHTML = Object.entries(VIEWS).map(([k,v]) => {
-    view = k;   // base() depends on the view
-    const n = base().filter(r => k === "rejected" || marks[r.key] !== "hidden").filter(v.f).length;
+    const n = DATA.rows.filter(r => v.f(r) && passesFilters(r, k)).length;
     const count = n > 999 ? Math.floor(n / 1000) + "k" : n;
     return `<button class="tab ${k===cur?"on":""}" data-v="${k}" style="--hue:${v.hue}" title="${v.tip}" aria-pressed="${k===cur}">
       <span class="tabicon"><span class="mi">${v.icon}</span>${n ? `<span class="tabcount">${count}</span>` : ""}</span>
       <span class="tablabel">${v.label}</span></button>`;
   }).join("");
-  view = cur;
   $("stats").querySelectorAll(".tab").forEach(el => el.onclick = () => { view = el.dataset.v; draw(); });
 }
 
+function timeLeft(d){          // days until deadline, in words
+  if (d === 0) return "today";
+  if (d === 1) return "tomorrow";
+  if (d < 7) return `${d} days`;
+  if (d < 14) return "1 week";
+  if (d < 31) return `${Math.floor(d / 7)} weeks`;
+  if (d < 60) return "1 month";
+  return `${Math.floor(d / 30)} months`;
+}
 function card(r){
   const sc = r.score;
   const en = lang === "en";
@@ -717,14 +755,18 @@ function card(r){
   const dl = daysTo(r.deadline);
   const tags = [];
   if (daysSince(r.first_seen) <= 2) tags.push(`<span class="tag new">NEW</span>`);
-  if (dl !== null && dl >= 0) tags.push(`<span class="tag ${dl<=7?"urgent":"dl"}"><span class="mi">schedule</span>Deadline ${r.deadline} · ${dl===0?"today":dl+" day"+(dl===1?"":"s")}</span>`);
+  if (dl !== null && dl >= 0) {
+    const level = dl <= 3 ? "urgent" : dl <= 7 ? "soon" : "later";
+    const full = new Date(r.deadline + "T00:00:00").toLocaleDateString("en-GB", {weekday:"long", day:"numeric", month:"long", year:"numeric"});
+    tags.push(`<button class="dltag ${level}" data-full="${esc(full)}" data-left="${esc(timeLeft(dl))}" title="Deadline: ${esc(full)}"><span class="mi">schedule</span>${timeLeft(dl)}</button>`);
+  }
   if (r.cat) tags.push(`<a class="tag cattag" href="#" data-c="${esc(r.cat)}" title="Show only ${esc(CATS[r.cat]||r.cat)} jobs">${CATS[r.cat]||r.cat}</a>`);
   if (DUTCH[r.dutch]) tags.push(`<span class="tag">${DUTCH[r.dutch]}</span>`);
   tags.push(`<span class="tag"><span class="mi">link</span>via ${esc(r.source)}${r.also.map(a=>`, <a href="${esc(a.url)}" target="_blank" rel="noopener">${esc(a.source)}</a>`).join("")}</span>`);
   if (!r.pre) tags.push(`<span class="tag">filtered: ${esc(r.pre_reason)}</span>`);
   if (translated) tags.push(`<a class="tag trtag" href="https://translate.google.com/translate?sl=nl&tl=en&u=${encodeURIComponent(r.url)}" target="_blank" rel="noopener" title="Translated from Dutch — open the full ad in Google Translate"><span class="mi">translate</span>Translated · full ad</a>`);
   const m = marks[r.key];
-  return `<article class="card ${m==="hidden"&&view!=="rejected"?"dim":""} ${m==="interested"?"liked":""} ${justLiked===r.key?"stripe-in":""}" data-k="${esc(r.key)}" data-url="${esc(r.url)}">
+  return `<article class="card  ${m==="interested"?"liked":""} ${justLiked===r.key?"stripe-in":""}" data-k="${esc(r.key)}" data-url="${esc(r.url)}">
     <div class="score ${sc==null?"na":""}" style="${col?`background:${col}`:""}" title="Fit score (0-10)">${sc==null?"–":sc}</div>
     <div>
       <a class="title" href="${esc(r.url)}" target="_blank" rel="noopener">${esc(title)}</a>
@@ -741,24 +783,37 @@ function card(r){
     </div></article>`;
 }
 
+// small popover with the full deadline date
+function showDeadline(btn){
+  let pop = $("dlpop");
+  if (!pop) {
+    pop = document.createElement("div"); pop.id = "dlpop"; document.body.appendChild(pop);
+    document.addEventListener("click", e => { if (!e.target.closest("#dlpop,.dltag")) pop.classList.remove("show"); });
+    window.addEventListener("scroll", () => pop.classList.remove("show"), {passive: true});
+  }
+  if (pop.classList.contains("show") && pop.dataset.for === btn.dataset.full) { pop.classList.remove("show"); return; }
+  pop.dataset.for = btn.dataset.full;
+  pop.innerHTML = `<span class="mi">event</span><div><b>${esc(btn.dataset.full)}</b><small>${/^(today|tomorrow)$/.test(btn.dataset.left) ? "closes " + esc(btn.dataset.left) : "closes in " + esc(btn.dataset.left)}</small></div>`;
+  const r = btn.getBoundingClientRect();
+  pop.style.left = Math.max(10, Math.min(r.left, innerWidth - 270)) + "px";
+  pop.style.top = (r.bottom + 8) + "px";
+  pop.classList.remove("show"); void pop.offsetWidth; pop.classList.add("show");
+}
 function draw(){
   renderStats();
-  const q = $("q").value.trim().toLowerCase();
-  let rows = base().filter(VIEWS[view].f)
-    .filter(r => view === "rejected" || $("showhidden").checked || marks[r.key] !== "hidden")
-    .filter(r => !cats.size || cats.has(r.cat))
-    .filter(r => !place || placeKey(r) === place.key)
-    .filter(r => !q || [r.title,r.title_en,r.org,r.summary,r.summary_en,r.loc].join(" ").toLowerCase().includes(q));
-  const s = view === "closing" ? "deadline" : $("sort").value;
+  let rows = DATA.rows.filter(r => VIEWS[view].f(r) && passesFilters(r, view));
+  const s = onlyClosing ? "deadline" : $("sort").value;
   const dlKey = r => { const d = daysTo(r.deadline); return d === null || d < 0 ? 9999 : d; };
   rows.sort((a,b) => s === "deadline" ? dlKey(a)-dlKey(b) || (b.score??-1)-(a.score??-1)
     : s === "new" ? (b.first_seen||"").localeCompare(a.first_seen||"") || (b.score??-1)-(a.score??-1)
     : (b.score??-1)-(a.score??-1) || dlKey(a)-dlKey(b));
-  $("count").textContent = `${rows.length} job${rows.length===1?"":"s"}` +
-    (view === "all" ? " — everything the scan found, including jobs the filter would hide (reason shown on each)" : "");
+  $("count").textContent = `${rows.length} job${rows.length===1?"":"s"}`;
+  $("qNew").classList.toggle("on", onlyNew); $("qNew").setAttribute("aria-pressed", onlyNew);
+  $("qClosing").classList.toggle("on", onlyClosing); $("qClosing").setAttribute("aria-pressed", onlyClosing);
   $("map").hidden = !mapMode; $("list").hidden = mapMode; $("nomap").hidden = !mapMode;
   if (mapMode) return drawMap(rows);
   $("list").innerHTML = rows.length ? rows.map(card).join("") : `<div class="empty">Nothing here right now.</div>`;
+  $("list").querySelectorAll(".dltag").forEach(b => b.onclick = e => { e.stopPropagation(); showDeadline(b); });
   $("list").querySelectorAll(".cattag").forEach(a => a.onclick = e => { e.preventDefault(); setCat(a.dataset.c); });
   $("list").querySelectorAll(".placelink").forEach(a => a.onclick = e => { e.preventDefault(); setPlace(a.dataset.place, a.dataset.label); });
   $("list").querySelectorAll(".vote").forEach(b => b.onclick = () => {
@@ -970,8 +1025,7 @@ $("btnFilters").onclick = () => {
   $("btnFilters").classList.toggle("on", open); $("btnFilters").setAttribute("aria-expanded", open);
 };
 function updateFilterDot(){
-  $("fdot").hidden = $("minscore").value === "5" && $("sort").value === "score" &&
-    !$("showhidden").checked && !$("showfiltered").checked;
+  $("fdot").hidden = $("minscore").value === "5" && $("sort").value === "score" && !$("showfiltered").checked;
 }
 function wirePopups(){
   map.on("popupopen", e => {
@@ -991,7 +1045,9 @@ $("unscored").hidden = !DATA.rows.some(r => r.pre && r.score == null);
 $("gen").textContent = "updated " + new Date(DATA.generated).toLocaleString();
 $("type").insertAdjacentHTML("beforeend", Object.entries(CATS).map(([k,v]) => `<option value="${k}">${v}</option>`).join(""));
 $("type").addEventListener("input", () => setCat($("type").value, false));
-["q","minscore","sort","showhidden","showfiltered"].forEach(id => $(id).addEventListener("input", () => { updateFilterDot(); draw(); }));
+$("qNew").onclick = () => { onlyNew = !onlyNew; draw(); };
+$("qClosing").onclick = () => { onlyClosing = !onlyClosing; draw(); };
+["q","minscore","sort","showfiltered"].forEach(id => $(id).addEventListener("input", () => { updateFilterDot(); draw(); }));
 $("srcs").innerHTML = Object.entries(DATA.sources).map(([k,v]) =>
   `<tr><td>${esc(k)}</td><td>${v.ok?`${v.count} jobs, ${v.new} new`:`<span class="bad">failed: ${esc(v.error)}</span>`}</td></tr>`).join("");
 draw();
