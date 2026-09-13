@@ -24,7 +24,8 @@ EXCLUDE_TITLE = re.compile(r"""(?ix)
     \bdierenarts\b | veterinarian | \bphysician | \barts\b | verpleegkundig | \bnurse\b |
     pharmacist | apotheker |
     \binternship | \bstagiair | \bstageplaats | afstudeer | master\s+thesis | \bMSc\s+thesis |
-    bachelor\s+thesis | vrijwillig | \bvolunteer
+    bachelor\s+thesis | vrijwillig | \bvolunteer | \bstage\b | vakantiekracht | vakantiehulp |
+    \bbijbaan | zaterdaghulp | open\s+sollicitatie
 """)
 
 

@@ -33,12 +33,15 @@ def guess_category(title: str, source: str) -> str | None:
     return None
 
 
-def dedupe_key(title: str, org: str) -> str | None:
+def dedupe_key(title: str, org: str, deadline: str | None = None) -> str | None:
     """Key for spotting the same ad on several sites. Long titles are distinctive on their
-    own (orgs are often spelled differently across boards); short ones also need the org."""
+    own (orgs are often spelled differently across boards); shorter ones also need the same
+    deadline, or else the same organization."""
     nt = _norm(title)
     if len(nt) >= 25:
         return nt
+    if deadline and len(nt) >= 12:
+        return f"{nt}#{deadline}"
     no = _norm(org)
     return f"{nt}@{no}" if nt and no else None
 
@@ -68,7 +71,7 @@ def build_rows(state: dict) -> list[dict]:
             "dutch": s.get("dutch_required"), "nl": s.get("in_netherlands", True),
             "also": [],
         }
-        dk = dedupe_key(row["title"], row["org"])
+        dk = dedupe_key(row["title"], row["org"], row["deadline"])
         if dk and dk in by_title:   # cross-posted duplicate: merge
             first = by_title[dk]
             first["also"].append({"source": row["source"], "url": row["url"]})
@@ -171,11 +174,59 @@ details.srcs td{padding:2px 12px 2px 0}
 .pop div{margin:5px 0}
 .pop b{display:inline-block;min-width:22px;text-align:center;border-radius:5px;color:#fff;margin-right:5px}
 .nomap{color:var(--muted);font-size:12px;margin-top:6px}
+
+/* --- Material-style elevation & icons (visual only) --- */
+:root{
+  --e1:0 1px 2px rgba(20,30,25,.10),0 1px 3px 1px rgba(20,30,25,.06);
+  --e2:0 1px 2px rgba(20,30,25,.12),0 2px 6px 2px rgba(20,30,25,.08);
+  --e3:0 4px 8px 3px rgba(20,30,25,.10),0 1px 3px rgba(20,30,25,.14);
+  --bg:#f3f5f2;
+}
+@media (prefers-color-scheme: dark){
+  :root{--e1:0 1px 2px rgba(0,0,0,.5),0 1px 3px 1px rgba(0,0,0,.3);
+        --e2:0 1px 2px rgba(0,0,0,.5),0 2px 6px 2px rgba(0,0,0,.35);
+        --e3:0 4px 8px 3px rgba(0,0,0,.4),0 1px 3px rgba(0,0,0,.5); --bg:#101311;}
+}
+.mi{font-family:"Material Symbols Rounded";font-weight:normal;font-style:normal;font-size:20px;line-height:1;
+  display:inline-block;vertical-align:middle;letter-spacing:normal;text-transform:none;white-space:nowrap;
+  -webkit-font-feature-settings:"liga";font-feature-settings:"liga";font-variation-settings:"FILL" 0,"wght" 400,"GRAD" 0,"opsz" 20}
+.mi.fill{font-variation-settings:"FILL" 1,"wght" 400,"GRAD" 0,"opsz" 20}
+h1{display:flex;align-items:center;gap:10px;font-weight:650}
+h1 .logo{width:40px;height:40px;border-radius:12px;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;box-shadow:var(--e2)}
+h1 .logo .mi{font-size:24px}
+.stat{border:0;border-radius:16px;padding:12px 16px;box-shadow:var(--e1);transition:box-shadow .2s,transform .2s}
+.stat:hover{box-shadow:var(--e3);transform:translateY(-1px)}
+.stat.on{box-shadow:var(--e2),inset 0 -3px 0 var(--accent)}
+.controls{border-bottom:0;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(8px)}
+input[type=search],select{border:0;border-radius:12px;box-shadow:var(--e1);padding:9px 12px}
+input[type=search]:focus,select:focus{outline:2px solid var(--accent);outline-offset:0}
+.chip{border:0;box-shadow:var(--e1);background:var(--panel);padding:6px 12px;transition:box-shadow .15s}
+.chip:hover{box-shadow:var(--e2)}
+.chip.on{background:var(--accent-soft);color:var(--accent);box-shadow:inset 0 0 0 1px var(--accent)}
+.card{border:0;border-radius:16px;box-shadow:var(--e1);transition:box-shadow .2s;padding:16px 18px}
+.card:hover{box-shadow:var(--e3)}
+.score{border-radius:14px;box-shadow:var(--e1)}
+.tag{border-radius:8px;display:inline-flex;align-items:center;gap:3px}
+.tag .mi{font-size:15px}
+.meta .mi{font-size:16px;margin-right:2px;vertical-align:-3px}
+.blockers .mi{font-size:17px;vertical-align:-3px}
+.actions button{border:0;border-radius:999px;padding:5px 12px 5px 9px;background:var(--chip);display:inline-flex;align-items:center;gap:4px;transition:box-shadow .15s,background .15s}
+.actions button:hover{box-shadow:var(--e1)}
+.actions button .mi{font-size:18px}
+.actions button.on{background:var(--accent-soft);color:var(--accent)}
+.seg{border:0;border-radius:999px;box-shadow:var(--e1);background:var(--panel);padding:3px}
+.seg button{border-radius:999px;display:inline-flex;align-items:center;gap:6px;padding:6px 14px;background:transparent}
+.seg button.on{background:var(--accent);color:#fff;box-shadow:var(--e1)}
+#map{border:0;border-radius:16px;box-shadow:var(--e2)}
+.notice{box-shadow:var(--e1);border-radius:12px}
+details.srcs{background:var(--panel);border-radius:16px;box-shadow:var(--e1);padding:12px 16px}
+.leaflet-popup-content-wrapper{border-radius:14px;box-shadow:var(--e3)}
 </style>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,400,0..1,0&display=block">
 </head>
 <body>
 <header>
-  <h1>🧬 NL Biology Job Scout</h1>
+  <h1><span class="logo"><span class="mi">genetics</span></span>NL Biology Job Scout</h1>
   <div class="sub">Genetics · conservation · aquaculture jobs in the Netherlands — updated daily. <span id="gen"></span></div>
   <div class="stats" id="stats"></div>
 </header>
@@ -194,7 +245,7 @@ details.srcs td{padding:2px 12px 2px 0}
   <div class="notice" id="unscored" hidden>Some jobs have no score yet. They'll be scored on the next daily run.</div>
   <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap">
     <div class="count" id="count"></div>
-    <div class="seg"><button id="btnList" class="on">☰ List</button><button id="btnMap">🗺 Map</button></div>
+    <div class="seg"><button id="btnList" class="on"><span class="mi">view_agenda</span>List</button><button id="btnMap"><span class="mi">map</span>Map</button></div>
   </div>
   <div id="map" hidden></div>
   <div class="nomap" id="nomap" hidden></div>
@@ -250,26 +301,26 @@ function card(r){
   const col = sc == null ? "" : sc >= 7 ? "var(--s-hi)" : sc >= 5 ? "var(--s-mid)" : "var(--s-lo)";
   const dl = daysTo(r.deadline);
   const tags = [];
-  if (daysSince(r.first_seen) <= 2) tags.push(`<span class="tag new">NEW</span>`);
-  if (dl !== null && dl >= 0) tags.push(`<span class="tag ${dl<=7?"urgent":"dl"}">Deadline ${r.deadline} · ${dl===0?"today":dl+" day"+(dl===1?"":"s")}</span>`);
+  if (daysSince(r.first_seen) <= 2) tags.push(`<span class="tag new"><span class="mi fill">fiber_new</span>NEW</span>`);
+  if (dl !== null && dl >= 0) tags.push(`<span class="tag ${dl<=7?"urgent":"dl"}"><span class="mi">schedule</span>Deadline ${r.deadline} · ${dl===0?"today":dl+" day"+(dl===1?"":"s")}</span>`);
   if (r.cat) tags.push(`<span class="tag">${CATS[r.cat]||r.cat}</span>`);
   if (DUTCH[r.dutch]) tags.push(`<span class="tag">${DUTCH[r.dutch]}</span>`);
-  tags.push(`<span class="tag">via ${esc(r.source)}${r.also.map(a=>`, <a href="${esc(a.url)}" target="_blank" rel="noopener">${esc(a.source)}</a>`).join("")}</span>`);
+  tags.push(`<span class="tag"><span class="mi">link</span>via ${esc(r.source)}${r.also.map(a=>`, <a href="${esc(a.url)}" target="_blank" rel="noopener">${esc(a.source)}</a>`).join("")}</span>`);
   if (!r.pre) tags.push(`<span class="tag">filtered: ${esc(r.pre_reason)}</span>`);
   const m = marks[r.key];
   return `<article class="card ${m==="hidden"?"dim":""}">
     <div class="score ${sc==null?"na":""}" style="${col?`background:${col}`:""}" title="Fit score (0-10)">${sc==null?"–":sc}</div>
     <div>
       <a class="title" href="${esc(r.url)}" target="_blank" rel="noopener">${esc(r.title)}</a>
-      <div class="meta"><span>${esc(r.org)}</span>${r.loc?`<span>📍 ${esc(r.loc)}</span>`:""}<span>first seen ${esc(r.first_seen)}</span></div>
+      <div class="meta"><span><span class="mi">apartment</span>${esc(r.org)}</span>${r.loc?`<span><span class="mi">location_on</span>${esc(r.loc)}</span>`:""}<span><span class="mi">visibility</span>first seen ${esc(r.first_seen)}</span></div>
       <div class="tags">${tags.join("")}</div>
       ${r.summary?`<p class="summary">${esc(r.summary)}</p>`:""}
       ${r.why?`<p class="why">${esc(r.why)}</p>`:""}
-      ${r.blockers?.length?`<p class="blockers">⚠ ${r.blockers.map(esc).join(" · ")}</p>`:""}
+      ${r.blockers?.length?`<p class="blockers"><span class="mi">warning</span> ${r.blockers.map(esc).join(" · ")}</p>`:""}
       <div class="actions">
-        <button data-k="${esc(r.key)}" data-m="saved" class="${m==="saved"?"on":""}">★ Save</button>
-        <button data-k="${esc(r.key)}" data-m="applied" class="${m==="applied"?"on":""}">✓ Applied</button>
-        <button data-k="${esc(r.key)}" data-m="hidden" class="${m==="hidden"?"on":""}">✕ Not interested</button>
+        <button data-k="${esc(r.key)}" data-m="saved" class="${m==="saved"?"on":""}"><span class="mi ${m==="saved"?"fill":""}">bookmark</span>Save</button>
+        <button data-k="${esc(r.key)}" data-m="applied" class="${m==="applied"?"on":""}"><span class="mi">check_circle</span>Applied</button>
+        <button data-k="${esc(r.key)}" data-m="hidden" class="${m==="hidden"?"on":""}"><span class="mi">block</span>Not interested</button>
       </div>
     </div></article>`;
 }

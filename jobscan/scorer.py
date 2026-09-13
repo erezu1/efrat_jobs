@@ -22,17 +22,18 @@ TOPICS = [
     (r"biodiversit", 3, 1.5),
     (r"wildlife|wilde\s+dieren|\bzoo\b|dierentuin|EAZA|breeding\s+programme|fokprogramma|\bEEP\b", 3, 1.5),
     (r"\beDNA\b|environmental\s+DNA", 4, 2),
-    (r"\bfish|\bvis\b|vissen|visserij|fisheries|ichthy|aquacult|aquacultuur|salmon|zalm", 4, 2),
+    (r"\bfish|\bvissen\b|vissoort|visserij|visstand|fisheries|ichthy|aquacult|aquacultuur|salmon|\bzalm", 4, 2),
     # Strong
     (r"(?<![a-z])genetic|(?<![a-z])genetica|(?<![a-z])genetisch", 3, 1.5),   # not "optogenetic"
-    (r"genomic|genomics|genoom|genome", 3, 1.5),
+    (r"genomic|genomics|\bgenoom|\bgenomes?\b", 3, 1.5),   # not Dutch "genomen" (= taken)
     (r"animal\s+breeding|fokkerij|breeding\s+value|quantitative\s+genetic", 3, 1.5),
     (r"evolution|evolutie|phylogen|fylogen", 2.5, 1),
-    (r"ecolog", 2, 1),
+    (r"ecolog|ecoloog", 2.5, 1),
+    (r"\bnatuur|\bnature\b|\bgroen\s+beheer|natuurbeheer|boswachter|ranger", 1.5, 0.5),
     (r"zoolog|animal\s+science|dierwetenschap|animal\s+ecology|animal\s+behaviou?r|diergedrag", 2.5, 1),
-    (r"marine|mariene|\bsea\b|oceanogr|coral|koraal|North\s+Sea|Noordzee|zeehond|seal", 2, 1),
-    (r"\bbird|vogel|ornitholog|mammal|zoogdier|amphibi|amfibie|reptiel|reptile|insect|vlinder", 2, 1),
-    (r"\bspecies\b|\bsoorten\b|taxonom|monitoring", 1.5, 0.5),
+    (r"(?<!Koninklijke\s)\bmarine\b|mariene|\bsea\b|oceanogr|\bcoral|koraal|North\s+Sea|Noordzee|zeehond|\bseals?\b", 2, 1),
+    (r"\bbirds?\b|\bvogels?\b|ornitholog|mammal|zoogdier|amphibi|amfibie|reptiel|reptile|\binsect|vlinder", 2, 1),
+    (r"\bspecies\b|diersoort|vissoort|soortbescherming|taxonom|monitoring", 1.5, 0.5),
     # Transferable skills
     (r"molecular\s+biolog|moleculaire\s+biolog|\bDNA\b|\bPCR\b|sequencing|sequencen", 1.5, 1),
     (r"bioinformatic|bio-informatica", 1.5, 1),
@@ -49,7 +50,13 @@ OFF_TOPICS = [
     (r"physics|natuurkunde|quantum|photonic|optic|semiconductor|electrocataly|chemistry|chemie", 3, 0.5),
     (r"software|developer|ICT|\bIT\b|data\s+engineer|cyber|machine\s+learning|\bAI\b", 2, 0),
     (r"econom|financ|controller|accountant|marketing|law\b|juridisch|jurist|linguist|taalkunde|history", 3, 0),
-    (r"\bHR\b|recruit|communicat|secretar|office|administrat|beleidsmedewerker", 2, 0),
+    (r"\bHR\b|recruit|communicat|secretar|office|administrat", 2, 0),
+    (r"beleidsmedewerker|beleidsadviseur|policy\s+officer|\badviseur\b|consultant", 1, 0),
+    (r"production\s+worker|productiemedewerker|\boperator\b|chauffeur|driver|\bsales\b|verkoop|"
+     r"technische\s+dienst|facilit|horeca|catering|schoonmaak|kassa|receptie|magazijn|logistiek", 3, 0),
+    (r"dierverzorg|animal\s+care(taker)?|zookeeper|oppasser", 3, 0),   # she wants to move on from animal care
+    (r"koninklijke\s+marine|defensie|\bnavy\b", 4, 0),
+    (r"energie|\benergy\b|riolering|vergunning|elektrotechn|werktuigbouw|bouwkund|civiel|civil\s+engineer", 2, 0),
     (r"drug|pharma|farmac|toxicolog|vaccin|immun", 2, 0.5),
     (r"crop|gewas|plant\s+breeding|plantenveredeling|soil|bodem|\bplant", 1, 0),
 ]

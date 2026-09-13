@@ -66,6 +66,8 @@ def expired(rec: dict, today: str) -> bool:
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--only", nargs="*", help="only run these source modules")
+    ap.add_argument("--offline", action="store_true",
+                    help="don't fetch; re-filter, re-score and re-render saved jobs (for tuning rules)")
     args = ap.parse_args()
     load_dotenv()
 
@@ -77,12 +79,14 @@ def main() -> int:
     # 1. Fetch
     known = {}   # dedupe key -> state key, to avoid re-fetching cross-posted ads
     for key, rec in state.items():
-        dk = dedupe_key(rec["title"], rec.get("organization", ""))
+        dk = dedupe_key(rec["title"], rec.get("organization", ""), rec.get("deadline"))
         if dk:
             known.setdefault(dk, key)
     seen_now: set[str] = set()
     ok_sources: set[str] = set()
-    for mod in load_sources(args.only):
+    all_sources = load_sources(None)
+    domain_sources = {getattr(m, "NAME", "") for m in all_sources if getattr(m, "DOMAIN_SPECIFIC", False)}
+    for mod in ([] if args.offline else load_sources(args.only)):
         name = getattr(mod, "NAME", mod.__name__.rsplit(".", 1)[-1])
         t0 = time.time()
         print(f"[{name}] fetching…", flush=True)
@@ -104,7 +108,7 @@ def main() -> int:
             seen_now.add(job.key)
             rec = state.get(job.key)
             if rec is None:
-                dk = dedupe_key(job.title, job.organization)
+                dk = dedupe_key(job.title, job.organization, job.deadline)
                 twin = state.get(known.get(dk)) if dk else None
                 if twin and len(twin.get("description", "")) > len(job.description):
                     # same ad already fetched from another site: reuse its text
@@ -146,9 +150,12 @@ def main() -> int:
         if not rec.get("active") and rec.get("last_seen", today) < cutoff:
             del state[key]
 
-    # 3. Score every active, prefiltered job (rules are cheap, so rule edits apply to all)
+    # 3. Re-filter and score every active job (rules are cheap, so rule edits apply to all)
     for rec in state.values():
         rec.pop("score", None)
+        passes, reason = prefilter(Job(**{k: rec[k] for k in Job.__dataclass_fields__}),
+                                   rec["source"] in domain_sources)
+        rec["prefilter"] = {"pass": passes, "reason": reason}
         if rec.get("active") and rec["prefilter"]["pass"] and not expired(rec, today):
             try:
                 rec["score"] = scorer.score(Job(**{k: rec[k] for k in Job.__dataclass_fields__}))
@@ -160,8 +167,9 @@ def main() -> int:
     # 4. Save + render
     save(state)
     runs = json.loads(RUNS.read_text()) if RUNS.exists() else []
-    runs = (runs + [run])[-60:]
-    RUNS.write_text(json.dumps(runs, indent=1))
+    if not args.offline:
+        runs = (runs + [run])[-60:]
+        RUNS.write_text(json.dumps(runs, indent=1))
 
     from . import geocode
     try:
