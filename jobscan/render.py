@@ -273,7 +273,8 @@ const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt
 
 function base(){
   const min = +$("minscore").value;
-  if (view === "all") return DATA.rows;        // every open job found, unfiltered
+  // every open job found, unfiltered; saved/applied also ignore the score filter
+  if (view === "all" || view === "saved" || view === "applied") return DATA.rows;
   return DATA.rows.filter(r => {
     if (!r.pre) return $("showfiltered").checked;
     if (r.score == null) return true;          // unscored (no API key yet) — show
@@ -285,6 +286,7 @@ const VIEWS = {
   new: {label:"New this week", f: r => daysSince(r.first_seen) <= 7},
   closing: {label:"Closing in 14 days", f: r => { const d = daysTo(r.deadline); return d !== null && d >= 0 && d <= 14; }},
   saved: {label:"Saved", f: r => marks[r.key] === "saved"},
+  applied: {label:"Applied", f: r => marks[r.key] === "applied"},
   all: {label:"All found (unfiltered)", f: r => true},
 };
 
