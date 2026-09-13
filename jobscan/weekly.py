@@ -9,6 +9,7 @@ Needs env: SMTP_HOST, SMTP_USER, SMTP_PASSWORD, EMAIL_TO (comma-separated); opti
 from __future__ import annotations
 
 import argparse
+import base64
 import html
 import json
 import os
@@ -22,6 +23,7 @@ from zoneinfo import ZoneInfo
 from .render import build_rows
 
 ROOT = Path(__file__).resolve().parent.parent
+LOGO = ROOT / "docs" / "icons" / "icon-192.png"
 MIN_SCORE = int(os.environ.get("WEEKLY_MIN_SCORE", "5"))
 DEADLINE_DAYS = 14
 CATS = {"phd": "PhD", "technician_research": "Technician / research",
@@ -53,7 +55,7 @@ def _meta(r: dict) -> str:
     return " · ".join(b for b in bits if b)
 
 
-def build_email(new, closing, today: date) -> tuple[str, str, str]:
+def build_email(new, closing, today: date, logo: str = "cid:biojobs-logo") -> tuple[str, str, str]:
     page = os.environ.get("PAGE_URL", "")
     subject = f"BioJobs NL — {len(new)} new position{'s' if len(new) != 1 else ''}, " \
               f"{len(closing)} deadline{'s' if len(closing) != 1 else ''} soon ({today:%d %b})"
@@ -74,7 +76,6 @@ def build_email(new, closing, today: date) -> tuple[str, str, str]:
     e = html.escape
     PURPLE, PINK, INK, MUTED, GROUND, LINE, CHIP = "#7b2d8e", "#c2378a", "#241a28", "#6f6474", "#f7f3f8", "#ece3ef", "#f0e8f2"
     FONT = "-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif"
-    logo = f"{page}icons/icon-192.png" if page else ""
 
     def pill(text, bg, fg):
         return (f'<span style="display:inline-block;background:{bg};color:{fg};border-radius:8px;'
@@ -98,7 +99,9 @@ def build_email(new, closing, today: date) -> tuple[str, str, str]:
  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#ffffff;border:1px solid {LINE};border-radius:16px;box-shadow:0 1px 3px rgba(40,20,45,.10)">
   <tr>
    <td width="52" valign="top" style="padding:16px 0 16px 16px">
-    <div style="width:44px;height:44px;line-height:44px;border-radius:12px;background:{score_bg};color:#fff;text-align:center;font:700 18px {FONT}">{r["score"]}</div>
+    <table role="presentation" width="44" height="44" cellpadding="0" cellspacing="0"><tr>
+     <td width="44" height="44" align="center" valign="middle" style="width:44px;height:44px;border-radius:12px;background:{score_bg};color:#ffffff;font-family:{FONT};font-size:18px;font-weight:700;line-height:44px;text-align:center">{r["score"]}</td>
+    </tr></table>
    </td>
    <td valign="top" style="padding:14px 16px 14px 12px;font-family:{FONT}">
     <a href="{e(r["url"])}" style="color:{INK};font-weight:650;font-size:15px;line-height:1.35;text-decoration:none">{e(r["title"])}</a>
@@ -112,13 +115,13 @@ def build_email(new, closing, today: date) -> tuple[str, str, str]:
     def section(title, count, cards_html):
         body = (f'<table role="presentation" width="100%" cellpadding="0" cellspacing="0">{cards_html}</table>'
                 if count else f'<div style="color:{MUTED};font-size:14px;padding:4px 0 12px">Nothing this week.</div>')
-        return (f'<div style="font:700 17px {FONT};color:{INK};margin:22px 0 10px">{title} '
+        return (f'<div style="font-family:{FONT};font-size:17px;font-weight:700;color:{INK};margin:22px 0 10px">{title} '
                 f'<span style="display:inline-block;background:{CHIP};color:{PURPLE};border-radius:999px;'
                 f'padding:1px 9px;font-size:13px;vertical-align:2px">{count}</span></div>{body}')
 
     button = (f'<table role="presentation" cellpadding="0" cellspacing="0" style="margin:18px auto 6px"><tr>'
               f'<td style="border-radius:999px;background:{PURPLE};background-image:linear-gradient(135deg,{PURPLE},#d6409f)">'
-              f'<a href="{e(page)}" style="display:inline-block;padding:11px 24px;color:#fff;font:600 14px {FONT};'
+              f'<a href="{e(page)}" style="display:inline-block;padding:11px 24px;color:#fff;font-family:{FONT};font-size:14px;font-weight:600;'
               f'text-decoration:none;border-radius:999px">Open BioJobs NL</a></td></tr></table>') if page else ""
 
     body = f"""<div style="background:{GROUND};padding:24px 12px;font-family:{FONT}">
@@ -127,7 +130,7 @@ def build_email(new, closing, today: date) -> tuple[str, str, str]:
   <table role="presentation" cellpadding="0" cellspacing="0"><tr>
    {f'<td style="padding-right:12px"><img src="{e(logo)}" width="44" height="44" alt="" style="display:block;border-radius:12px"></td>' if logo else ""}
    <td>
-    <div style="font:700 22px {FONT};color:{INK};letter-spacing:-.01em">BioJobs NL</div>
+    <div style="font-family:{FONT};font-size:22px;font-weight:700;color:{INK};letter-spacing:-.01em">BioJobs NL</div>
     <div style="font-size:13px;color:{MUTED}">Your weekly update · {today:%d %B %Y}</div>
    </td>
   </tr></table>
@@ -156,11 +159,13 @@ def main() -> int:
 
     state = json.loads((ROOT / "data" / "jobs.json").read_text())
     new, closing = collect(state, now.date())
-    subject, text, body = build_email(new, closing, now.date())
     if args.dry_run:
+        data_uri = "data:image/png;base64," + base64.b64encode(LOGO.read_bytes()).decode()
+        subject, text, body = build_email(new, closing, now.date(), logo=data_uri)
         print(subject, "\n", text, sep="")
-        (ROOT / "data" / "weekly_preview.html").write_text(body)
+        (ROOT / "data" / "weekly_preview.html").write_text('<meta charset="utf-8">' + body)
         return 0
+    subject, text, body = build_email(new, closing, now.date())
 
     host, user, pw, to = ((os.environ.get(k) or "").strip().strip("'\"")
                           for k in ("SMTP_HOST", "SMTP_USER", "SMTP_PASSWORD", "EMAIL_TO"))
@@ -172,6 +177,8 @@ def main() -> int:
     msg["Subject"], msg["From"], msg["To"] = subject, user, to
     msg.set_content(text)
     msg.add_alternative(body, subtype="html")
+    # embed the logo in the message so it shows even when remote images are blocked
+    msg.get_payload()[1].add_related(LOGO.read_bytes(), "image", "png", cid="<biojobs-logo>")
     with smtplib.SMTP_SSL(host, int(os.environ.get("SMTP_PORT") or "465")) as s:
         s.login(user, pw)
         s.send_message(msg)
