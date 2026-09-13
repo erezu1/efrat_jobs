@@ -273,11 +273,18 @@ input[type=search]:focus,select:focus{outline:2px solid var(--accent);outline-of
 .applybox{overflow:hidden;white-space:nowrap;max-width:170px}
 /* grows smoothly out of the ✓/✕ group (no overshoot); .out plays the exact reverse */
 /* "Applied?" sends out a soft ring every few seconds until it's checked */
-.applybox:not(.on){animation:applyPulse 4s 1s ease-out infinite}
+.applybox:not(.on){animation:applyPulse 2.2s .6s ease-out infinite}
+.applybox:not(.on) .mi{animation:applyNudge 2.2s .6s ease-in-out infinite}
 .applybox.appear{animation:applyIn .42s cubic-bezier(.25,.8,.3,1) both}
-.applybox.appear:not(.on){animation:applyIn .42s cubic-bezier(.25,.8,.3,1) both, applyPulse 4s .42s ease-out infinite}
-@keyframes applyPulse{0%{box-shadow:var(--e1),inset 0 0 0 1.5px color-mix(in srgb,#2f7dd1 45%,transparent),0 0 0 0 rgba(47,125,209,.5)}
-  35%,100%{box-shadow:var(--e1),inset 0 0 0 1.5px color-mix(in srgb,#2f7dd1 45%,transparent),0 0 0 14px rgba(47,125,209,0)}}
+.applybox.appear:not(.on){animation:applyIn .42s cubic-bezier(.25,.8,.3,1) both, applyPulse 2.2s .42s ease-out infinite}
+/* double ring + small bump + the paper plane nudging forward: "go on, apply!" */
+@keyframes applyPulse{
+  0%{transform:scale(1);box-shadow:var(--e1),inset 0 0 0 1.5px color-mix(in srgb,#2f7dd1 45%,transparent),0 0 0 0 rgba(47,125,209,.75),0 0 0 0 rgba(214,64,159,.55)}
+  12%{transform:scale(1.07)}
+  24%{transform:scale(1)}
+  45%{box-shadow:var(--e1),inset 0 0 0 1.5px color-mix(in srgb,#2f7dd1 45%,transparent),0 0 0 12px rgba(47,125,209,0),0 0 0 5px rgba(214,64,159,.35)}
+  70%,100%{transform:scale(1);box-shadow:var(--e1),inset 0 0 0 1.5px color-mix(in srgb,#2f7dd1 45%,transparent),0 0 0 18px rgba(47,125,209,0),0 0 0 20px rgba(214,64,159,0)}}
+@keyframes applyNudge{0%,30%,100%{transform:rotate(-20deg) translateX(0)}8%{transform:rotate(-35deg) translateX(3px) translateY(-2px)}16%{transform:rotate(-12deg) translateX(-1px)}}
 .applybox.out{animation:applyIn .32s cubic-bezier(.25,.8,.3,1) reverse both;pointer-events:none}
 @keyframes applyIn{
   from{opacity:0;max-width:0;padding-left:0;padding-right:0;margin-left:-12px;transform:scale(.7)}
@@ -797,6 +804,7 @@ function wireSwipe(el){
       ab.style.maxWidth = q ? `${ab.scrollWidth * (1 - q)}px` : "";
       ab.style.paddingLeft = `${15 * (1 - q)}px`; ab.style.paddingRight = `${20 * (1 - q)}px`;
       ab.style.marginLeft = `${-12 * q}px`;
+      ab.style.animation = q ? "none" : "";   // pause the pulse while it's being dragged away
       ab.style.transform = `scale(${1 - .4 * q})`;
     }
     // the matching button grows and fills; the other one shrinks away, so the group stays centered
