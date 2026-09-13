@@ -721,6 +721,7 @@ function passesFilters(r, v){
   return true;
 }
 
+const defaultSort = v => v === "interested" ? "deadline" : "score";   // interested: what to apply to first
 function renderStats(){
   const cur = view;
   $("stats").innerHTML = Object.entries(VIEWS).map(([k,v]) => {
@@ -730,7 +731,10 @@ function renderStats(){
       <span class="tabicon"><span class="mi">${v.icon}</span>${n ? `<span class="tabcount">${count}</span>` : ""}</span>
       <span class="tablabel">${v.label}</span></button>`;
   }).join("");
-  $("stats").querySelectorAll(".tab").forEach(el => el.onclick = () => { view = el.dataset.v; draw(); });
+  $("stats").querySelectorAll(".tab").forEach(el => el.onclick = () => {
+    if (view !== el.dataset.v) $("sort").value = defaultSort(el.dataset.v);   // each tab starts with its own sort
+    view = el.dataset.v; updateFilterDot(); draw();
+  });
 }
 
 function timeLeft(d){          // days until deadline, in words
@@ -1038,7 +1042,7 @@ $("btnFilters").onclick = () => {
   $("btnFilters").classList.toggle("on", open); $("btnFilters").setAttribute("aria-expanded", open);
 };
 function updateFilterDot(){
-  $("fdot").hidden = $("minscore").value === "5" && $("sort").value === "score" && !$("showfiltered").checked;
+  $("fdot").hidden = $("minscore").value === "5" && $("sort").value === defaultSort(view) && !$("showfiltered").checked;
 }
 function wirePopups(){
   map.on("popupopen", e => {
