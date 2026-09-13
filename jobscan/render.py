@@ -289,7 +289,8 @@ input[type=search]:focus,select:focus{outline:2px solid var(--accent);outline-of
 .card.liked.stripe-in{animation:stripeIn .45s cubic-bezier(.25,.8,.3,1) both}
 .card.liked.stripe-out{animation:stripeIn .32s cubic-bezier(.25,.8,.3,1) reverse both}
 @keyframes stripeIn{from{box-shadow:var(--e1),inset 0 0 0 var(--accent)}to{box-shadow:var(--e1),inset 4px 0 0 var(--accent)}}
-.card.dragging{user-select:none;cursor:grabbing;z-index:2}
+.card.dragging,.card.moving{z-index:30}   /* above other cards and the pinned search bar (toast stays on top) */
+.card.dragging{user-select:none;cursor:grabbing}
 @property --p{syntax:"<number>";inherits:true;initial-value:0}
 /* swipe feedback scales continuously with drag progress --p (0..1) */
 .card::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;opacity:calc(var(--p) * .92);
@@ -798,6 +799,7 @@ function wireSwipe(el){
   };
   // interested: ✓ lights up, card springs back (a small nudge right when triggered by the button)
   el.animateInterested = (fromSwipe = false) => {
+    el.classList.add("moving");
     if (!fromSwipe) {
       el.style.transition = "transform .18s ease"; el.style.transform = "translateX(28px) rotate(.6deg)";
       paint(1, "yes", 180);
@@ -810,6 +812,7 @@ function wireSwipe(el){
   };
   // not interested: ✕ lights up, card slides away to the left (from where it is, or from rest)
   el.animateReject = (fromSwipe = false) => {
+    el.classList.add("moving");
     const wasLiked = el.classList.contains("liked");
     if (wasLiked) {                     // undo the "interested" look at the same time: ✓, stripe, Applied?
       const yes = el.querySelector(".vote.yes"), ab = el.querySelector(".applybox");
@@ -835,8 +838,9 @@ function wireSwipe(el){
       setTimeout(go, wasLiked ? 320 : 170);
     }
   };
-  const reset = () => { el.style.transition = "transform .25s ease"; el.style.transform = "";
-                        paint(0, el.dataset.dir || "yes", 250); setTimeout(() => { el.style.transition = ""; }, 260); };
+  const reset = () => { el.style.transition = "transform .25s ease"; el.style.transform = ""; el.classList.add("moving");
+                        paint(0, el.dataset.dir || "yes", 250);
+                        setTimeout(() => { el.style.transition = ""; el.classList.remove("moving"); }, 260); };
   el.addEventListener("pointerdown", e => {
     if (e.button !== 0 || e.target.closest("a,button,input,label,select")) return;
     x0 = e.clientX; y0 = e.clientY; dx = 0; tracking = true; dragging = false;
