@@ -223,6 +223,12 @@ input[type=search]:focus,select:focus{outline:2px solid var(--accent);outline-of
 #map{border:0;border-radius:16px;box-shadow:var(--e2)}
 .notice{box-shadow:var(--e1);border-radius:12px}
 details.srcs{background:var(--panel);border-radius:16px;box-shadow:var(--e1);padding:12px 16px}
+.placelink{color:inherit;text-decoration:none;border-radius:6px;padding:0 3px;margin:0 -3px}
+.placelink:hover{color:var(--accent);background:var(--accent-soft)}
+.placechip{display:inline-flex;align-items:center;gap:4px}
+.placechip .mi{font-size:16px}
+.onlyhere{margin:2px 0 6px;border:0;border-radius:999px;background:var(--accent);color:#fff;padding:4px 10px 4px 7px;font-size:12px;display:inline-flex;align-items:center;gap:3px;cursor:pointer}
+.onlyhere .mi{font-size:16px}
 .leaflet-popup-content-wrapper{border-radius:14px;box-shadow:var(--e3)}
 </style>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,400,0..1,0&display=block">
@@ -242,6 +248,7 @@ details.srcs{background:var(--panel);border-radius:16px;box-shadow:var(--e1);pad
     </select>
     <select id="sort"><option value="score">Sort: best fit</option><option value="deadline">Sort: deadline</option><option value="new">Sort: newest</option></select>
     <div class="chips" id="cats"></div>
+    <span class="chip on placechip" id="placechip" hidden><span class="mi">location_on</span><span id="placename"></span><span class="mi">close</span></span>
     <label class="tog"><input type="checkbox" id="showhidden"> show dismissed</label>
     <label class="tog"><input type="checkbox" id="showfiltered"> show keyword-filtered</label>
   </div>
@@ -268,6 +275,14 @@ try { marks = JSON.parse(localStorage.getItem("marks") || "{}"); } catch(e) {}
 const saveMarks = () => { try { localStorage.setItem("marks", JSON.stringify(marks)); } catch(e) {} };
 
 let view = "matches", cats = new Set();
+let place = null;   // {key, label}: show only jobs from one location
+const placeKey = r => r.ll ? r.ll.join(",") : (r.loc || "").trim().toLowerCase();
+function setPlace(key, label){
+  place = key ? {key, label} : null;
+  $("placechip").hidden = !place; $("placename").textContent = place ? label : "";
+  window.scrollTo({top: 0, behavior: "smooth"});
+  draw();
+}
 const $ = id => document.getElementById(id);
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 
@@ -317,7 +332,7 @@ function card(r){
     <div class="score ${sc==null?"na":""}" style="${col?`background:${col}`:""}" title="Fit score (0-10)">${sc==null?"–":sc}</div>
     <div>
       <a class="title" href="${esc(r.url)}" target="_blank" rel="noopener">${esc(r.title)}</a>
-      <div class="meta"><span><span class="mi">apartment</span>${esc(r.org)}</span>${r.loc?`<span><span class="mi">location_on</span>${esc(r.loc)}</span>`:""}<span><span class="mi">visibility</span>first seen ${esc(r.first_seen)}</span></div>
+      <div class="meta"><span><span class="mi">apartment</span>${esc(r.org)}</span>${r.loc?`<a class="placelink" href="#" data-place="${esc(placeKey(r))}" data-label="${esc(r.loc)}" title="Show only jobs in ${esc(r.loc)}"><span class="mi">location_on</span>${esc(r.loc)}</a>`:""}<span><span class="mi">visibility</span>first seen ${esc(r.first_seen)}</span></div>
       <div class="tags">${tags.join("")}</div>
       ${r.summary?`<p class="summary">${esc(r.summary)}</p>`:""}
       ${r.why?`<p class="why">${esc(r.why)}</p>`:""}
@@ -336,6 +351,7 @@ function draw(){
   let rows = base().filter(VIEWS[view].f)
     .filter(r => $("showhidden").checked || marks[r.key] !== "hidden")
     .filter(r => !cats.size || cats.has(r.cat))
+    .filter(r => !place || placeKey(r) === place.key)
     .filter(r => !q || [r.title,r.org,r.summary,r.loc].join(" ").toLowerCase().includes(q));
   const s = view === "closing" ? "deadline" : $("sort").value;
   const dlKey = r => { const d = daysTo(r.deadline); return d === null || d < 0 ? 9999 : d; };
@@ -347,6 +363,7 @@ function draw(){
   $("map").hidden = !mapMode; $("list").hidden = mapMode; $("nomap").hidden = !mapMode;
   if (mapMode) return drawMap(rows);
   $("list").innerHTML = rows.length ? rows.map(card).join("") : `<div class="empty">Nothing here right now.</div>`;
+  $("list").querySelectorAll(".placelink").forEach(a => a.onclick = e => { e.preventDefault(); setPlace(a.dataset.place, a.dataset.label); });
   $("list").querySelectorAll(".actions button").forEach(b => b.onclick = () => {
     const k = b.dataset.k; marks[k] = marks[k] === b.dataset.m ? undefined : b.dataset.m;
     if (!marks[k]) delete marks[k]; saveMarks(); draw();
@@ -361,6 +378,7 @@ function drawMap(rows){
     map = L.map("map").setView([52.2, 5.3], 7);
     L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
       {maxZoom: 18, attribution: "© OpenStreetMap contributors"}).addTo(map);
+    wirePopups();
   }
   if (layer) layer.remove();
   layer = L.layerGroup().addTo(map);
@@ -380,8 +398,9 @@ function drawMap(rows){
       `<div style="background:${scoreCol(best)};color:#fff;border:2px solid #fff;border-radius:999px;
         min-width:${n>9?30:24}px;height:24px;line-height:20px;text-align:center;font:600 12px sans-serif;
         box-shadow:0 1px 4px rgba(0,0,0,.35);transform:translate(-50%,-50%);padding:0 4px">${n}</div>`});
-    const place = list[0].loc || "";
-    const html = `<div class="pop"><h4>${esc(place)} — ${n} job${n===1?"":"s"}</h4>` + list.map(r => {
+    const placeLabel = list[0].loc || "";
+    const html = `<div class="pop"><h4>${esc(placeLabel)} — ${n} job${n===1?"":"s"}</h4>` +
+      `<button class="onlyhere" data-place="${esc(placeKey(list[0]))}" data-label="${esc(placeLabel)}"><span class="mi">filter_alt</span>Show only these jobs</button>` + list.map(r => {
       const dl = daysTo(r.deadline);
       return `<div><b style="background:${scoreCol(r.score)}">${r.score ?? "–"}</b>` +
         `<a href="${esc(r.url)}" target="_blank" rel="noopener">${esc(r.title)}</a>` +
@@ -391,6 +410,13 @@ function drawMap(rows){
   });
   setTimeout(() => map.invalidateSize(), 0);
   $("nomap").textContent = missing ? `${missing} job${missing===1?"":"s"} without a known location aren't shown on the map.` : "";
+}
+$("placechip").onclick = () => setPlace(null);
+function wirePopups(){
+  map.on("popupopen", e => {
+    const b = e.popup.getElement().querySelector(".onlyhere");
+    if (b) b.onclick = () => { map.closePopup(); setPlace(b.dataset.place, b.dataset.label); };
+  });
 }
 $("btnList").onclick = () => { mapMode = false; $("btnList").classList.add("on"); $("btnMap").classList.remove("on"); draw(); };
 $("btnMap").onclick = () => { mapMode = true; $("btnMap").classList.add("on"); $("btnList").classList.remove("on"); draw(); };
