@@ -15,6 +15,7 @@ import requests
 from .base import Job, get, html_to_text, iso_date, session
 
 NAME = "werknl"
+SLOW = True  # rate-limited or very large; run last
 API = "https://www.werk.nl/werkzoekenden/mijn-werkmap/kia/publiek/zoekenvacatures/api"
 SITE = "https://www.werk.nl/nl/vacatures/"
 

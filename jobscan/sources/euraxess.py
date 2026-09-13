@@ -16,6 +16,7 @@ from bs4 import BeautifulSoup
 from .base import Job, get, html_to_text
 
 NAME = "euraxess"
+SLOW = True  # rate-limited or very large; run last
 BASE = "https://euraxess.ec.europa.eu"
 SEARCH = BASE + "/jobs/search"
 NL_FACET = "job_country:798"

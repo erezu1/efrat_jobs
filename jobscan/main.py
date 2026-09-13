@@ -37,7 +37,13 @@ def load_sources(only: list[str] | None):
         mod = importlib.import_module(f"{sources.__name__}.{info.name}")
         if hasattr(mod, "fetch"):
             mods.append(mod)
-    return mods
+    # slow, rate-limited sources last so a timeout costs the least
+    return sorted(mods, key=lambda m: getattr(m, "SLOW", False))
+
+
+def save(state: dict) -> None:
+    STATE.parent.mkdir(exist_ok=True)
+    STATE.write_text(json.dumps(state, indent=1, ensure_ascii=False, sort_keys=True))
 
 
 def load_dotenv(path: Path = ROOT / ".env") -> None:
@@ -79,6 +85,7 @@ def main() -> int:
     for mod in load_sources(args.only):
         name = getattr(mod, "NAME", mod.__name__.rsplit(".", 1)[-1])
         t0 = time.time()
+        print(f"[{name}] fetching…", flush=True)
         try:
             jobs: list[Job] = mod.fetch()
         except Exception as e:
@@ -90,7 +97,10 @@ def main() -> int:
         ok_sources.add(name)
         new = 0
         domain_specific = getattr(mod, "DOMAIN_SPECIFIC", False)
-        for job in jobs:
+        print(f"[{name}] {len(jobs)} listed, reading new ads…", flush=True)
+        for i, job in enumerate(jobs, 1):
+            if i % 25 == 0:
+                print(f"[{name}]   {i}/{len(jobs)} ({time.time() - t0:.0f}s)", flush=True)
             seen_now.add(job.key)
             rec = state.get(job.key)
             if rec is None:
@@ -125,7 +135,8 @@ def main() -> int:
         run["sources"][name] = {"ok": True, "count": len(jobs), "new": new,
                                 "seconds": round(time.time() - t0, 1)}
         run["new"] += new
-        print(f"[{name}] {len(jobs)} jobs, {new} new ({time.time() - t0:.0f}s)")
+        print(f"[{name}] done: {len(jobs)} jobs, {new} new ({time.time() - t0:.0f}s)", flush=True)
+        save(state)
 
     # 2. Mark closed (only for sources that fetched successfully) and prune old
     cutoff = (date.today() - timedelta(days=KEEP_CLOSED_DAYS)).isoformat()
@@ -147,8 +158,7 @@ def main() -> int:
     print(f"scored {run['scored']} jobs")
 
     # 4. Save + render
-    STATE.parent.mkdir(exist_ok=True)
-    STATE.write_text(json.dumps(state, indent=1, ensure_ascii=False, sort_keys=True))
+    save(state)
     runs = json.loads(RUNS.read_text()) if RUNS.exists() else []
     runs = (runs + [run])[-60:]
     RUNS.write_text(json.dumps(runs, indent=1))

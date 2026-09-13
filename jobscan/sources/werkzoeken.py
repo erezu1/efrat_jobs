@@ -17,6 +17,7 @@ from bs4 import BeautifulSoup
 from .base import Job, get, html_to_text
 
 NAME = "werkzoeken"
+SLOW = True  # rate-limited or very large; run last
 BASE = "https://www.werkzoeken.nl"
 
 SEARCH_TERMS = [
