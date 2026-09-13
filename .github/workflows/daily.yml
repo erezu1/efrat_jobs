@@ -25,7 +25,13 @@ jobs:
           python-version: "3.12"
           cache: pip
 
-      - run: pip install -r requirements.txt
+      - run: pip install -r requirements.txt -r requirements-translate.txt
+
+      - name: Cache translation model
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/huggingface
+          key: hf-opus-mt-nl-en-v1
 
       - name: Scan, score and render
         env:

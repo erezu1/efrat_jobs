@@ -6,7 +6,7 @@ import re
 from datetime import date, datetime, timezone
 from pathlib import Path
 
-from . import geocode
+from . import geocode, translate
 
 
 def _norm(t: str) -> str:
@@ -48,6 +48,7 @@ def dedupe_key(title: str, org: str, deadline: str | None = None) -> str | None:
 
 def build_rows(state: dict) -> list[dict]:
     rows, by_title = [], {}
+    tr = translate.load()
     today = date.today().isoformat()
     # best copy first, so cross-posted duplicates merge into the scored/prefiltered one
     ordered = sorted(state.items(), key=lambda kv: (
@@ -68,6 +69,8 @@ def build_rows(state: dict) -> list[dict]:
             "cat": s.get("category") or guess_category(r["title"], r["source"]),
             "summary": s.get("summary", ""),
             "why": s.get("why", ""), "blockers": s.get("blockers", []),
+            "title_en": tr.get(translate.key(r["title"])),
+            "summary_en": tr.get(translate.key(s.get("summary", ""))) if s.get("summary") else None,
             "dutch": s.get("dutch_required"), "nl": s.get("in_netherlands", True),
             "also": [],
         }
@@ -231,6 +234,13 @@ html,body{overflow-x:clip}
   .controls.stuck::after{opacity:1}
 }
 input[type=search],select{border:0;border-radius:12px;box-shadow:var(--e1);padding:9px 12px}
+select{-webkit-appearance:none;appearance:none;padding-right:34px;cursor:pointer;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5l5 5 5-5' fill='none' stroke='%237b2d8e' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 13px center;background-size:12px 8px}
+select:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.iconbtn.langbtn{display:inline-flex;width:auto;padding:0 10px;gap:3px;font-size:12px;background:var(--panel)}
+.iconbtn.langbtn .mi{font-size:19px}
+.trtag{text-decoration:none;color:var(--accent)!important}
 input[type=search]:focus,select:focus{outline:2px solid var(--accent);outline-offset:0}
 .chip{border:0;box-shadow:var(--e1);background:var(--panel);padding:6px 12px;transition:box-shadow .15s}
 .chip:hover{box-shadow:var(--e2)}
@@ -393,6 +403,7 @@ details.srcs{background:var(--panel);border-radius:16px;box-shadow:var(--e1);pad
     <div class="toprow">
       <a class="minilogo" href="#" id="minilogo" title="Back to top"><svg class="helix" viewBox="0 0 64 64" aria-hidden="true"><g fill="none" stroke="#fff" stroke-width="4.5" stroke-linecap="round"><path d="M21 10C21 23 43 23 43 32S21 41 21 54"/><path d="M43 10C43 23 21 23 21 32S43 41 43 54"/></g><g stroke="#fff" stroke-width="3" stroke-linecap="round" opacity=".8"><path d="M25 15h14M25 49h14M29 22h6M29 42h6"/></g></svg></a>
       <input type="search" id="q" placeholder="Search jobs…">
+      <button class="iconbtn langbtn" id="btnLang" title="Show Dutch ads in English / original Dutch"><span class="mi">translate</span><b id="langlabel">EN</b></button>
       <button class="iconbtn" id="btnFilters" title="Filters" aria-expanded="false"><span class="mi">tune</span><span class="fdot" id="fdot" hidden></span></button>
     </div>
     <div class="filters" id="filters">
@@ -594,6 +605,8 @@ function hideUndo(){
 }
 
 let view = "matches", cats = new Set();
+let lang = "en";   // "en" = show English translations of Dutch ads, "nl" = original text
+try { lang = localStorage.getItem("lang") || "en"; } catch(e) {}
 let place = null;   // {key, label}: show only jobs from one location
 const placeKey = r => r.ll ? r.ll.join(",") : (r.loc || "").trim().toLowerCase();
 function setPlace(key, label){
@@ -638,6 +651,10 @@ function renderStats(){
 
 function card(r){
   const sc = r.score;
+  const en = lang === "en";
+  const title = en && r.title_en ? r.title_en : r.title;
+  const summary = en && r.summary_en ? r.summary_en : r.summary;
+  const translated = en && (r.title_en || r.summary_en);
   const col = sc == null ? "" : sc >= 7 ? "var(--s-hi)" : sc >= 5 ? "var(--s-mid)" : "var(--s-lo)";
   const dl = daysTo(r.deadline);
   const tags = [];
@@ -647,14 +664,15 @@ function card(r){
   if (DUTCH[r.dutch]) tags.push(`<span class="tag">${DUTCH[r.dutch]}</span>`);
   tags.push(`<span class="tag"><span class="mi">link</span>via ${esc(r.source)}${r.also.map(a=>`, <a href="${esc(a.url)}" target="_blank" rel="noopener">${esc(a.source)}</a>`).join("")}</span>`);
   if (!r.pre) tags.push(`<span class="tag">filtered: ${esc(r.pre_reason)}</span>`);
+  if (translated) tags.push(`<a class="tag trtag" href="https://translate.google.com/translate?sl=nl&tl=en&u=${encodeURIComponent(r.url)}" target="_blank" rel="noopener" title="Translated from Dutch — open the full ad in Google Translate"><span class="mi">translate</span>Translated · full ad</a>`);
   const m = marks[r.key];
   return `<article class="card ${m==="hidden"&&view!=="rejected"?"dim":""} ${m==="interested"?"liked":""}" data-k="${esc(r.key)}" data-url="${esc(r.url)}">
     <div class="score ${sc==null?"na":""}" style="${col?`background:${col}`:""}" title="Fit score (0-10)">${sc==null?"–":sc}</div>
     <div>
-      <a class="title" href="${esc(r.url)}" target="_blank" rel="noopener">${esc(r.title)}</a>
+      <a class="title" href="${esc(r.url)}" target="_blank" rel="noopener">${esc(title)}</a>
       <div class="meta"><span><span class="mi">apartment</span>${esc(r.org)}</span>${r.loc?`<a class="placelink" href="#" data-place="${esc(placeKey(r))}" data-label="${esc(r.loc)}" title="Show only jobs in ${esc(r.loc)}"><span class="mi">location_on</span>${esc(r.loc)}</a>`:""}<span><span class="mi">visibility</span>first seen ${esc(r.first_seen)}</span></div>
       <div class="tags">${tags.join("")}</div>
-      ${r.summary?`<p class="summary">${esc(r.summary)}</p>`:""}
+      ${summary?`<p class="summary">${esc(summary)}</p>`:""}
       ${r.why?`<p class="why">${esc(r.why)}</p>`:""}
       ${r.blockers?.length?`<p class="blockers"><span class="mi">warning</span> ${r.blockers.map(esc).join(" · ")}</p>`:""}
       <div class="actions">
@@ -672,7 +690,7 @@ function draw(){
     .filter(r => view === "rejected" || $("showhidden").checked || marks[r.key] !== "hidden")
     .filter(r => !cats.size || cats.has(r.cat))
     .filter(r => !place || placeKey(r) === place.key)
-    .filter(r => !q || [r.title,r.org,r.summary,r.loc].join(" ").toLowerCase().includes(q));
+    .filter(r => !q || [r.title,r.title_en,r.org,r.summary,r.summary_en,r.loc].join(" ").toLowerCase().includes(q));
   const s = view === "closing" ? "deadline" : $("sort").value;
   const dlKey = r => { const d = daysTo(r.deadline); return d === null || d < 0 ? 9999 : d; };
   rows.sort((a,b) => s === "deadline" ? dlKey(a)-dlKey(b) || (b.score??-1)-(a.score??-1)
@@ -823,6 +841,12 @@ function setCat(c, scroll = true){   // show only this job type ("" = all types)
   draw();
 }
 $("typechip").onclick = () => setCat("", false);
+function updateLangBtn(){
+  $("langlabel").textContent = lang === "en" ? "EN" : "NL";
+  $("btnLang").title = lang === "en" ? "Showing English translations — tap for original Dutch" : "Showing original Dutch — tap for English";
+}
+$("btnLang").onclick = () => { lang = lang === "en" ? "nl" : "en"; try { localStorage.setItem("lang", lang); } catch(e) {} updateLangBtn(); draw(); };
+updateLangBtn();
 $("btnFilters").onclick = () => {
   const open = $("filters").classList.toggle("open");
   $("btnFilters").classList.toggle("on", open); $("btnFilters").setAttribute("aria-expanded", open);

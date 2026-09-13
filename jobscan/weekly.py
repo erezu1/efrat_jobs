@@ -33,6 +33,9 @@ CATS = {"phd": "PhD", "technician_research": "Research & lab",
 def collect(state: dict, today: date) -> tuple[list[dict], list[tuple[int, dict]]]:
     rows = [r for r in build_rows(state)
             if r["pre"] and r["nl"] is not False and (r["score"] or 0) >= MIN_SCORE]
+    for r in rows:   # show English translations of Dutch ads
+        r["title"] = r.get("title_en") or r["title"]
+        r["summary"] = r.get("summary_en") or r["summary"]
     week_ago = (today - timedelta(days=7)).isoformat()
     new = sorted((r for r in rows if (r["first_seen"] or "") > week_ago),
                  key=lambda r: (-(r["score"] or 0), r["deadline"] or "9999"))

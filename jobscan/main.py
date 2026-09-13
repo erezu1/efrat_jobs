@@ -171,7 +171,15 @@ def main() -> int:
         runs = (runs + [run])[-60:]
         RUNS.write_text(json.dumps(runs, indent=1))
 
-    from . import geocode
+    from . import geocode, translate
+    try:
+        texts = []
+        for rec in state.values():
+            if rec.get("active") and rec.get("score"):
+                texts += [rec["title"], rec["score"].get("summary", "")]
+        translate.update(texts)
+    except Exception as e:
+        print(f"translation skipped: {e}", file=sys.stderr)
     try:
         geocode.update(state)
     except Exception as e:

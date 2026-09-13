@@ -1,0 +1,6 @@
+# Optional: Dutch→English translation of job titles/summaries (OPUS-MT, runs on CPU)
+--extra-index-url https://download.pytorch.org/whl/cpu
+torch
+transformers>=4.40
+sentencepiece
+sacremoses
