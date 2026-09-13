@@ -1,0 +1,57 @@
+name: Daily job scan
+
+on:
+  schedule:
+    - cron: "15 5 * * *"   # 05:15 UTC = 07:15 Amsterdam (summer time)
+  workflow_dispatch:        # "Run workflow" button in the Actions tab
+
+permissions:
+  contents: write
+  issues: write
+
+concurrency:
+  group: job-scan
+  cancel-in-progress: false
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    timeout-minutes: 150   # first run fetches every ad's detail page; later runs take minutes
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - run: pip install -r requirements.txt
+
+      - name: Scan, score and render
+        env:
+          ADZUNA_APP_ID: ${{ secrets.ADZUNA_APP_ID }}
+          ADZUNA_APP_KEY: ${{ secrets.ADZUNA_APP_KEY }}
+          JOOBLE_API_KEY: ${{ secrets.JOOBLE_API_KEY }}
+          SMTP_HOST: ${{ secrets.SMTP_HOST }}
+          SMTP_USER: ${{ secrets.SMTP_USER }}
+          SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}
+          EMAIL_TO: ${{ secrets.EMAIL_TO }}
+          PAGE_URL: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/
+        run: python -m jobscan.main
+
+      - name: Commit results
+        run: |
+          git config user.name "job-scout-bot"
+          git config user.email "job-scout-bot@users.noreply.github.com"
+          git add data docs
+          git diff --cached --quiet || git commit -m "Daily scan $(date -u +%F)"
+          git push
+
+      - name: Open digest issue (GitHub emails repo watchers)
+        if: vars.DIGEST_ISSUES == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if [ -s data/digest.md ]; then
+            gh issue create --title "New job matches $(date -u +%F)" --body-file data/digest.md
+          fi
