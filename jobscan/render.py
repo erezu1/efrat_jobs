@@ -381,6 +381,32 @@ details.srcs{background:var(--panel);border-radius:16px;box-shadow:var(--e1);pad
   .leaflet-control-attribution a{color:#ddd}
 }
 .leaflet-popup-content-wrapper{border-radius:14px;box-shadow:var(--e3)}
+
+/* --- icon tabs --- */
+.stats{display:flex;gap:6px;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;margin:16px -4px 6px;padding:8px 4px 6px}
+.stats::-webkit-scrollbar{display:none}
+.tab{flex:none;min-width:72px;border:0;background:transparent;padding:2px 4px;display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;color:var(--muted)}
+.tabicon{position:relative;width:52px;height:52px;border-radius:18px;display:flex;align-items:center;justify-content:center;
+  background:color-mix(in srgb,var(--hue) 14%,var(--panel));color:var(--hue);box-shadow:var(--e1);
+  transition:transform .25s cubic-bezier(.2,1.4,.4,1),background .2s,color .2s,box-shadow .2s,border-radius .25s}
+.tabicon .mi{font-size:26px;font-variation-settings:"FILL" 0,"wght" 500,"GRAD" 0,"opsz" 24;transition:font-variation-settings .2s}
+.tab:hover .tabicon{transform:translateY(-2px);box-shadow:var(--e2)}
+.tab.on .tabicon{background:linear-gradient(135deg,var(--hue),color-mix(in srgb,var(--hue) 55%,#ff6fb5));color:#fff;
+  box-shadow:0 6px 14px -4px color-mix(in srgb,var(--hue) 60%,transparent);border-radius:50%;transform:scale(1.06)}
+.tab.on .tabicon .mi{font-variation-settings:"FILL" 1,"wght" 500,"GRAD" 0,"opsz" 24}
+.tabcount{position:absolute;top:-6px;right:-8px;min-width:22px;height:20px;padding:0 6px;border-radius:999px;
+  background:var(--panel);color:var(--ink);font:700 11px/20px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  text-align:center;box-shadow:var(--e1)}
+.tab.on .tabcount{background:var(--ink);color:var(--bg)}
+.tablabel{font-size:12px;font-weight:600;white-space:nowrap}
+.tab.on .tablabel{color:var(--ink)}
+@media (max-width:760px){
+  .stats{margin:12px -14px 4px;padding:8px 14px 6px;gap:2px}
+  .stats{-webkit-mask-image:linear-gradient(to right,#000 85%,transparent);mask-image:linear-gradient(to right,#000 85%,transparent)}
+  .tab{min-width:64px}
+  .tabicon{width:46px;height:46px;border-radius:16px}
+  .tabicon .mi{font-size:23px}
+}
 </style>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@700;800&display=swap">
@@ -629,13 +655,13 @@ function base(){
   });
 }
 const VIEWS = {
-  matches: {label:"Matches", f: r => true},
-  new: {label:"New this week", f: r => daysSince(r.first_seen) <= 7},
-  closing: {label:"Closing in 14 days", f: r => { const d = daysTo(r.deadline); return d !== null && d >= 0 && d <= 14; }},
-  interested: {label:"Interested", f: r => marks[r.key] === "interested"},
-  applied: {label:"Applied", f: r => marks[r.key] === "interested" && applied[r.key]},
-  rejected: {label:"Rejected", f: r => marks[r.key] === "hidden"},
-  all: {label:"All found (unfiltered)", f: r => true},
+  matches:    {label:"Matches",    icon:"auto_awesome",     hue:"#7b2d8e", tip:"Good matches for her profile", f: r => true},
+  new:        {label:"New",        icon:"new_releases",     hue:"#d6409f", tip:"New this week", f: r => daysSince(r.first_seen) <= 7},
+  closing:    {label:"Closing",    icon:"hourglass_bottom", hue:"#e07a1f", tip:"Deadline in the next 14 days", f: r => { const d = daysTo(r.deadline); return d !== null && d >= 0 && d <= 14; }},
+  interested: {label:"Interested", icon:"favorite",         hue:"#e0447a", tip:"Marked interested", f: r => marks[r.key] === "interested"},
+  applied:    {label:"Applied",    icon:"send",             hue:"#2f7dd1", tip:"Applied", f: r => marks[r.key] === "interested" && applied[r.key]},
+  rejected:   {label:"Rejected",   icon:"thumb_down",       hue:"#8a7f90", tip:"Marked not interested", f: r => marks[r.key] === "hidden"},
+  all:        {label:"All",        icon:"travel_explore",   hue:"#1f9a8a", tip:"Everything the scan found (unfiltered)", f: r => true},
 };
 
 function renderStats(){
@@ -643,10 +669,13 @@ function renderStats(){
   $("stats").innerHTML = Object.entries(VIEWS).map(([k,v]) => {
     view = k;   // base() depends on the view
     const n = base().filter(r => k === "rejected" || marks[r.key] !== "hidden").filter(v.f).length;
-    return `<div class="stat ${k===cur?"on":""}" data-v="${k}"><b>${n}</b><span>${v.label}</span></div>`;
+    const count = n > 999 ? Math.floor(n / 1000) + "k" : n;
+    return `<button class="tab ${k===cur?"on":""}" data-v="${k}" style="--hue:${v.hue}" title="${v.tip}" aria-pressed="${k===cur}">
+      <span class="tabicon"><span class="mi">${v.icon}</span>${n ? `<span class="tabcount">${count}</span>` : ""}</span>
+      <span class="tablabel">${v.label}</span></button>`;
   }).join("");
   view = cur;
-  $("stats").querySelectorAll(".stat").forEach(el => el.onclick = () => { view = el.dataset.v; draw(); });
+  $("stats").querySelectorAll(".tab").forEach(el => el.onclick = () => { view = el.dataset.v; draw(); });
 }
 
 function card(r){
