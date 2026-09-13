@@ -16,7 +16,7 @@ docs/index.html        → the dashboard;  data/digest.md → daily digest (emai
 ## Sources
 | Kind | Sources |
 |---|---|
-| Academic | AcademicTransfer, EURAXESS, Nature Careers, Utrecht University, UvA, Leiden, LUMC, UMC Utrecht, WUR, KNAW institutes (NIOO, Westerdijk, Hubrecht…) |
+| Academic | AcademicTransfer, EURAXESS, Netherlands Cancer Institute (AVL), Nature Careers, Utrecht University, UvA, Leiden, LUMC, UMC Utrecht, WUR, KNAW institutes (NIOO, Westerdijk, Hubrecht…) |
 | Wageningen area | WUR, KeyGene, Solynta, NIZO, Noldus, Hendrix Genetics |
 | Nature / zoos / NGOs | Greenjobs, Sustainable Jobs, Fondsen, Groene Ruimte, Naturalis, NIOZ, EAZA, Staatsbosbeheer, ARTIS, Blijdorp, Burgers' Zoo, Apenheul, GaiaZOO, WWF-NL, Vogelbescherming, Sovon, RAVON, Vlinderstichting, Zodion, IUCN NL… |
 | Industry | Nutreco/Skretting/Trouw, CRV, Topigs Norsvin, Koppert, Enza, Bejo, Syngenta, Dümmen Orange, BaseClear, GenomeScan, Cobb, Eurofins |

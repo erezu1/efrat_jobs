@@ -243,7 +243,8 @@ input[type=search]:focus,select:focus{outline:2px solid var(--accent);outline-of
 .applybox input{display:none}
 .applybox .mi{font-size:18px}
 .applybox.on{background:var(--accent-soft);color:var(--accent);font-weight:600}
-.card{position:relative;touch-action:pan-y}
+.card{position:relative;touch-action:pan-y;cursor:pointer}
+.card:active{transform:scale(.995)}
 .card.liked{box-shadow:var(--e1),inset 4px 0 0 var(--accent)}
 .card.dragging{user-select:none;cursor:grabbing;z-index:2}
 @property --p{syntax:"<number>";inherits:true;initial-value:0}
@@ -625,7 +626,7 @@ function card(r){
   tags.push(`<span class="tag"><span class="mi">link</span>via ${esc(r.source)}${r.also.map(a=>`, <a href="${esc(a.url)}" target="_blank" rel="noopener">${esc(a.source)}</a>`).join("")}</span>`);
   if (!r.pre) tags.push(`<span class="tag">filtered: ${esc(r.pre_reason)}</span>`);
   const m = marks[r.key];
-  return `<article class="card ${m==="hidden"&&view!=="rejected"?"dim":""} ${m==="interested"?"liked":""}" data-k="${esc(r.key)}">
+  return `<article class="card ${m==="hidden"&&view!=="rejected"?"dim":""} ${m==="interested"?"liked":""}" data-k="${esc(r.key)}" data-url="${esc(r.url)}">
     <div class="score ${sc==null?"na":""}" style="${col?`background:${col}`:""}" title="Fit score (0-10)">${sc==null?"–":sc}</div>
     <div>
       <a class="title" href="${esc(r.url)}" target="_blank" rel="noopener">${esc(r.title)}</a>
@@ -667,7 +668,14 @@ function draw(){
     if (cb.checked) applied[cb.dataset.k] = true; else delete applied[cb.dataset.k];
     saveMarks(cb.dataset.k); draw();
   });
-  $("list").querySelectorAll(".card").forEach(wireSwipe);
+  $("list").querySelectorAll(".card").forEach(c => {
+    wireSwipe(c);
+    c.addEventListener("click", e => {          // whole card opens the ad (except its own controls)
+      if (e.target.closest("a,button,input,label,select") || c.dataset.dragged) return;
+      if (String(getSelection()).length) return;   // don't hijack text selection
+      window.open(c.dataset.url, "_blank", "noopener");
+    });
+  });
 }
 
 // Swipe a card: right = interested, left = not interested
@@ -716,6 +724,7 @@ function wireSwipe(el){
     tracking = false;
     if (!dragging) return;
     el.classList.remove("dragging");
+    el.dataset.dragged = "1"; setTimeout(() => { delete el.dataset.dragged; }, 350);
     if (dx > 90) {                       // interested: button lights up, card springs back
       paint(1, "yes", 120);
       el.style.transition = "transform .3s cubic-bezier(.2,1.4,.4,1)"; el.style.transform = "";

@@ -34,19 +34,24 @@ TOPICS = [
     (r"(?<!Koninklijke\s)\bmarine\b|mariene|\bsea\b|oceanogr|\bcoral|koraal|North\s+Sea|Noordzee|zeehond|\bseals?\b", 2, 1),
     (r"\bbirds?\b|\bvogels?\b|ornitholog|mammal|zoogdier|amphibi|amfibie|reptiel|reptile|\binsect|vlinder", 2, 1),
     (r"\bspecies\b|diersoort|vissoort|soortbescherming|taxonom|monitoring", 1.5, 0.5),
-    # Transferable skills
-    (r"molecular\s+biolog|moleculaire\s+biolog|\bDNA\b|\bPCR\b|sequencing|sequencen", 1.5, 1),
-    (r"bioinformatic|bio-informatica", 1.5, 1),
-    (r"laborator|\blab\b", 1, 0.5),
-    (r"\bbiolog|life\s+science|levenswetenschap", 1, 0.5),
+    # Molecular / cell biology research (e.g. research assistant in a biomedical lab) — relevant too
+    (r"molecular\s+biolog|moleculaire\s+biolog|\bmolecul|\bmoleculair|cell\s+biolog|celbiolog|oncogenomic", 3, 1.5),
+    (r"\bDNA\b|\bRNA\b|\bPCR\b|qPCR|sequencing|sequencen|CRISPR|genetic\s+screen|cloning|kloneren|"
+     r"cell\s+culture|celkweek|western\s+blot|flow\s+cytometr|microscop|genome\s+(in)?stabilit|DNA\s+repair", 2, 1.5),
+    (r"bioinformatic|bio-informatica", 2, 1),
+    (r"laborator|\blab\b", 1.5, 0.5),
+    (r"\bbiolog|life\s+science|levenswetenschap|biomedic|biomedisch", 1.5, 0.5),
 ]
 
-DESC_CAP = 4.0   # max points from topic words that appear only in the description
+DESC_CAP = 4.5   # max points from topic words that appear only in the description
 
 # Off-profile topics: (regex, penalty if in title, penalty if only in description)
 OFF_TOPICS = [
-    (r"patient|pati[eë]nt|clinical|klinisch|hospital|ziekenhuis|cancer|kanker|tumou?r|oncolog", 3, 1),
-    (r"neuro|brain|hersen|psychiatr|psycholog|cardio|hart(spier)?", 3, 0.5),
+    # patient care / clinical routine (biomedical *research* topics like cancer or neuro are fine)
+    (r"verpleeg|\bnurse|zorgmedewerker|doktersassistent|poli(kliniek)?assistent|patiëntenzorg|patient\s+care|"
+     r"\bklinisch\s+(chemisch|fysicus)|radiotherap|anesthes|operatie|\bOK\b|\bAIOS\b|\bANIOS\b|arts-assistent", 4, 0),
+    (r"patient|pati[eë]nt|hospital|ziekenhuis|clinical\s+trial|klinisch", 1, 0),
+    (r"psychiatr|psycholog|linguist|cognitive|cognitie", 3, 0.5),
     (r"physics|natuurkunde|quantum|photonic|optic|semiconductor|electrocataly|chemistry|chemie", 3, 0.5),
     (r"software|developer|ICT|\bIT\b|data\s+engineer|cyber|machine\s+learning|\bAI\b", 2, 0),
     (r"econom|financ|controller|accountant|marketing|law\b|juridisch|jurist|linguist|taalkunde|history", 3, 0),
@@ -57,15 +62,16 @@ OFF_TOPICS = [
     (r"dierverzorg|animal\s+care(taker)?|zookeeper|oppasser", 3, 0),   # she wants to move on from animal care
     (r"koninklijke\s+marine|defensie|\bnavy\b", 4, 0),
     (r"energie|\benergy\b|riolering|vergunning|elektrotechn|werktuigbouw|bouwkund|civiel|civil\s+engineer", 2, 0),
-    (r"drug|pharma|farmac|toxicolog|vaccin|immun", 2, 0.5),
+    (r"\bpharmacist|apotheek|farmaceutisch\s+(consulent|assistent)", 2, 0),
     (r"crop|gewas|plant\s+breeding|plantenveredeling|soil|bodem|\bplant", 1, 0),
 ]
 
 # Job-type adjustments on the title
 TYPE_ADJ = [
     (r"\bph\.?d\b|promovend|doctoral\s+candidate", +1, "PhD position"),
-    (r"technician|technicus|analist|analyst|laborant|research\s+assistant|onderzoeksassistent|"
-     r"researcher|onderzoeker", +1, "technician / research role"),
+    (r"research\s+assistant|onderzoeksassistent|research\s+technician|lab(oratory)?\s+technician|"
+     r"laborant|analist|\banalyst\b|technicus|technician", +2, "technician / research role"),
+    (r"researcher|onderzoeker|scientist|wetenschapper", +1, "research role"),
     (r"\bsenior\b|\bmanager\b|director|directeur|\bhead\b|\bhoofd\b|teamleider|team\s+lead|"
      r"\blead\b|principal", -2, "senior / management level"),
 ]
@@ -75,7 +81,8 @@ INDUSTRY_SOURCES = {"industry", "wageningen_companies", "eurofins"}
 
 # Requirement detection in the description
 PHD_REQUIRED = re.compile(
-    r"(?i)(completed|hold|have|with)\s+(a\s+)?(PhD|doctorate)|PhD\s+(degree\s+)?(is\s+)?required|"
+    r"(?i)(completed|hold|have|with)\s+(a\s+)?(PhD|doctorate)(?!\s*(student|candidate|position|project|researcher|program|traject))|"
+    r"PhD\s+(degree\s+)?(is\s+)?required|"
     r"gepromoveerd|afgeronde\s+promotie|doctoral\s+degree\s+in")
 DVM_REQUIRED = re.compile(r"(?i)\bDVM\b|veterinary\s+degree|diergeneeskunde|dierenarts\b|\bMD\b|medical\s+degree|basisarts|BIG-regist")
 DUTCH_FLUENT = re.compile(

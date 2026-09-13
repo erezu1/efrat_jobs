@@ -25,7 +25,7 @@ EXCLUDE_TITLE = re.compile(r"""(?ix)
     pharmacist | apotheker |
     \binternship | \bstagiair | \bstageplaats | afstudeer | master\s+thesis | \bMSc\s+thesis |
     bachelor\s+thesis | vrijwillig | \bvolunteer | \bstage\b | vakantiekracht | vakantiehulp |
-    \bbijbaan | zaterdaghulp | open\s+sollicitatie
+    \bbijbaan | zaterdaghulp | open\s+sollicitatie | onderzoekstage | afstudeerstage | meewerkstage | snuffelstage | \w+stage\b(?=\s|$)
 """)
 
 
