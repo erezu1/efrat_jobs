@@ -105,21 +105,25 @@ TEMPLATE = r"""<!doctype html>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#7b2d8e">
+<meta name="mobile-web-app-capable" content="yes">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <title>NL Biology Job Scout</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='16' fill='%231f6f5c'/><g fill='none' stroke='white' stroke-width='4.5' stroke-linecap='round'><path d='M21 10C21 23 43 23 43 32S21 41 21 54'/><path d='M43 10C43 23 21 23 21 32S43 41 43 54'/></g><g stroke='white' stroke-width='3' stroke-linecap='round' opacity='.8'><path d='M25 15h14M25 49h14M29 22h6M29 42h6'/></g></svg>">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><defs><linearGradient id='g' x1='0' y1='0' x2='1' y2='1'><stop offset='0' stop-color='%237b2d8e'/><stop offset='1' stop-color='%23d6409f'/></linearGradient></defs><rect width='64' height='64' rx='16' fill='url(%23g)'/><g fill='none' stroke='white' stroke-width='4.5' stroke-linecap='round'><path d='M21 10C21 23 43 23 43 32S21 41 21 54'/><path d='M43 10C43 23 21 23 21 32S43 41 43 54'/></g><g stroke='white' stroke-width='3' stroke-linecap='round' opacity='.8'><path d='M25 15h14M25 49h14M29 22h6M29 42h6'/></g></svg>">
 <style>
 :root{
-  --bg:#f6f5f1; --panel:#fff; --ink:#1d2320; --muted:#667069; --line:#e3e1da;
-  --accent:#1f6f5c; --accent-soft:#e3f0eb; --warn:#b4541a; --warn-soft:#fbeadf;
-  --danger:#b3261e; --chip:#efede7;
-  --s-hi:#1f6f5c; --s-mid:#7a8f2a; --s-lo:#a39e93;
+  --bg:#f7f3f8; --panel:#fff; --ink:#241a28; --muted:#6f6474; --line:#e8dfeb;
+  --accent:#7b2d8e; --accent-soft:#f4e5f5; --warn:#b4541a; --warn-soft:#fbeadf;
+  --danger:#b3261e; --chip:#f0e8f2;
+  --s-hi:#7b2d8e; --s-mid:#c2378a; --s-lo:#a79cab;
 }
 @media (prefers-color-scheme: dark){
-  :root{--bg:#121513; --panel:#1b1f1c; --ink:#e6e9e6; --muted:#98a29b; --line:#2c322e;
-    --accent:#5fbf9f; --accent-soft:#1f3029; --warn:#e89a5f; --warn-soft:#3a2a1e; --danger:#ef7a70;
-    --chip:#262b27; --s-hi:#5fbf9f; --s-mid:#b3c45a; --s-lo:#6f756f;}
+  :root{--bg:#151117; --panel:#201a23; --ink:#ece6ee; --muted:#a397a8; --line:#352c39;
+    --accent:#d59ce6; --accent-soft:#3b2543; --warn:#e89a5f; --warn-soft:#3a2a1e; --danger:#ef7a70;
+    --chip:#2b2430; --s-hi:#d59ce6; --s-mid:#f08cc0; --s-lo:#7a6f7f;}
 }
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,sans-serif}
@@ -177,29 +181,29 @@ details.srcs td{padding:2px 12px 2px 0}
 
 /* --- Material-style elevation & icons (visual only) --- */
 :root{
-  --e1:0 1px 2px rgba(20,30,25,.10),0 1px 3px 1px rgba(20,30,25,.06);
-  --e2:0 1px 2px rgba(20,30,25,.12),0 2px 6px 2px rgba(20,30,25,.08);
-  --e3:0 4px 8px 3px rgba(20,30,25,.10),0 1px 3px rgba(20,30,25,.14);
-  --bg:#f3f5f2;
+  --e1:0 1px 2px rgba(40,20,45,.10),0 1px 3px 1px rgba(40,20,45,.06);
+  --e2:0 1px 2px rgba(40,20,45,.12),0 2px 6px 2px rgba(40,20,45,.08);
+  --e3:0 4px 8px 3px rgba(40,20,45,.10),0 1px 3px rgba(40,20,45,.14);
+  --bg:#f7f3f8;
 }
 @media (prefers-color-scheme: dark){
   :root{--e1:0 1px 2px rgba(0,0,0,.5),0 1px 3px 1px rgba(0,0,0,.3);
         --e2:0 1px 2px rgba(0,0,0,.5),0 2px 6px 2px rgba(0,0,0,.35);
-        --e3:0 4px 8px 3px rgba(0,0,0,.4),0 1px 3px rgba(0,0,0,.5); --bg:#101311;}
+        --e3:0 4px 8px 3px rgba(0,0,0,.4),0 1px 3px rgba(0,0,0,.5); --bg:#130f15;}
 }
 .mi{font-family:"Material Symbols Rounded";font-weight:normal;font-style:normal;font-size:20px;line-height:1;
   display:inline-block;vertical-align:middle;letter-spacing:normal;text-transform:none;white-space:nowrap;
   -webkit-font-feature-settings:"liga";font-feature-settings:"liga";font-variation-settings:"FILL" 0,"wght" 400,"GRAD" 0,"opsz" 20}
 .mi.fill{font-variation-settings:"FILL" 1,"wght" 400,"GRAD" 0,"opsz" 20}
 h1{display:flex;align-items:center;gap:10px;font-weight:650}
-h1 .logo{width:40px;height:40px;border-radius:12px;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;box-shadow:var(--e2)}
+h1 .logo{width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg,#7b2d8e,#d6409f);color:#fff;display:flex;align-items:center;justify-content:center;box-shadow:var(--e2)}
 h1 .logo .mi{font-size:24px}
 .stat{border:0;border-radius:16px;padding:12px 16px;box-shadow:var(--e1);transition:box-shadow .2s,transform .2s}
 .stat:hover{box-shadow:var(--e3);transform:translateY(-1px)}
 .stat.on{background:var(--accent);color:var(--on-accent);box-shadow:var(--e2)}
 .stat.on span{color:var(--on-accent);opacity:.85}
 :root{--on-accent:#fff}
-@media (prefers-color-scheme: dark){:root{--on-accent:#0d1a14}}
+@media (prefers-color-scheme: dark){:root{--on-accent:#1f0f26}}
 .controls{border-bottom:0;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(8px)}
 input[type=search],select{border:0;border-radius:12px;box-shadow:var(--e1);padding:9px 12px}
 input[type=search]:focus,select:focus{outline:2px solid var(--accent);outline-offset:0}
@@ -374,7 +378,7 @@ function draw(){
 }
 
 let mapMode = false, map = null, layer = null;
-const scoreCol = s => s == null ? "#a39e93" : s >= 7 ? "#1f6f5c" : s >= 5 ? "#7a8f2a" : "#a39e93";
+const scoreCol = s => s == null ? "#a79cab" : s >= 7 ? "#7b2d8e" : s >= 5 ? "#c2378a" : "#a79cab";
 function drawMap(rows){
   if (!window.L) { $("nomap").hidden = false; $("nomap").textContent = "The map library couldn't load."; return; }
   if (!map) {
@@ -407,7 +411,7 @@ function drawMap(rows){
       const dl = daysTo(r.deadline);
       return `<div><b style="background:${scoreCol(r.score)}">${r.score ?? "–"}</b>` +
         `<a href="${esc(r.url)}" target="_blank" rel="noopener">${esc(r.title)}</a>` +
-        `<br><span style="color:#667069">${esc(r.org)}${dl!==null&&dl>=0?` · deadline in ${dl} d`:""}</span></div>`;
+        `<br><span style="color:#6f6474">${esc(r.org)}${dl!==null&&dl>=0?` · deadline in ${dl} d`:""}</span></div>`;
     }).join("") + `</div>`;
     L.marker(list[0].ll, {icon}).bindPopup(html, {maxWidth: 320}).addTo(layer);
   });
@@ -443,6 +447,7 @@ $("cats").querySelectorAll(".chip").forEach(c => c.onclick = () => {
 $("srcs").innerHTML = Object.entries(DATA.sources).map(([k,v]) =>
   `<tr><td>${esc(k)}</td><td>${v.ok?`${v.count} jobs, ${v.new} new`:`<span class="bad">failed: ${esc(v.error)}</span>`}</td></tr>`).join("");
 draw();
+if ("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js").catch(() => {});
 </script>
 </body>
 </html>

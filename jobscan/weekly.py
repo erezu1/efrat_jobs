@@ -75,11 +75,11 @@ def build_email(new, closing, today: date) -> tuple[str, str, str]:
         summary = (f'<div style="color:#444;font-size:13px;margin-top:4px">{e(r["summary"][:180])}</div>'
                    if r["summary"] else "")
         return (f'<tr><td style="padding:10px 0;border-bottom:1px solid #eee;vertical-align:top;width:44px">'
-                f'<div style="background:{"#1f6f5c" if r["score"] >= 7 else "#7a8f2a"};color:#fff;border-radius:8px;'
+                f'<div style="background:{"#7b2d8e" if r["score"] >= 7 else "#c2378a"};color:#fff;border-radius:8px;'
                 f'width:36px;height:36px;line-height:36px;text-align:center;font-weight:700">{r["score"]}</div></td>'
                 f'<td style="padding:10px 0 10px 10px;border-bottom:1px solid #eee">'
-                f'{badge}<a href="{e(r["url"])}" style="color:#1d2320;font-weight:600;font-size:15px">{e(r["title"])}</a>'
-                f'<div style="color:#667069;font-size:13px">{e(_meta(r))}</div>'
+                f'{badge}<a href="{e(r["url"])}" style="color:#241a28;font-weight:600;font-size:15px">{e(r["title"])}</a>'
+                f'<div style="color:#6f6474;font-size:13px">{e(_meta(r))}</div>'
                 f'{summary}</td></tr>')
 
     def dl_badge(d):
@@ -87,16 +87,16 @@ def build_email(new, closing, today: date) -> tuple[str, str, str]:
         return (f'<span style="background:{col};color:#fff;border-radius:5px;padding:1px 7px;font-size:12px;'
                 f'margin-right:6px">{"today" if d == 0 else f"{d} day" + ("s" if d != 1 else "") + " left"}</span>')
 
-    empty = '<p style="color:#667069">None this week.</p>'
-    body = f"""<div style="font-family:-apple-system,Segoe UI,Roboto,sans-serif;max-width:640px;margin:auto;color:#1d2320">
+    empty = '<p style="color:#6f6474">None this week.</p>'
+    body = f"""<div style="font-family:-apple-system,Segoe UI,Roboto,sans-serif;max-width:640px;margin:auto;color:#241a28">
 <h2 style="margin:0 0 4px">🧬 Weekly job scout</h2>
-<div style="color:#667069;font-size:13px;margin-bottom:18px">Biology jobs in the Netherlands · week ending {today:%d %B %Y}</div>
+<div style="color:#6f6474;font-size:13px;margin-bottom:18px">Biology jobs in the Netherlands · week ending {today:%d %B %Y}</div>
 <h3 style="margin:18px 0 4px">New positions this week ({len(new)})</h3>
 {f'<table style="width:100%;border-collapse:collapse">{"".join(item(r) for r in new)}</table>' if new else empty}
 <h3 style="margin:26px 0 4px">Deadlines in the next {DEADLINE_DAYS} days ({len(closing)})</h3>
 {f'<table style="width:100%;border-collapse:collapse">{"".join(item(r, dl_badge(d)) for d, r in closing)}</table>' if closing else empty}
-{f'<p style="margin-top:26px"><a href="{e(page)}" style="background:#1f6f5c;color:#fff;padding:9px 16px;border-radius:8px;text-decoration:none">Open all jobs</a></p>' if page else ""}
-<p style="color:#98a29b;font-size:12px;margin-top:22px">Only jobs with a fit score of {MIN_SCORE}+ are listed.</p>
+{f'<p style="margin-top:26px"><a href="{e(page)}" style="background:#7b2d8e;color:#fff;padding:9px 16px;border-radius:8px;text-decoration:none">Open all jobs</a></p>' if page else ""}
+<p style="color:#a397a8;font-size:12px;margin-top:22px">Only jobs with a fit score of {MIN_SCORE}+ are listed.</p>
 </div>"""
     return subject, text, body
 
