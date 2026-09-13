@@ -346,7 +346,13 @@ input[type=search]:focus,select:focus{outline:2px solid var(--accent);outline-of
 
 .seg{border:0;border-radius:999px;box-shadow:var(--e1);background:var(--panel);padding:3px}
 .seg button{border-radius:999px;display:inline-flex;align-items:center;gap:6px;padding:6px 14px;background:transparent}
-.seg button.on{background:var(--accent);color:#fff;box-shadow:var(--e1)}
+.seg{position:relative}
+.seg button{position:relative;z-index:1;transition:color .25s}
+.seg button.on{background:transparent;color:#fff;box-shadow:none}
+.segpill{position:absolute;top:3px;bottom:3px;left:0;width:0;border-radius:999px;z-index:0;
+  background:var(--accent);box-shadow:var(--e1);transition:transform .35s cubic-bezier(.3,1.25,.5,1),width .35s cubic-bezier(.3,1.25,.5,1)}
+/* no grey Android tap rectangle */
+*{-webkit-tap-highlight-color:transparent}
 #map{border:0;border-radius:16px;box-shadow:var(--e2)}
 .notice{box-shadow:var(--e1);border-radius:12px}
 details.srcs{background:var(--panel);border-radius:16px;box-shadow:var(--e1);padding:12px 16px}
@@ -389,7 +395,8 @@ details.srcs{background:var(--panel);border-radius:16px;box-shadow:var(--e1);pad
     transition:grid-template-rows .34s cubic-bezier(.4,0,.2,1),margin-top .34s cubic-bezier(.4,0,.2,1),opacity .26s ease}
   .filters-inner{min-height:0;overflow:hidden;transform:translateY(-8px);transition:transform .34s cubic-bezier(.4,0,.2,1)}
   .filters.open{grid-template-rows:1fr;margin-top:0;opacity:1;pointer-events:auto}
-  .filters.open .filters-inner{transform:none;padding:4px 0 2px}
+  .filters-inner{padding:4px 6px 6px;margin:0 -6px}   /* room so shadows/focus rings aren't clipped */
+  .filters.open .filters-inner{transform:none}
   .filters-inner select{flex:1 1 30%}
   .iconbtn .mi{transition:transform .32s cubic-bezier(.2,.8,.2,1)}
   #btnFilters.on .mi{transform:rotate(90deg)}
@@ -506,7 +513,7 @@ details.srcs{background:var(--panel);border-radius:16px;box-shadow:var(--e1);pad
         <span class="chip on fchip" id="typechip" hidden><span id="typename"></span><span class="mi">close</span></span>
         <span class="chip on fchip placechip" id="placechip" hidden><span class="mi">location_on</span><span id="placename"></span><span class="mi">close</span></span>
       </div>
-      <div class="seg"><button id="btnList" class="on"><span class="mi">view_agenda</span>List</button><button id="btnMap"><span class="mi">map</span>Map</button></div>
+      <div class="seg"><span class="segpill" id="segpill"></span><button id="btnList" class="on"><span class="mi">view_agenda</span>List</button><button id="btnMap"><span class="mi">map</span>Map</button></div>
     </div>
   </div>
   <div class="notice" id="unscored" hidden>Some jobs have no score yet. They'll be scored on the next daily run.</div>
@@ -1074,13 +1081,23 @@ function wirePopups(){
     const b = e.popup.getElement().querySelector(".onlyhere");
     if (b) b.onclick = () => {
       map.closePopup();
-      mapMode = false; $("btnList").classList.add("on"); $("btnMap").classList.remove("on");
+      mapMode = false; $("btnList").classList.add("on"); $("btnMap").classList.remove("on"); moveSegPill();
       setPlace(b.dataset.place, b.dataset.label);
     };
   });
 }
-$("btnList").onclick = () => { mapMode = false; $("btnList").classList.add("on"); $("btnMap").classList.remove("on"); draw(); };
-$("btnMap").onclick = () => { mapMode = true; $("btnMap").classList.add("on"); $("btnList").classList.remove("on"); draw(); };
+function moveSegPill(animate = true){       // the purple pill slides to the active List/Map button
+  const on = mapMode ? $("btnMap") : $("btnList"), pill = $("segpill");
+  if (!animate) pill.style.transition = "none";
+  pill.style.width = on.offsetWidth + "px";
+  pill.style.transform = `translateX(${on.offsetLeft}px)`;
+  if (!animate) { void pill.offsetWidth; pill.style.transition = ""; }
+}
+$("btnList").onclick = () => { mapMode = false; $("btnList").classList.add("on"); $("btnMap").classList.remove("on"); moveSegPill(); draw(); };
+$("btnMap").onclick = () => { mapMode = true; $("btnMap").classList.add("on"); $("btnList").classList.remove("on"); moveSegPill(); draw(); };
+addEventListener("resize", () => moveSegPill(false));
+document.fonts?.ready.then(() => moveSegPill(false));
+setTimeout(() => moveSegPill(false), 0);
 
 Sync.init();
 $("unscored").hidden = !DATA.rows.some(r => r.pre && r.score == null);
