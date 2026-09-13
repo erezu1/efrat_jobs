@@ -221,13 +221,14 @@ html,body{overflow-x:clip}
 #topbar{position:fixed;top:0;left:0;right:0;z-index:6;padding-top:env(safe-area-inset-top);
   transform:translateY(calc(-1 * var(--hide,0px)));transition:transform .32s cubic-bezier(.25,.8,.3,1);will-change:transform}
 #topbar::before{content:"";position:absolute;left:0;right:0;top:0;bottom:0;z-index:-1;background:var(--bg);transition:background .25s}
-body.scrolled #topbar::before{bottom:-30px;background:color-mix(in srgb,var(--bg) 72%,transparent);
-  -webkit-mask-image:linear-gradient(to bottom,#000 0,#000 calc(100% - 30px),transparent 100%);
-  mask-image:linear-gradient(to bottom,#000 0,#000 calc(100% - 30px),transparent 100%)}
+/* the soft fade stays inside the bar's own bottom padding, so the page keeps its normal spacing */
+body.scrolled #topbar::before{background:color-mix(in srgb,var(--bg) 72%,transparent);
+  -webkit-mask-image:linear-gradient(to bottom,#000 0,#000 calc(100% - 12px),transparent 100%);
+  mask-image:linear-gradient(to bottom,#000 0,#000 calc(100% - 12px),transparent 100%)}
 @supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
   body.scrolled #topbar::before{-webkit-backdrop-filter:blur(16px) saturate(1.5);backdrop-filter:blur(16px) saturate(1.5)}
 }
-#topspace{height:calc(var(--tbh,0px) + 18px)}   /* extra room so the first card starts clear of the blur fade */
+#topspace{height:var(--tbh,0px)}
 header{position:relative}
 .barwrap{max-width:980px;margin:0 auto;padding:0 20px}
 .controls{position:relative;top:auto;z-index:auto;border-bottom:0;background:transparent;padding:10px 0 12px}
@@ -1094,7 +1095,7 @@ $("placechip").onclick = () => setPlace(null);
     const d = Math.sign(y - lastY);
     if (d && d !== dir) { dir = d; anchor = lastY; }
     // tucking the title away before it has scrolled past would uncover the empty space it leaves behind
-    if (y < H + 24) hidden = false;
+    if (y < H) hidden = false;
     else if (dir > 0 && y - anchor > 14) hidden = true;       // scrolled down a little: tuck the title away
     else if (dir < 0 && anchor - y > 40) hidden = false;      // scrolled up a bit more: bring it back
     lastY = y;
