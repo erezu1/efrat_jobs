@@ -213,7 +213,11 @@ h1 .logo .mi{font-size:24px}
 :root{--on-accent:#fff}
 @media (prefers-color-scheme: dark){:root{--on-accent:#1f0f26}}
 .controls{border-bottom:0;background:var(--bg);padding-top:max(12px,env(safe-area-inset-top));transition:box-shadow .2s}
-.controls.stuck{box-shadow:0 6px 10px -8px rgba(40,20,45,.35)}
+/* soft fade under the pinned bar: cards dissolve instead of being cut off */
+.controls::after{content:"";position:absolute;left:-20px;right:-20px;top:100%;height:28px;pointer-events:none;
+  background:linear-gradient(to bottom,var(--bg) 0%,color-mix(in srgb,var(--bg) 70%,transparent) 40%,transparent 100%);
+  opacity:0;transition:opacity .25s}
+.controls.stuck::after{opacity:1}
 input[type=search],select{border:0;border-radius:12px;box-shadow:var(--e1);padding:9px 12px}
 input[type=search]:focus,select:focus{outline:2px solid var(--accent);outline-offset:0}
 .chip{border:0;box-shadow:var(--e1);background:var(--panel);padding:6px 12px;transition:box-shadow .15s}
