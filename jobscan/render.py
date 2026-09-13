@@ -273,17 +273,14 @@ input[type=search]:focus,select:focus{outline:2px solid var(--accent);outline-of
 .applybox{overflow:hidden;white-space:nowrap;max-width:170px}
 /* grows smoothly out of the ✓/✕ group (no overshoot); .out plays the exact reverse */
 /* "Applied?" sends out a soft ring every few seconds until it's checked */
-.applybox:not(.on){animation:applyPulse 2.2s .6s ease-out infinite}
-.applybox:not(.on) .mi{animation:applyNudge 2.2s .6s ease-in-out infinite}
+.applybox:not(.on){animation:applyPulse 2.8s .6s ease-out infinite}
+.applybox:not(.on) .mi{animation:applyNudge 2.8s .6s ease-in-out infinite}
 .applybox.appear{animation:applyIn .42s cubic-bezier(.25,.8,.3,1) both}
-.applybox.appear:not(.on){animation:applyIn .42s cubic-bezier(.25,.8,.3,1) both, applyPulse 2.2s .42s ease-out infinite}
+.applybox.appear:not(.on){animation:applyIn .42s cubic-bezier(.25,.8,.3,1) both, applyPulse 2.8s .42s ease-out infinite}
 /* double ring + small bump + the paper plane nudging forward: "go on, apply!" */
 @keyframes applyPulse{
-  0%{transform:scale(1);box-shadow:var(--e1),inset 0 0 0 1.5px color-mix(in srgb,#2f7dd1 45%,transparent),0 0 0 0 rgba(47,125,209,.75),0 0 0 0 rgba(214,64,159,.55)}
-  12%{transform:scale(1.07)}
-  24%{transform:scale(1)}
-  45%{box-shadow:var(--e1),inset 0 0 0 1.5px color-mix(in srgb,#2f7dd1 45%,transparent),0 0 0 12px rgba(47,125,209,0),0 0 0 5px rgba(214,64,159,.35)}
-  70%,100%{transform:scale(1);box-shadow:var(--e1),inset 0 0 0 1.5px color-mix(in srgb,#2f7dd1 45%,transparent),0 0 0 18px rgba(47,125,209,0),0 0 0 20px rgba(214,64,159,0)}}
+  0%{box-shadow:var(--e1),inset 0 0 0 1.5px color-mix(in srgb,#2f7dd1 45%,transparent),0 0 0 0 rgba(47,125,209,.6)}
+  55%,100%{box-shadow:var(--e1),inset 0 0 0 1.5px color-mix(in srgb,#2f7dd1 45%,transparent),0 0 0 12px rgba(47,125,209,0)}}
 @keyframes applyNudge{0%,30%,100%{transform:rotate(-20deg) translateX(0)}8%{transform:rotate(-35deg) translateX(3px) translateY(-2px)}16%{transform:rotate(-12deg) translateX(-1px)}}
 .applybox.out{animation:applyIn .32s cubic-bezier(.25,.8,.3,1) reverse both;pointer-events:none}
 @keyframes applyIn{
