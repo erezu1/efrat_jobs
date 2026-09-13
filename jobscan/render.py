@@ -222,7 +222,7 @@ h1 .logo{width:40px;height:40px;border-radius:12px;background:linear-gradient(13
 html,body{overflow-x:clip}
 /* Pinned-bar glass: a separate fixed layer (steadier than blurring the sticky bar itself while scrolling fast) */
 #glass{position:fixed;left:0;right:0;top:0;height:var(--gh,0px);z-index:4;pointer-events:none;opacity:0;
-  background:color-mix(in srgb,var(--bg) 70%,transparent);transition:opacity .2s,height .3s ease;
+  background:color-mix(in srgb,var(--bg) 70%,transparent);transition:opacity .2s;
   -webkit-mask-image:linear-gradient(to bottom,#000 0,#000 calc(100% - 34px),transparent 100%);
   mask-image:linear-gradient(to bottom,#000 0,#000 calc(100% - 34px),transparent 100%)}
 @supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
@@ -230,13 +230,16 @@ html,body{overflow-x:clip}
 }
 body.stuck #glass{opacity:1}
 body.stuck .controls::before{background:transparent}
-.controls{transform:translateZ(0);transition:top .3s ease}
+.controls{top:0;transform:translateY(var(--rv,0px)) translateZ(0)}
 /* scrolling up reveals the title + tabs above the pinned search bar; scrolling down tucks them away */
-header{position:sticky;top:0;z-index:6;transition:transform .3s ease}
+/* the header scrolls away normally (sticky with a negative top parks it just above the screen);
+   when revealed, header and search bar are shifted down together by the same amount (--rv) */
+header{position:sticky;top:calc(-1 * var(--hh,0px));z-index:6;transform:translateY(var(--rv,0px))}
+body.anim header,body.anim .controls{transition:transform .32s cubic-bezier(.25,.8,.3,1)}
+body.anim #glass{transition:opacity .2s,height .32s cubic-bezier(.25,.8,.3,1)}
 header::before{content:"";position:absolute;inset:0 -50vw;z-index:-1;background:var(--bg);transition:background .2s}
 body.stuck header::before{background:transparent}
-body.stuck:not(.reveal) header{transform:translateY(-105%);pointer-events:none}
-body.reveal .controls{top:var(--hh,0px)}
+
 input[type=search],select{border:0;border-radius:12px;box-shadow:var(--e1);padding:9px 12px}
 select{-webkit-appearance:none;appearance:none;padding-right:34px;cursor:pointer;
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5l5 5 5-5' fill='none' stroke='%237b2d8e' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
@@ -1084,27 +1087,37 @@ function drawMap(rows){
 }
 $("placechip").onclick = () => setPlace(null);
 // show the small logo in the sticky bar once the page header has scrolled away
-(() => {   // pinned bar state: stuck once the header scrolls away; reveal header again when scrolling up
+(() => {   // pinned bar: header scrolls away with the page; scrolling up slides header + search bar back in together
   const hdr = document.querySelector("header"), ctl = $("controls"), body = document.body;
   const glass = document.createElement("div"); glass.id = "glass"; body.appendChild(glass);
-  let lastY = scrollY, reveal = false, ticking = false, natH = hdr.offsetHeight;
+  let lastY = scrollY, reveal = false, ticking = false, natH = hdr.offsetHeight, animTimer = null;
   const update = () => {
     ticking = false;
-    const y = scrollY;
-    if (!body.classList.contains("stuck")) natH = hdr.offsetHeight;
-    const stuck = y > natH;
-    if (!stuck) reveal = false;
-    else if (y < lastY - 6) reveal = true;
-    else if (y > lastY + 6) reveal = false;
+    const y = Math.max(0, scrollY);
+    natH = hdr.offsetHeight;                 // layout height (transforms don't change it)
+    let next = reveal;
+    if (y <= 2) next = false;
+    else if (y < lastY - 6 && y > natH * .5) next = true;
+    else if (y > lastY + 6) next = false;
+    if (next !== reveal) {                   // animate only the moment it toggles; otherwise follow the scroll exactly
+      reveal = next;
+      body.classList.add("anim"); clearTimeout(animTimer);
+      animTimer = setTimeout(() => body.classList.remove("anim"), 340);
+    }
     lastY = y;
+    const rv = reveal ? Math.min(natH, y) : 0;          // how far header + bar are pulled down
+    const stuck = y > natH || rv > 0;
     body.classList.toggle("stuck", stuck);
-    body.classList.toggle("reveal", stuck && reveal);
-    ctl.classList.toggle("stuck", stuck && !reveal);          // mini logo only when the title is hidden
+    body.classList.toggle("reveal", reveal);
+    ctl.classList.toggle("stuck", y > natH && !reveal);      // mini logo only when the title is hidden
     body.style.setProperty("--hh", natH + "px");
-    body.style.setProperty("--gh", (stuck ? (reveal ? natH : 0) + ctl.offsetHeight + 34 : 0) + "px");
+    body.style.setProperty("--rv", rv + "px");
+    body.style.setProperty("--gh", (stuck ? rv + ctl.offsetHeight + 34 : 0) + "px");
   };
   addEventListener("scroll", () => { if (!ticking) { ticking = true; requestAnimationFrame(update); } }, {passive: true});
-  addEventListener("resize", () => { natH = body.classList.contains("stuck") ? natH : hdr.offsetHeight; update(); });
+  addEventListener("resize", update);
+  document.fonts?.ready.then(update);
+  new ResizeObserver(update).observe(hdr);
   update();
 })();
 $("minilogo").onclick = e => { e.preventDefault(); window.scrollTo({top: 0, behavior: "smooth"}); };
