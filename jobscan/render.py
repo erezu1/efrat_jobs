@@ -254,6 +254,8 @@ input[type=search]:focus,select:focus{outline:2px solid var(--accent);outline-of
 .blockers .mi{font-size:17px;vertical-align:-3px}
 .actions button{border:0;border-radius:999px;padding:5px 12px 5px 9px;background:var(--chip);display:inline-flex;align-items:center;gap:4px;transition:box-shadow .15s,background .15s}
 .actions{align-items:center;justify-content:center;gap:12px;margin-top:14px}
+.actions{direction:ltr;flex-direction:row}
+.actions .vote.yes{order:1}.actions .vote.no{order:2}.actions .applybox{order:3}
 .actions .vote{width:48px;height:48px;padding:0;justify-content:center;border-radius:50%;transition:transform .15s,background .15s,box-shadow .15s}
 .actions .vote .mi{font-size:28px;font-variation-settings:"FILL" 0,"wght" 600,"GRAD" 0,"opsz" 24}
 .actions .vote.on{box-shadow:var(--e2)}
@@ -323,11 +325,7 @@ header{position:relative}
 .syncpanel .row button.primary{background:linear-gradient(135deg,#7b2d8e,#d6409f);color:#fff}
 .syncpanel .row button .mi{font-size:17px}
 @media (max-width:760px){.syncpanel{right:14px;top:62px}}
-.swipebadge{position:absolute;top:50%;z-index:3;width:84px;height:84px;margin-top:-42px;border-radius:50%;pointer-events:none;
   display:flex;align-items:center;justify-content:center;color:#fff;box-shadow:0 8px 24px rgba(40,20,45,.35);opacity:0;transform:scale(.3)}
-.swipebadge .mi{font-size:54px;font-variation-settings:"FILL" 1,"wght" 700,"GRAD" 0,"opsz" 48}
-.swipebadge.yes{left:24px;background:linear-gradient(135deg,#7b2d8e,#d6409f)}
-.swipebadge.no{right:24px;background:var(--danger)}
 .vote{position:relative;overflow:hidden}
 .vote .fill{position:absolute;inset:0;border-radius:50%;opacity:0;pointer-events:none}
 .vote.yes .fill{background:linear-gradient(135deg,#7b2d8e,#d6409f)}
@@ -786,15 +784,8 @@ function draw(){
 function wireSwipe(el){
   const k = el.dataset.k;
   let x0 = 0, y0 = 0, dx = 0, tracking = false, dragging = false;
-  let badge = null;
-  const paint = (p, dir, ms = 0) => {   // everything scales continuously with drag progress p (0..1)
+  const paint = (p, dir, ms = 0) => {   // tint + matching button scale continuously with drag progress p (0..1)
     const tr = ms ? `all ${ms}ms ease` : "none";
-    if (!badge) { badge = document.createElement("div"); el.appendChild(badge); }
-    badge.className = `swipebadge ${dir}`;
-    badge.innerHTML = `<span class="mi">${dir === "yes" ? "check" : "close"}</span>`;
-    badge.style.transition = tr;
-    badge.style.opacity = p;
-    badge.style.transform = `scale(${.3 + .7 * p}) rotate(${(1 - p) * (dir === "yes" ? -30 : 30)}deg)`;
     el.dataset.dir = dir; el.style.setProperty("--p", p);
     el.querySelectorAll(".vote").forEach(b => {
       const mine = b.classList.contains(dir), q = mine ? p : 0, f = b.querySelector(".fill"), i = b.querySelector(".mi");
@@ -805,7 +796,7 @@ function wireSwipe(el){
       i.style.color = (q > .45 || b.classList.contains("on")) ? "#fff" : "";
     });
   };
-  // interested: badge + ✓ light up, card springs back (a small nudge right when triggered by the button)
+  // interested: ✓ lights up, card springs back (a small nudge right when triggered by the button)
   el.animateInterested = (fromSwipe = false) => {
     if (!fromSwipe) {
       el.style.transition = "transform .18s ease"; el.style.transform = "translateX(28px) rotate(.6deg)";
@@ -817,8 +808,20 @@ function wireSwipe(el){
     setTimeout(() => { el.querySelector(".vote.yes")?.classList.add("on"); paint(0, "yes", 300); }, 260);
     setTimeout(() => setMark(k, "interested", true), 560);
   };
-  // not interested: badge + ✕ light up, card slides away to the left (from where it is, or from rest)
+  // not interested: ✕ lights up, card slides away to the left (from where it is, or from rest)
   el.animateReject = (fromSwipe = false) => {
+    const wasLiked = el.classList.contains("liked");
+    if (wasLiked) {                     // undo the "interested" look at the same time: ✓, stripe, Applied?
+      const yes = el.querySelector(".vote.yes"), ab = el.querySelector(".applybox");
+      if (yes) {
+        yes.classList.remove("on");
+        const f = yes.querySelector(".fill"), i = yes.querySelector(".mi");
+        [yes, f, i].forEach(x => x.style.transition = "all .25s ease");
+        f.style.opacity = 0; i.style.color = ""; yes.style.transform = "";
+      }
+      el.classList.remove("stripe-in"); void el.offsetWidth; el.classList.add("stripe-out");
+      if (ab) { ab.classList.remove("appear"); void ab.offsetWidth; ab.classList.add("out"); }
+    }
     paint(1, "no", fromSwipe ? 100 : 160);
     el.querySelector(".vote.no")?.classList.add("on");
     const go = () => {
@@ -826,10 +829,10 @@ function wireSwipe(el){
       el.style.transform = "translateX(-120%) rotate(-10deg)"; el.style.opacity = "0";
       setTimeout(() => setMark(k, "hidden", true), 300);
     };
-    if (fromSwipe) go();
+    if (fromSwipe) setTimeout(go, wasLiked ? 220 : 0);
     else {
       el.style.transition = "transform .16s ease"; el.style.transform = "translateX(-22px) rotate(-.6deg)";
-      setTimeout(go, 170);
+      setTimeout(go, wasLiked ? 320 : 170);
     }
   };
   const reset = () => { el.style.transition = "transform .25s ease"; el.style.transform = "";
