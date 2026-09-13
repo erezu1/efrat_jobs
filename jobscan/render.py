@@ -270,7 +270,12 @@ input[type=search]:focus,select:focus{outline:2px solid var(--accent);outline-of
 .applybox.on .mi{transform:none;font-variation-settings:"FILL" 1,"wght" 600,"GRAD" 0,"opsz" 24}
 .applybox{overflow:hidden;white-space:nowrap;max-width:170px}
 /* grows smoothly out of the ✓/✕ group (no overshoot); .out plays the exact reverse */
-.applybox.appear{animation:applyIn .42s cubic-bezier(.25,.8,.3,1) both, applyGlow 1.4s .42s ease-out 1}
+/* "Applied?" sends out a soft ring every few seconds until it's checked */
+.applybox:not(.on){animation:applyPulse 4s 1s ease-out infinite}
+.applybox.appear{animation:applyIn .42s cubic-bezier(.25,.8,.3,1) both}
+.applybox.appear:not(.on){animation:applyIn .42s cubic-bezier(.25,.8,.3,1) both, applyPulse 4s .42s ease-out infinite}
+@keyframes applyPulse{0%{box-shadow:var(--e1),inset 0 0 0 1.5px color-mix(in srgb,#2f7dd1 45%,transparent),0 0 0 0 rgba(47,125,209,.5)}
+  35%,100%{box-shadow:var(--e1),inset 0 0 0 1.5px color-mix(in srgb,#2f7dd1 45%,transparent),0 0 0 14px rgba(47,125,209,0)}}
 .applybox.out{animation:applyIn .32s cubic-bezier(.25,.8,.3,1) reverse both;pointer-events:none}
 @keyframes applyIn{
   from{opacity:0;max-width:0;padding-left:0;padding-right:0;margin-left:-12px;transform:scale(.7)}
@@ -279,6 +284,9 @@ input[type=search]:focus,select:focus{outline:2px solid var(--accent);outline-of
 .card{position:relative;touch-action:pan-y;cursor:pointer}
 .card:active{transform:scale(.995)}
 .card.liked{box-shadow:var(--e1),inset 4px 0 0 var(--accent)}
+.card.liked.stripe-in{animation:stripeIn .45s cubic-bezier(.25,.8,.3,1) both}
+.card.liked.stripe-out{animation:stripeIn .32s cubic-bezier(.25,.8,.3,1) reverse both}
+@keyframes stripeIn{from{box-shadow:var(--e1),inset 0 0 0 var(--accent)}to{box-shadow:var(--e1),inset 4px 0 0 var(--accent)}}
 .card.dragging{user-select:none;cursor:grabbing;z-index:2}
 @property --p{syntax:"<number>";inherits:true;initial-value:0}
 /* swipe feedback scales continuously with drag progress --p (0..1) */
@@ -711,7 +719,7 @@ function card(r){
   if (!r.pre) tags.push(`<span class="tag">filtered: ${esc(r.pre_reason)}</span>`);
   if (translated) tags.push(`<a class="tag trtag" href="https://translate.google.com/translate?sl=nl&tl=en&u=${encodeURIComponent(r.url)}" target="_blank" rel="noopener" title="Translated from Dutch — open the full ad in Google Translate"><span class="mi">translate</span>Translated · full ad</a>`);
   const m = marks[r.key];
-  return `<article class="card ${m==="hidden"&&view!=="rejected"?"dim":""} ${m==="interested"?"liked":""}" data-k="${esc(r.key)}" data-url="${esc(r.url)}">
+  return `<article class="card ${m==="hidden"&&view!=="rejected"?"dim":""} ${m==="interested"?"liked":""} ${justLiked===r.key?"stripe-in":""}" data-k="${esc(r.key)}" data-url="${esc(r.url)}">
     <div class="score ${sc==null?"na":""}" style="${col?`background:${col}`:""}" title="Fit score (0-10)">${sc==null?"–":sc}</div>
     <div>
       <a class="title" href="${esc(r.url)}" target="_blank" rel="noopener">${esc(title)}</a>
@@ -755,6 +763,7 @@ function draw(){
     const ab = c.querySelector(".applybox");
     if (m === "interested" && marks[k] === "interested" && ab) {    // un-marking: Applied? shrinks away first
       b.classList.remove("on"); ab.classList.remove("appear"); void ab.offsetWidth; ab.classList.add("out");
+      c.classList.remove("stripe-in"); void c.offsetWidth; c.classList.add("stripe-out");
       return setTimeout(() => setMark(k, m), 320);
     }
     setMark(k, m);
