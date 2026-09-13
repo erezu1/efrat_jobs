@@ -224,6 +224,8 @@ input[type=search]:focus,select:focus{outline:2px solid var(--accent);outline-of
 .notice{box-shadow:var(--e1);border-radius:12px}
 details.srcs{background:var(--panel);border-radius:16px;box-shadow:var(--e1);padding:12px 16px}
 .placelink{color:inherit;text-decoration:none;border-radius:6px;padding:0 3px;margin:0 -3px}
+.cattag{text-decoration:none;cursor:pointer}
+.cattag:hover{background:var(--accent-soft);color:var(--accent)}
 .placelink:hover{color:var(--accent);background:var(--accent-soft)}
 .placechip{display:inline-flex;align-items:center;gap:4px}
 .placechip .mi{font-size:16px}
@@ -323,7 +325,7 @@ function card(r){
   const tags = [];
   if (daysSince(r.first_seen) <= 2) tags.push(`<span class="tag new">NEW</span>`);
   if (dl !== null && dl >= 0) tags.push(`<span class="tag ${dl<=7?"urgent":"dl"}"><span class="mi">schedule</span>Deadline ${r.deadline} · ${dl===0?"today":dl+" day"+(dl===1?"":"s")}</span>`);
-  if (r.cat) tags.push(`<span class="tag">${CATS[r.cat]||r.cat}</span>`);
+  if (r.cat) tags.push(`<a class="tag cattag" href="#" data-c="${esc(r.cat)}" title="Show only ${esc(CATS[r.cat]||r.cat)} jobs">${CATS[r.cat]||r.cat}</a>`);
   if (DUTCH[r.dutch]) tags.push(`<span class="tag">${DUTCH[r.dutch]}</span>`);
   tags.push(`<span class="tag"><span class="mi">link</span>via ${esc(r.source)}${r.also.map(a=>`, <a href="${esc(a.url)}" target="_blank" rel="noopener">${esc(a.source)}</a>`).join("")}</span>`);
   if (!r.pre) tags.push(`<span class="tag">filtered: ${esc(r.pre_reason)}</span>`);
@@ -363,6 +365,7 @@ function draw(){
   $("map").hidden = !mapMode; $("list").hidden = mapMode; $("nomap").hidden = !mapMode;
   if (mapMode) return drawMap(rows);
   $("list").innerHTML = rows.length ? rows.map(card).join("") : `<div class="empty">Nothing here right now.</div>`;
+  $("list").querySelectorAll(".cattag").forEach(a => a.onclick = e => { e.preventDefault(); setCat(a.dataset.c); });
   $("list").querySelectorAll(".placelink").forEach(a => a.onclick = e => { e.preventDefault(); setPlace(a.dataset.place, a.dataset.label); });
   $("list").querySelectorAll(".actions button").forEach(b => b.onclick = () => {
     const k = b.dataset.k; marks[k] = marks[k] === b.dataset.m ? undefined : b.dataset.m;
@@ -412,6 +415,12 @@ function drawMap(rows){
   $("nomap").textContent = missing ? `${missing} job${missing===1?"":"s"} without a known location aren't shown on the map.` : "";
 }
 $("placechip").onclick = () => setPlace(null);
+function setCat(c){   // show only this job type (same as selecting just that chip)
+  cats = new Set([c]);
+  $("cats").querySelectorAll(".chip").forEach(ch => ch.classList.toggle("on", ch.dataset.c === c));
+  window.scrollTo({top: 0, behavior: "smooth"});
+  draw();
+}
 function wirePopups(){
   map.on("popupopen", e => {
     const b = e.popup.getElement().querySelector(".onlyhere");
