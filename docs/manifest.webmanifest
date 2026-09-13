@@ -1,6 +1,6 @@
 {
-  "name": "BioJobs NL",
-  "short_name": "BioJobs NL",
+  "name": "BioJobs",
+  "short_name": "BioJobs",
   "description": "Genetics, conservation and aquaculture jobs in the Netherlands, updated daily.",
   "start_url": "./",
   "scope": "./",

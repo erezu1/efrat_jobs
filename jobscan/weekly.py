@@ -26,8 +26,8 @@ ROOT = Path(__file__).resolve().parent.parent
 LOGO = ROOT / "docs" / "icons" / "icon-192.png"
 MIN_SCORE = int(os.environ.get("WEEKLY_MIN_SCORE", "5"))
 DEADLINE_DAYS = 14
-CATS = {"phd": "PhD", "technician_research": "Technician / research",
-        "conservation_zoo_ngo": "Conservation / zoo / NGO", "industry": "Industry", "other": "Other"}
+CATS = {"phd": "PhD", "technician_research": "Research & lab",
+        "conservation_zoo_ngo": "Nature & zoos", "industry": "Industry", "other": "Other"}
 
 
 def collect(state: dict, today: date) -> tuple[list[dict], list[tuple[int, dict]]]:
@@ -57,7 +57,7 @@ def _meta(r: dict) -> str:
 
 def build_email(new, closing, today: date, logo: str = "cid:biojobs-logo") -> tuple[str, str, str]:
     page = os.environ.get("PAGE_URL", "")
-    subject = f"BioJobs NL — {len(new)} new position{'s' if len(new) != 1 else ''}, " \
+    subject = f"BioJobs — {len(new)} new position{'s' if len(new) != 1 else ''}, " \
               f"{len(closing)} deadline{'s' if len(closing) != 1 else ''} soon ({today:%d %b})"
 
     # plain text
@@ -122,7 +122,7 @@ def build_email(new, closing, today: date, logo: str = "cid:biojobs-logo") -> tu
     button = (f'<table role="presentation" cellpadding="0" cellspacing="0" style="margin:18px auto 6px"><tr>'
               f'<td style="border-radius:999px;background:{PURPLE};background-image:linear-gradient(135deg,{PURPLE},#d6409f)">'
               f'<a href="{e(page)}" style="display:inline-block;padding:11px 24px;color:#fff;font-family:{FONT};font-size:14px;font-weight:600;'
-              f'text-decoration:none;border-radius:999px">Open BioJobs NL</a></td></tr></table>') if page else ""
+              f'text-decoration:none;border-radius:999px">Open BioJobs</a></td></tr></table>') if page else ""
 
     body = f"""<div style="background:{GROUND};padding:24px 12px;font-family:{FONT}">
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:640px;margin:0 auto">
@@ -130,7 +130,7 @@ def build_email(new, closing, today: date, logo: str = "cid:biojobs-logo") -> tu
   <table role="presentation" cellpadding="0" cellspacing="0"><tr>
    {f'<td style="padding-right:12px"><img src="{e(logo)}" width="44" height="44" alt="" style="display:block;border-radius:12px"></td>' if logo else ""}
    <td>
-    <div style="font-family:{FONT};font-size:22px;font-weight:700;color:{INK};letter-spacing:-.01em">BioJobs NL</div>
+    <div style="font-family:{FONT};font-size:22px;font-weight:700;color:{INK};letter-spacing:-.01em">BioJobs</div>
     <div style="font-size:13px;color:{MUTED}">Your weekly update · {today:%d %B %Y}</div>
    </td>
   </tr></table>

@@ -109,7 +109,7 @@ TEMPLATE = r"""<!doctype html>
 <meta name="theme-color" content="#7b2d8e">
 <meta name="mobile-web-app-capable" content="yes">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
-<title>BioJobs NL</title>
+<title>BioJobs</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><defs><linearGradient id='g' x1='0' y1='0' x2='1' y2='1'><stop offset='0' stop-color='%237b2d8e'/><stop offset='1' stop-color='%23d6409f'/></linearGradient></defs><rect width='64' height='64' rx='16' fill='url(%23g)'/><g fill='none' stroke='white' stroke-width='4.5' stroke-linecap='round'><path d='M21 10C21 23 43 23 43 32S21 41 21 54'/><path d='M43 10C43 23 21 23 21 32S43 41 43 54'/></g><g stroke='white' stroke-width='3' stroke-linecap='round' opacity='.8'><path d='M25 15h14M25 49h14M29 22h6M29 42h6'/></g></svg>">
@@ -146,6 +146,10 @@ label.tog{font-size:13px;color:var(--muted);display:flex;gap:5px;align-items:cen
 .count{color:var(--muted);font-size:13px;margin:12px 0 4px}
 .card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin:10px 0;display:grid;grid-template-columns:52px 1fr;gap:14px}
 .card.dim{opacity:.55}
+.card>div{min-width:0}
+.title,.summary,.why{overflow-wrap:anywhere}
+.tags{min-width:0}
+.tag{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .score{width:52px;height:52px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:20px;color:#fff}
 .score.na{background:var(--chip);color:var(--muted);font-size:14px}
 .title{font-weight:600;font-size:16px;color:var(--ink);text-decoration:none}
@@ -240,33 +244,77 @@ details.srcs{background:var(--panel);border-radius:16px;box-shadow:var(--e1);pad
   transition:width .2s,opacity .2s,margin .2s;box-shadow:var(--e1);text-decoration:none;flex:none}
 .minilogo .mi{font-size:22px}
 .controls.stuck .minilogo{width:38px;opacity:1;margin-right:0}
+.controls{row-gap:8px}
 .ctlrow{flex-basis:100%;display:flex;justify-content:space-between;align-items:center;gap:8px}
+.ctlrow .left{display:flex;align-items:center;gap:6px;flex-wrap:wrap;min-width:0}
+.toprow{flex-basis:100%;display:flex;gap:8px;align-items:center}
+.toprow input[type=search]{flex:1 1 auto;min-width:0}
+.filters{flex-basis:100%;display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.iconbtn{position:relative;border:0;border-radius:12px;box-shadow:var(--e1);width:40px;height:38px;padding:0;display:none;align-items:center;justify-content:center;flex:none}
+.iconbtn.on{background:var(--accent);color:var(--on-accent)}
+.fdot{position:absolute;top:6px;right:7px;width:8px;height:8px;border-radius:50%;background:#d6409f;box-shadow:0 0 0 2px var(--panel)}
+.fchip{display:inline-flex;align-items:center;gap:3px;font-size:12px;padding:3px 8px}
+.fchip .mi{font-size:15px}
+@media (max-width: 760px){
+  header{padding:18px 14px 4px}
+  main{padding:0 14px 60px}
+  .sub{font-size:12px}
+  .stats{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;margin:12px -14px 4px;padding:4px 14px 8px;gap:8px}
+  .stats::-webkit-scrollbar{display:none}
+  .stat{min-width:auto;flex:none;padding:8px 12px}
+  .stat b{font-size:18px}
+  .iconbtn{display:inline-flex}
+  .filters{display:none;padding:4px 0 2px}
+  .filters.open{display:flex}
+  .filters select{flex:1 1 30%}
+  .card{grid-template-columns:40px minmax(0,1fr);gap:10px;padding:14px}
+  .meta{gap:4px 10px}
+  .actions{flex-wrap:wrap}
+  .score{width:40px;height:40px;font-size:17px;border-radius:12px}
+  .seg button{padding:5px 10px}
+}
 .ctlrow .count{margin:0}
+@media (prefers-color-scheme: dark){
+  .leaflet-tile-pane{filter:invert(1) hue-rotate(180deg) brightness(.9) contrast(.9) saturate(.6)}
+  .leaflet-popup-content-wrapper,.leaflet-popup-tip{background:var(--panel);color:var(--ink)}
+  .leaflet-popup-content a{color:var(--accent)}
+  .leaflet-bar a{background:var(--panel);color:var(--ink);border-color:var(--line)}
+  .leaflet-control-attribution{background:rgba(0,0,0,.5)!important;color:#bbb}
+  .leaflet-control-attribution a{color:#ddd}
+}
 .leaflet-popup-content-wrapper{border-radius:14px;box-shadow:var(--e3)}
 </style>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,400,0..1,0&display=block">
 </head>
 <body>
 <header>
-  <h1><span class="logo"><span class="mi">genetics</span></span>BioJobs NL</h1>
+  <h1><span class="logo"><span class="mi">genetics</span></span>BioJobs</h1>
   <div class="sub">Genetics · conservation · aquaculture jobs in the Netherlands — updated daily. <span id="gen"></span></div>
   <div class="stats" id="stats"></div>
 </header>
 <main>
   <div class="controls" id="controls">
-    <a class="minilogo" href="#" id="minilogo" title="Back to top"><span class="mi">genetics</span></a>
-    <input type="search" id="q" placeholder="Search title, organization, summary…">
-    <select id="minscore" title="Minimum fit score">
-      <option value="7">Score ≥ 7</option><option value="5" selected>Score ≥ 5</option>
-      <option value="3">Score ≥ 3</option><option value="0">All scored</option>
-    </select>
-    <select id="sort"><option value="score">Sort: best fit</option><option value="deadline">Sort: deadline</option><option value="new">Sort: newest</option></select>
-    <div class="chips" id="cats"></div>
-    <span class="chip on placechip" id="placechip" hidden><span class="mi">location_on</span><span id="placename"></span><span class="mi">close</span></span>
-    <label class="tog"><input type="checkbox" id="showhidden"> show dismissed</label>
-    <label class="tog"><input type="checkbox" id="showfiltered"> show keyword-filtered</label>
+    <div class="toprow">
+      <a class="minilogo" href="#" id="minilogo" title="Back to top"><span class="mi">genetics</span></a>
+      <input type="search" id="q" placeholder="Search jobs…">
+      <button class="iconbtn" id="btnFilters" title="Filters" aria-expanded="false"><span class="mi">tune</span><span class="fdot" id="fdot" hidden></span></button>
+    </div>
+    <div class="filters" id="filters">
+      <select id="type" title="Job type"><option value="">All job types</option></select>
+      <select id="minscore" title="Minimum fit score">
+        <option value="7">Score ≥ 7</option><option value="5" selected>Score ≥ 5</option>
+        <option value="3">Score ≥ 3</option><option value="0">All scores</option>
+      </select>
+      <select id="sort" title="Sort"><option value="score">Best fit</option><option value="deadline">Deadline</option><option value="new">Newest</option></select>
+      <label class="tog"><input type="checkbox" id="showhidden"> show dismissed</label>
+      <label class="tog"><input type="checkbox" id="showfiltered"> show keyword-filtered</label>
+    </div>
     <div class="ctlrow">
-      <div class="count" id="count"></div>
+      <div class="left">
+        <div class="count" id="count"></div>
+        <span class="chip on fchip" id="typechip" hidden><span id="typename"></span><span class="mi">close</span></span>
+        <span class="chip on fchip placechip" id="placechip" hidden><span class="mi">location_on</span><span id="placename"></span><span class="mi">close</span></span>
+      </div>
       <div class="seg"><button id="btnList" class="on"><span class="mi">view_agenda</span>List</button><button id="btnMap"><span class="mi">map</span>Map</button></div>
     </div>
   </div>
@@ -278,7 +326,7 @@ details.srcs{background:var(--panel);border-radius:16px;box-shadow:var(--e1);pad
 </main>
 <script>
 const DATA = __DATA__;
-const CATS = {phd:"PhD", technician_research:"Technician / research", conservation_zoo_ngo:"Conservation / zoo / NGO", industry:"Industry", other:"Other"};
+const CATS = {phd:"PhD", technician_research:"Research & lab", conservation_zoo_ngo:"Nature & zoos", industry:"Industry", other:"Other"};
 const DUTCH = {basic:"Dutch: basic", fluent:"Dutch: fluent required"};
 const today = new Date(); today.setHours(0,0,0,0);
 const daysTo = d => d ? Math.round((new Date(d+"T00:00:00") - today)/864e5) : null;
@@ -391,6 +439,7 @@ function drawMap(rows){
   if (!window.L) { $("nomap").hidden = false; $("nomap").textContent = "The map library couldn't load."; return; }
   if (!map) {
     map = L.map("map").setView([52.2, 5.3], 7);
+    // one free OpenStreetMap layer; in dark mode CSS inverts it into a dark map (no API key needed)
     L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
       {maxZoom: 18, attribution: "© OpenStreetMap contributors"}).addTo(map);
     wirePopups();
@@ -421,9 +470,12 @@ function drawMap(rows){
         `<a href="${esc(r.url)}" target="_blank" rel="noopener">${esc(r.title)}</a>` +
         `<br><span style="color:#6f6474">${esc(r.org)}${dl!==null&&dl>=0?` · deadline in ${dl} d`:""}</span></div>`;
     }).join("") + `</div>`;
-    L.marker(list[0].ll, {icon}).bindPopup(html, {maxWidth: 320}).addTo(layer);
+    L.marker(list[0].ll, {icon}).bindPopup(html, {maxWidth: 280, autoPanPaddingTopLeft: [50, 20]}).addTo(layer);
   });
-  setTimeout(() => map.invalidateSize(), 0);
+  setTimeout(() => {
+    map.invalidateSize();
+    if (!map._framed) { map.fitBounds([[50.75, 3.35], [53.55, 7.2]]); map._framed = true; }   // the Netherlands
+  }, 0);
   $("nomap").textContent = missing ? `${missing} job${missing===1?"":"s"} without a known location aren't shown on the map.` : "";
 }
 $("placechip").onclick = () => setPlace(null);
@@ -431,11 +483,21 @@ $("placechip").onclick = () => setPlace(null);
 new IntersectionObserver(([e]) => $("controls").classList.toggle("stuck", !e.isIntersecting))
   .observe(document.querySelector("header"));
 $("minilogo").onclick = e => { e.preventDefault(); window.scrollTo({top: 0, behavior: "smooth"}); };
-function setCat(c){   // show only this job type (same as selecting just that chip)
-  cats = new Set([c]);
-  $("cats").querySelectorAll(".chip").forEach(ch => ch.classList.toggle("on", ch.dataset.c === c));
-  window.scrollTo({top: 0, behavior: "smooth"});
+function setCat(c, scroll = true){   // show only this job type ("" = all types)
+  cats = c ? new Set([c]) : new Set();
+  $("type").value = c || "";
+  $("typechip").hidden = !c; $("typename").textContent = c ? CATS[c] : "";
+  if (scroll) window.scrollTo({top: 0, behavior: "smooth"});
   draw();
+}
+$("typechip").onclick = () => setCat("", false);
+$("btnFilters").onclick = () => {
+  const open = $("filters").classList.toggle("open");
+  $("btnFilters").classList.toggle("on", open); $("btnFilters").setAttribute("aria-expanded", open);
+};
+function updateFilterDot(){
+  $("fdot").hidden = $("minscore").value === "5" && $("sort").value === "score" &&
+    !$("showhidden").checked && !$("showfiltered").checked;
 }
 function wirePopups(){
   map.on("popupopen", e => {
@@ -452,10 +514,9 @@ $("btnMap").onclick = () => { mapMode = true; $("btnMap").classList.add("on"); $
 
 $("unscored").hidden = !DATA.rows.some(r => r.pre && r.score == null);
 $("gen").textContent ="Last update: " + new Date(DATA.generated).toLocaleString();
-$("cats").innerHTML = Object.entries(CATS).map(([k,v]) => `<span class="chip" data-c="${k}">${v}</span>`).join("");
-$("cats").querySelectorAll(".chip").forEach(c => c.onclick = () => {
-  cats.has(c.dataset.c) ? cats.delete(c.dataset.c) : cats.add(c.dataset.c); c.classList.toggle("on"); draw(); });
-["q","minscore","sort","showhidden","showfiltered"].forEach(id => $(id).addEventListener("input", draw));
+$("type").insertAdjacentHTML("beforeend", Object.entries(CATS).map(([k,v]) => `<option value="${k}">${v}</option>`).join(""));
+$("type").addEventListener("input", () => setCat($("type").value, false));
+["q","minscore","sort","showhidden","showfiltered"].forEach(id => $(id).addEventListener("input", () => { updateFilterDot(); draw(); }));
 $("srcs").innerHTML = Object.entries(DATA.sources).map(([k,v]) =>
   `<tr><td>${esc(k)}</td><td>${v.ok?`${v.count} jobs, ${v.new} new`:`<span class="bad">failed: ${esc(v.error)}</span>`}</td></tr>`).join("");
 draw();
