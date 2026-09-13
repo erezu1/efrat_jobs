@@ -263,6 +263,22 @@ input[type=search]:focus,select:focus{outline:2px solid var(--accent);outline-of
 .toast button{border:0;border-radius:10px;background:transparent;color:#f08cc0;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:8px 12px;font-size:13px}
 .toast button:hover{background:rgba(255,255,255,.08)}
 @media (prefers-color-scheme: dark){.toast{background:#ece6ee;color:#241a28}.toast .mi,.toast button{color:#7b2d8e}}
+header{position:relative}
+.syncbtn{display:inline-flex!important;position:absolute;top:26px;right:20px;background:var(--panel)}
+.syncbtn.on{background:var(--panel);color:var(--accent)}
+.syncpanel{position:absolute;right:20px;top:72px;z-index:40;width:min(340px,calc(100vw - 28px));background:var(--panel);border-radius:18px;box-shadow:var(--e3);padding:14px 16px;font-size:14px}
+.syncpanel .head{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.syncpanel .x{border:0;background:transparent;padding:4px;border-radius:8px}
+.syncpanel p{margin:6px 0}
+.syncpanel p .mi{font-size:18px;vertical-align:-4px;color:var(--accent)}
+.syncpanel .small{color:var(--muted);font-size:12.5px}
+.syncpanel .err{color:var(--danger);font-size:13px}
+.syncpanel input{width:100%;border:0;border-radius:10px;box-shadow:var(--e1);padding:9px 11px;font:inherit;margin:6px 0;background:var(--bg);color:var(--ink)}
+.syncpanel .row{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.syncpanel .row button{border:0;border-radius:999px;padding:7px 14px;background:var(--chip);display:inline-flex;align-items:center;gap:5px;font-size:13px}
+.syncpanel .row button.primary{background:linear-gradient(135deg,#7b2d8e,#d6409f);color:#fff}
+.syncpanel .row button .mi{font-size:17px}
+@media (max-width:760px){.syncbtn{top:16px;right:14px}.syncpanel{right:14px;top:62px}}
 .swipebadge{position:absolute;top:50%;z-index:3;width:84px;height:84px;margin-top:-42px;border-radius:50%;pointer-events:none;
   display:flex;align-items:center;justify-content:center;color:#fff;box-shadow:0 8px 24px rgba(40,20,45,.35);opacity:0;transform:scale(.3)}
 .swipebadge .mi{font-size:54px;font-variation-settings:"FILL" 1,"wght" 700,"GRAD" 0,"opsz" 48}
@@ -345,6 +361,11 @@ details.srcs{background:var(--panel);border-radius:16px;box-shadow:var(--e1);pad
 <header>
   <h1><span class="logo"><svg class="helix" viewBox="0 0 64 64" aria-hidden="true"><g fill="none" stroke="#fff" stroke-width="4.5" stroke-linecap="round"><path d="M21 10C21 23 43 23 43 32S21 41 21 54"/><path d="M43 10C43 23 21 23 21 32S43 41 43 54"/></g><g stroke="#fff" stroke-width="3" stroke-linecap="round" opacity=".8"><path d="M25 15h14M25 49h14M29 22h6M29 42h6"/></g></svg></span><span class="name">BioJobs</span></h1>
   <div class="stats" id="stats"></div>
+  <button class="iconbtn syncbtn" id="syncbtn" title="Sync marks across devices"><span class="mi">cloud_off</span></button>
+  <div class="syncpanel" id="syncpanel" hidden>
+    <div class="head"><b>Sync across devices</b><button class="x" id="syncclose" aria-label="Close"><span class="mi">close</span></button></div>
+    <div class="body"></div>
+  </div>
 </header>
 <main>
   <div class="controls" id="controls">
@@ -395,17 +416,141 @@ for (const [k, m] of Object.entries(marks)) {          // migrate older "saved"/
   if (m === "saved") marks[k] = "interested";
   if (m === "applied") { marks[k] = "interested"; applied[k] = true; }
 }
-const saveMarks = () => { try {
-  localStorage.setItem("marks", JSON.stringify(marks)); localStorage.setItem("applied", JSON.stringify(applied));
-} catch(e) {} };
-saveMarks();
+// stamps[key] = when this job's mark last changed (ms) — lets devices merge: newest change wins
+let stamps = {};
+try { stamps = JSON.parse(localStorage.getItem("stamps") || "{}"); } catch(e) {}
+const saveMarks = (changedKey) => {
+  if (changedKey) stamps[changedKey] = Date.now();
+  try {
+    localStorage.setItem("marks", JSON.stringify(marks)); localStorage.setItem("applied", JSON.stringify(applied));
+    localStorage.setItem("stamps", JSON.stringify(stamps));
+  } catch(e) {}
+  if (changedKey) Sync.schedulePush();
+};
 function setMark(k, m, force = false){   // tap toggles; swipe (force) always sets
   const before = {mark: marks[k], applied: !!applied[k]};
   if (!force && marks[k] === m) delete marks[k]; else marks[k] = m;
   if (marks[k] !== "interested") delete applied[k];
-  saveMarks(); draw();
+  saveMarks(k); draw();
   if (marks[k] === "hidden" && before.mark !== "hidden") showUndo(k, before);
 }
+
+// ---------- Sync marks across devices via a private GitHub Gist ----------
+// The token is entered on each device (or arrives via a private "connect" link) and is kept only in
+// that browser's storage — it is never part of this public page.
+const Sync = (() => {
+  const FILE = "biojobs-marks.json", DESC = "BioJobs sync (marks)";
+  let cfg = null, pushTimer = null, busy = false, lastSync = null, lastError = "";
+  try { cfg = JSON.parse(localStorage.getItem("sync") || "null"); } catch(e) {}
+  const api = (path, opts = {}) => fetch("https://api.github.com" + path, {...opts, cache: "no-store",
+    headers: {"Authorization": "Bearer " + cfg.token, "Accept": "application/vnd.github+json", ...(opts.headers || {})}})
+    .then(async r => { if (!r.ok) throw new Error(`GitHub ${r.status}`); return r.status === 204 ? null : r.json(); });
+  const snapshot = () => {
+    const keys = new Set([...Object.keys(marks), ...Object.keys(applied), ...Object.keys(stamps)]);
+    const out = {};
+    keys.forEach(k => out[k] = {m: marks[k] || null, a: !!applied[k], t: stamps[k] || 1});
+    return out;
+  };
+  const merge = remote => {       // newest change per job wins; returns true if local has newer data
+    let localNewer = false, changed = false;
+    const local = snapshot();
+    for (const [k, r] of Object.entries(remote || {})) {
+      const l = local[k];
+      if (!l || r.t > l.t) {
+        if (r.m) marks[k] = r.m; else delete marks[k];
+        if (r.a) applied[k] = true; else delete applied[k];
+        stamps[k] = r.t; changed = true;
+      } else if (l.t > r.t) localNewer = true;
+    }
+    for (const k of Object.keys(local)) if (!(k in (remote || {}))) localNewer = true;
+    if (changed) { saveMarks(); draw(); }
+    return localNewer;
+  };
+  async function pull(){
+    if (!cfg || busy) return;
+    busy = true; status("syncing");
+    try {
+      const g = await api(`/gists/${cfg.gist}`);
+      let remote = {};
+      try { remote = JSON.parse(g.files?.[FILE]?.content || "{}"); } catch(e) {}
+      if (merge(remote)) await push(true);
+      lastSync = new Date(); lastError = "";
+    } catch(e) { lastError = e.message; }
+    busy = false; status();
+  }
+  async function push(inner = false){
+    if (!cfg || (busy && !inner)) return;
+    if (!inner) { busy = true; status("syncing"); }
+    try {
+      await api(`/gists/${cfg.gist}`, {method: "PATCH",
+        body: JSON.stringify({files: {[FILE]: {content: JSON.stringify(snapshot())}}})});
+      lastSync = new Date(); lastError = "";
+    } catch(e) { lastError = e.message; }
+    if (!inner) { busy = false; status(); }
+  }
+  function schedulePush(){ if (!cfg) return; clearTimeout(pushTimer); pushTimer = setTimeout(() => pull(), 1200); }
+  async function connect(token, gistId){
+    cfg = {token: token.trim(), gist: gistId || null};
+    try {
+      if (!cfg.gist) {        // find this user's existing BioJobs gist, or create one
+        const mine = await api("/gists?per_page=100");
+        const found = mine.find(g => g.description === DESC);
+        cfg.gist = found ? found.id : (await api("/gists", {method: "POST",
+          body: JSON.stringify({description: DESC, public: false, files: {[FILE]: {content: "{}"}}})})).id;
+      }
+      localStorage.setItem("sync", JSON.stringify(cfg));
+      await pull();
+      if (lastError) throw new Error(lastError);
+      return true;
+    } catch(e) { cfg = null; localStorage.removeItem("sync"); lastError = e.message; status(); return false; }
+  }
+  function disconnect(){ cfg = null; localStorage.removeItem("sync"); status(); }
+  const link = () => cfg ? `${location.origin}${location.pathname}#sync=${btoa(JSON.stringify(cfg))}` : "";
+  function status(state){
+    const b = $("syncbtn"); if (!b) return;
+    const icon = !cfg ? "cloud_off" : state === "syncing" ? "cloud_sync" : lastError ? "cloud_alert" : "cloud_done";
+    b.querySelector(".mi").textContent = icon;
+    b.classList.toggle("on", !!cfg && !lastError);
+    b.title = !cfg ? "Sync marks across devices" : lastError ? `Sync problem: ${lastError}` : "Synced across devices";
+    renderSyncPanel();
+  }
+  function renderSyncPanel(){
+    const d = $("syncpanel"); if (!d || d.hidden) return;
+    d.querySelector(".body").innerHTML = !cfg ? `
+      <p>Marks (Interested / Applied / Rejected) are saved in this browser only. Connect to keep them in sync on all your devices.</p>
+      <p class="small">Use a GitHub token that can only access <b>Gists</b>. It stays on this device.</p>
+      <input id="synctoken" type="password" placeholder="GitHub token (github_pat_…)" autocomplete="off">
+      ${lastError ? `<p class="err">${esc(lastError)} — check the token.</p>` : ""}
+      <div class="row"><button class="primary" id="syncconnect">Connect</button></div>` : `
+      <p><span class="mi">${lastError ? "cloud_alert" : "cloud_done"}</span> ${lastError ? "Sync problem: " + esc(lastError) :
+        "Synced" + (lastSync ? " · " + lastSync.toLocaleTimeString() : "")}</p>
+      <p class="small">To connect another device, open this link on it. Share it privately; it contains the sync key.</p>
+      <div class="row"><button class="primary" id="synccopy"><span class="mi">link</span>Copy link for another device</button></div>
+      <div class="row"><button id="syncnow"><span class="mi">sync</span>Sync now</button><button id="syncoff">Disconnect this device</button></div>`;
+    const on = (id, f) => { const el = $(id); if (el) el.onclick = f; };
+    on("syncconnect", async () => { const t = $("synctoken").value; if (t) { $("syncconnect").textContent = "Connecting…"; await connect(t); } });
+    on("synccopy", async () => {
+      try { await navigator.clipboard.writeText(link()); $("synccopy").innerHTML = '<span class="mi">check</span>Copied'; }
+      catch(e) { prompt("Copy this link:", link()); }
+    });
+    on("syncnow", () => pull());
+    on("syncoff", () => disconnect());
+  }
+  function init(){
+    const m = location.hash.match(/#sync=([^&]+)/);     // arrived via a "connect this device" link
+    if (m) {
+      history.replaceState(null, "", location.pathname + location.search);
+      try { const c = JSON.parse(atob(decodeURIComponent(m[1]))); if (c.token && c.gist) connect(c.token, c.gist); } catch(e) {}
+    }
+    $("syncbtn").onclick = () => { const d = $("syncpanel"); d.hidden = !d.hidden; renderSyncPanel(); };
+    $("syncclose").onclick = () => { $("syncpanel").hidden = true; };
+    status();
+    if (cfg) pull();
+    document.addEventListener("visibilitychange", () => { if (document.visibilityState === "visible") pull(); });
+    setInterval(() => { if (document.visibilityState === "visible") pull(); }, 60000);
+  }
+  return {init, schedulePush, pull};
+})();
 let undoTimer = null;
 function showUndo(k, before){
   const t = $("toast");
@@ -413,7 +558,7 @@ function showUndo(k, before){
   t.querySelector("button").onclick = () => {
     if (before.mark) marks[k] = before.mark; else delete marks[k];
     if (before.applied) applied[k] = true; else delete applied[k];
-    saveMarks(); hideUndo(); draw();
+    saveMarks(k); hideUndo(); draw();
   };
   t.classList.remove("out"); t.hidden = false;
   requestAnimationFrame(() => t.classList.add("in"));
@@ -520,7 +665,7 @@ function draw(){
   $("list").querySelectorAll(".vote").forEach(b => b.onclick = () => setMark(b.dataset.k, b.dataset.m));
   $("list").querySelectorAll(".applybox input").forEach(cb => cb.onchange = () => {
     if (cb.checked) applied[cb.dataset.k] = true; else delete applied[cb.dataset.k];
-    saveMarks(); draw();
+    saveMarks(cb.dataset.k); draw();
   });
   $("list").querySelectorAll(".card").forEach(wireSwipe);
 }
@@ -668,6 +813,7 @@ function wirePopups(){
 $("btnList").onclick = () => { mapMode = false; $("btnList").classList.add("on"); $("btnMap").classList.remove("on"); draw(); };
 $("btnMap").onclick = () => { mapMode = true; $("btnMap").classList.add("on"); $("btnList").classList.remove("on"); draw(); };
 
+Sync.init();
 $("unscored").hidden = !DATA.rows.some(r => r.pre && r.score == null);
 $("gen").textContent = "updated " + new Date(DATA.generated).toLocaleString();
 $("type").insertAdjacentHTML("beforeend", Object.entries(CATS).map(([k,v]) => `<option value="${k}">${v}</option>`).join(""));

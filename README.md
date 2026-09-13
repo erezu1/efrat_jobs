@@ -54,7 +54,7 @@ The digest lists new matches scoring ≥ 6 and reminds about them 7, 3 and 1 day
 - **What ranks high** → the `TOPICS`, `OFF_TOPICS` and `TYPE_ADJ` lists at the top of
   [`jobscan/scorer.py`](jobscan/scorer.py). All open jobs are re-scored on every run, so edits apply right away.
 - **What gets dropped entirely** → [`jobscan/prefilter.py`](jobscan/prefilter.py).
-- On the page, tap ✓ / ✕ (or swipe a card right / left) to mark Interested / Not interested; Interested jobs get an Applied checkbox. Marks are stored in that browser only.
+- On the page, tap ✓ / ✕ (or swipe a card right / left) to mark Interested / Not interested; Interested jobs get an Applied checkbox. Marks are stored in the browser; tap the cloud button (top right) to sync them across devices through a private GitHub Gist (needs a fine-grained token with only the Gists permission, entered on one device; other devices connect with the link it gives).
 
 ## Running locally
 ```bash
