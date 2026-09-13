@@ -1,15 +1,13 @@
 """Daily digest of new good matches and approaching deadlines.
 
-Always writes data/digest.md (empty file when there is nothing to report; the GitHub
-workflow turns a non-empty digest into an issue, which GitHub emails to repo watchers).
-Also emails it if SMTP_HOST, SMTP_USER, SMTP_PASSWORD and EMAIL_TO are set.
+Writes data/digest.md (empty when there is nothing to report). If the repo variable
+DIGEST_ISSUES is 'true', the daily workflow turns it into a GitHub issue. The weekly email
+is separate: see jobscan/weekly.py.
 """
 from __future__ import annotations
 
 import os
-import smtplib
 from datetime import date
-from email.message import EmailMessage
 from pathlib import Path
 
 from .render import build_rows
@@ -28,9 +26,8 @@ def _line(r: dict, extra: str = "") -> str:
 
 def build_digest(state: dict, today: str) -> str:
     rows = [r for r in build_rows(state) if r["pre"] and r["nl"] is not False]
-    good = [r for r in rows if r["score"] is None or r["score"] >= MIN_SCORE]
-    new = sorted((r for r in good if r["first_seen"] == today),
-                 key=lambda r: -(r["score"] or 0))
+    good = [r for r in rows if r["score"] is not None and r["score"] >= MIN_SCORE]
+    new = sorted((r for r in good if r["first_seen"] == today), key=lambda r: -r["score"])
     t = date.fromisoformat(today)
     closing = []
     for r in good:
@@ -49,7 +46,7 @@ def build_digest(state: dict, today: str) -> str:
         parts.append(f"## 🆕 {len(new)} new match{'es' if len(new) != 1 else ''}\n")
         parts += [_line(r) for r in new]
     if closing:
-        parts.append(f"\n## ⏰ Deadlines coming up\n")
+        parts.append("\n## ⏰ Deadlines coming up\n")
         parts += [_line(r, f" (**{d} day{'s' if d != 1 else ''} left**)") for d, r in closing]
     page = os.environ.get("PAGE_URL")
     if page:
@@ -60,19 +57,4 @@ def build_digest(state: dict, today: str) -> str:
 def notify(state: dict, today: str) -> None:
     digest = build_digest(state, today)
     (ROOT / "data" / "digest.md").write_text(digest)
-    if not digest:
-        print("digest: nothing new")
-        return
-    print(digest)
-    host, user, pw, to = (os.environ.get(k) for k in ("SMTP_HOST", "SMTP_USER", "SMTP_PASSWORD", "EMAIL_TO"))
-    if not (host and user and pw and to):
-        return
-    msg = EmailMessage()
-    msg["Subject"] = f"Job scout {today}: new biology jobs in NL"
-    msg["From"] = user
-    msg["To"] = to
-    msg.set_content(digest)
-    with smtplib.SMTP_SSL(host, int(os.environ.get("SMTP_PORT", "465"))) as s:
-        s.login(user, pw)
-        s.send_message(msg)
-    print(f"digest emailed to {to}")
+    print(f"digest: {digest.count(chr(10) + '- ')} items" if digest else "digest: nothing new")

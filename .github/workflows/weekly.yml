@@ -1,0 +1,35 @@
+name: Weekly email
+
+on:
+  schedule:
+    # Saturday 08:00 Amsterdam. Cron is UTC, so fire at both possible hours;
+    # the script only sends when it's 08:xx in Amsterdam (summer: 06 UTC, winter: 07 UTC).
+    - cron: "0 6 * * 6"
+    - cron: "0 7 * * 6"
+  workflow_dispatch:
+    inputs:
+      force:
+        description: "Send now (ignore the Saturday-08:00 check)"
+        type: boolean
+        default: true
+
+jobs:
+  mail:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -r requirements.txt
+      - name: Send weekly email
+        env:
+          SMTP_HOST: ${{ secrets.SMTP_HOST }}
+          SMTP_PORT: ${{ secrets.SMTP_PORT }}
+          SMTP_USER: ${{ secrets.SMTP_USER }}
+          SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}
+          EMAIL_TO: ${{ secrets.EMAIL_TO }}
+          PAGE_URL: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/
+        run: python -m jobscan.weekly ${{ inputs.force && '--force' || '' }}
