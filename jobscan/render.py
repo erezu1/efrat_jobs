@@ -254,6 +254,15 @@ input[type=search]:focus,select:focus{outline:2px solid var(--accent);outline-of
 .card[data-dir="no"]::after{background:linear-gradient(to left,color-mix(in srgb,var(--danger) 22%,var(--panel)) 0%,color-mix(in srgb,var(--panel) 60%,transparent) 70%)}
 .card::after{z-index:2}
 .card .actions{position:relative;z-index:3}
+.toast{position:fixed;left:50%;bottom:max(20px,env(safe-area-inset-bottom));z-index:50;display:flex;align-items:center;gap:10px;
+  background:#2a2030;color:#fff;border-radius:14px;padding:10px 10px 10px 16px;box-shadow:0 8px 28px rgba(20,10,25,.35);
+  font-size:14px;width:max-content;max-width:calc(100vw - 28px);transform:translate(-50%,24px);opacity:0;transition:transform .25s ease,opacity .25s ease}
+.toast.in{transform:translate(-50%,0);opacity:1}
+.toast .mi{font-size:20px;color:#f08cc0}
+.toast .msg{white-space:nowrap}
+.toast button{border:0;border-radius:10px;background:transparent;color:#f08cc0;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:8px 12px;font-size:13px}
+.toast button:hover{background:rgba(255,255,255,.08)}
+@media (prefers-color-scheme: dark){.toast{background:#ece6ee;color:#241a28}.toast .mi,.toast button{color:#7b2d8e}}
 .swipebadge{position:absolute;top:50%;z-index:3;width:84px;height:84px;margin-top:-42px;border-radius:50%;pointer-events:none;
   display:flex;align-items:center;justify-content:center;color:#fff;box-shadow:0 8px 24px rgba(40,20,45,.35);opacity:0;transform:scale(.3)}
 .swipebadge .mi{font-size:54px;font-variation-settings:"FILL" 1,"wght" 700,"GRAD" 0,"opsz" 48}
@@ -367,6 +376,7 @@ details.srcs{background:var(--panel);border-radius:16px;box-shadow:var(--e1);pad
   <div id="map" hidden></div>
   <div class="nomap" id="nomap" hidden></div>
   <div id="list"></div>
+  <div class="toast" id="toast" hidden role="status"><span class="mi">block</span><span class="msg"></span><button>Undo</button></div>
   <details class="srcs"><summary>Sources in the last run · <span id="gen"></span></summary><table id="srcs"></table></details>
 </main>
 <script>
@@ -390,9 +400,29 @@ const saveMarks = () => { try {
 } catch(e) {} };
 saveMarks();
 function setMark(k, m, force = false){   // tap toggles; swipe (force) always sets
+  const before = {mark: marks[k], applied: !!applied[k]};
   if (!force && marks[k] === m) delete marks[k]; else marks[k] = m;
   if (marks[k] !== "interested") delete applied[k];
   saveMarks(); draw();
+  if (marks[k] === "hidden" && before.mark !== "hidden") showUndo(k, before);
+}
+let undoTimer = null;
+function showUndo(k, before){
+  const t = $("toast");
+  t.querySelector(".msg").textContent = "Marked not interested";
+  t.querySelector("button").onclick = () => {
+    if (before.mark) marks[k] = before.mark; else delete marks[k];
+    if (before.applied) applied[k] = true; else delete applied[k];
+    saveMarks(); hideUndo(); draw();
+  };
+  t.classList.remove("out"); t.hidden = false;
+  requestAnimationFrame(() => t.classList.add("in"));
+  clearTimeout(undoTimer); undoTimer = setTimeout(hideUndo, 5000);
+}
+function hideUndo(){
+  const t = $("toast"); clearTimeout(undoTimer);
+  t.classList.remove("in"); t.classList.add("out");
+  setTimeout(() => { if (t.classList.contains("out")) t.hidden = true; }, 250);
 }
 
 let view = "matches", cats = new Set();
@@ -410,7 +440,7 @@ const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt
 function base(){
   const min = +$("minscore").value;
   // every open job found, unfiltered; saved/applied also ignore the score filter
-  if (view === "all" || view === "interested" || view === "applied") return DATA.rows;
+  if (view === "all" || view === "interested" || view === "applied" || view === "rejected") return DATA.rows;
   return DATA.rows.filter(r => {
     if (!r.pre) return $("showfiltered").checked;
     if (r.score == null) return true;          // unscored (no API key yet) — show
@@ -423,6 +453,7 @@ const VIEWS = {
   closing: {label:"Closing in 14 days", f: r => { const d = daysTo(r.deadline); return d !== null && d >= 0 && d <= 14; }},
   interested: {label:"Interested", f: r => marks[r.key] === "interested"},
   applied: {label:"Applied", f: r => marks[r.key] === "interested" && applied[r.key]},
+  rejected: {label:"Rejected", f: r => marks[r.key] === "hidden"},
   all: {label:"All found (unfiltered)", f: r => true},
 };
 
@@ -430,7 +461,7 @@ function renderStats(){
   const cur = view;
   $("stats").innerHTML = Object.entries(VIEWS).map(([k,v]) => {
     view = k;   // base() depends on the view
-    const n = base().filter(r => marks[r.key] !== "hidden").filter(v.f).length;
+    const n = base().filter(r => k === "rejected" || marks[r.key] !== "hidden").filter(v.f).length;
     return `<div class="stat ${k===cur?"on":""}" data-v="${k}"><b>${n}</b><span>${v.label}</span></div>`;
   }).join("");
   view = cur;
@@ -449,7 +480,7 @@ function card(r){
   tags.push(`<span class="tag"><span class="mi">link</span>via ${esc(r.source)}${r.also.map(a=>`, <a href="${esc(a.url)}" target="_blank" rel="noopener">${esc(a.source)}</a>`).join("")}</span>`);
   if (!r.pre) tags.push(`<span class="tag">filtered: ${esc(r.pre_reason)}</span>`);
   const m = marks[r.key];
-  return `<article class="card ${m==="hidden"?"dim":""} ${m==="interested"?"liked":""}" data-k="${esc(r.key)}">
+  return `<article class="card ${m==="hidden"&&view!=="rejected"?"dim":""} ${m==="interested"?"liked":""}" data-k="${esc(r.key)}">
     <div class="score ${sc==null?"na":""}" style="${col?`background:${col}`:""}" title="Fit score (0-10)">${sc==null?"–":sc}</div>
     <div>
       <a class="title" href="${esc(r.url)}" target="_blank" rel="noopener">${esc(r.title)}</a>
@@ -470,7 +501,7 @@ function draw(){
   renderStats();
   const q = $("q").value.trim().toLowerCase();
   let rows = base().filter(VIEWS[view].f)
-    .filter(r => $("showhidden").checked || marks[r.key] !== "hidden")
+    .filter(r => view === "rejected" || $("showhidden").checked || marks[r.key] !== "hidden")
     .filter(r => !cats.size || cats.has(r.cat))
     .filter(r => !place || placeKey(r) === place.key)
     .filter(r => !q || [r.title,r.org,r.summary,r.loc].join(" ").toLowerCase().includes(q));
