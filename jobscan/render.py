@@ -787,6 +787,18 @@ function wireSwipe(el){
   const paint = (p, dir, ms = 0) => {   // tint + matching button scale continuously with drag progress p (0..1)
     const tr = ms ? `all ${ms}ms ease` : "none";
     el.dataset.dir = dir; el.style.setProperty("--p", p);
+    // dragging towards "not interested": Applied? shrinks away too
+    const ab = el.querySelector(".applybox");
+    if (ab) {
+      ab.classList.remove("appear");      // its entrance animation would override these inline styles
+      const q = dir === "no" ? p : 0;
+      ab.style.transition = tr;
+      ab.style.opacity = 1 - q;
+      ab.style.maxWidth = q ? `${ab.scrollWidth * (1 - q)}px` : "";
+      ab.style.paddingLeft = `${15 * (1 - q)}px`; ab.style.paddingRight = `${20 * (1 - q)}px`;
+      ab.style.marginLeft = `${-12 * q}px`;
+      ab.style.transform = `scale(${1 - .4 * q})`;
+    }
     // the matching button grows and fills; the other one shrinks away, so the group stays centered
     el.querySelectorAll(".vote").forEach(b => {
       const mine = b.classList.contains(dir), on = b.classList.contains("on");
