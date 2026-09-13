@@ -24,8 +24,11 @@ TOPICS = [
     (r"\beDNA\b|environmental\s+DNA", 4, 2),
     (r"\bfish|\bvissen\b|vissoort|visserij|visstand|fisheries|ichthy|aquacult|aquacultuur|salmon|\bzalm", 4, 2),
     # Strong
-    (r"(?<![a-z])genetic|(?<![a-z])genetica|(?<![a-z])genetisch", 3, 1.5),   # not "optogenetic"
-    (r"genomic|genomics|\bgenoom|\bgenomes?\b", 3, 1.5),   # not Dutch "genomen" (= taken)
+    (r"(?<![a-z])genetic|(?<![a-z])genetica|(?<![a-z])genetisch|\bgenes?\b|\bgenen\b", 4, 2.5),   # not "optogenetic"
+    (r"genomic|genomics|\bgenoom|\bgenomes?\b|oncogenomic", 4, 2.5),   # not Dutch "genomen" (= taken)
+    # sequencing & genotyping — core of her MSc skill set
+    (r"sequencing|sequencen|\bNGS\b|next[-\s]generation|whole[-\s]genome|exome|RNA-?seq|genotyp|\bSNPs?\b|"
+     r"\bGWAS\b|\bqPCR\b|\bPCR\b|DNA\s+(isolat|extract)|library\s+prep|nanopore|illumina|genetic\s+screen|CRISPR", 4, 2.5),
     (r"animal\s+breeding|fokkerij|breeding\s+value|quantitative\s+genetic", 3, 1.5),
     (r"evolution|evolutie|phylogen|fylogen", 2.5, 1),
     (r"ecolog|ecoloog", 2.5, 1),
@@ -35,15 +38,17 @@ TOPICS = [
     (r"\bbirds?\b|\bvogels?\b|ornitholog|mammal|zoogdier|amphibi|amfibie|reptiel|reptile|\binsect|vlinder", 2, 1),
     (r"\bspecies\b|diersoort|vissoort|soortbescherming|taxonom|monitoring", 1.5, 0.5),
     # Molecular / cell biology research (e.g. research assistant in a biomedical lab) — relevant too
-    (r"molecular\s+biolog|moleculaire\s+biolog|\bmolecul|\bmoleculair|cell\s+biolog|celbiolog|oncogenomic", 3, 1.5),
-    (r"\bDNA\b|\bRNA\b|\bPCR\b|qPCR|sequencing|sequencen|CRISPR|genetic\s+screen|cloning|kloneren|"
-     r"cell\s+culture|celkweek|western\s+blot|flow\s+cytometr|microscop|genome\s+(in)?stabilit|DNA\s+repair", 2, 1.5),
+    (r"\bDNA\b|\bRNA\b|genome\s+(in)?stabilit|DNA\s+repair|cloning|kloneren", 2, 1.5),
+    (r"molecular\s+biolog|moleculaire\s+biolog|\bmolecul|\bmoleculair|cell\s+biolog|celbiolog", 2, 1),
+    (r"cell\s+culture|celkweek|western\s+blot|flow\s+cytometr|microscop|ELISA", 1, 0.5),
     (r"bioinformatic|bio-informatica", 2, 1),
     (r"laborator|\blab\b", 1.5, 0.5),
     (r"\bbiolog|life\s+science|levenswetenschap|biomedic|biomedisch", 1.5, 0.5),
 ]
 
-DESC_CAP = 4.5   # max points from topic words that appear only in the description
+DESC_CAP = 3.0        # max points from other topic words that appear only in the description
+CORE_DESC_CAP = 5.0   # separate, higher cap for genetics / genomics / sequencing words in the description
+CORE = re.compile(r"genetic|genetica|genetisch|\\bgenes?|genen|genom|genoom|sequenc|NGS|next|whole|exome|seq|genotyp|SNP|GWAS|PCR|DNA|library|nanopore|illumina|screen|CRISPR|eDNA|populat")
 
 # Off-profile topics: (regex, penalty if in title, penalty if only in description)
 OFF_TOPICS = [
@@ -136,16 +141,19 @@ def summary(text: str, limit: int = 220) -> str:
 
 def score(job: Job) -> dict:
     title, text = job.title, job.description or ""
-    t_pts, d_pts, hits = 0.0, 0.0, []
+    t_pts, d_core, d_other, hits = 0.0, 0.0, 0.0, []
     for rx, in_title, in_desc in _TOPICS:
         if rx.search(title):
             t_pts += in_title
             hits.append(_label(rx, title))
         elif rx.search(text):
-            d_pts += in_desc
+            if CORE.search(rx.pattern):
+                d_core += in_desc
+            else:
+                d_other += in_desc
             hits.append(_label(rx, text))
-    # A relevant title matters most; words deep in the ad text can only add a little.
-    raw = min(t_pts + min(d_pts, DESC_CAP), 9.0)
+    # A relevant title matters most; ad-text words add a capped amount (genetics/sequencing can add more).
+    raw = min(t_pts + min(d_core, CORE_DESC_CAP) + min(d_other, DESC_CAP), 9.0)
 
     minus = []
     for rx, in_title, in_desc in _OFF:
