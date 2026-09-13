@@ -227,7 +227,7 @@ body.scrolled #topbar::before{bottom:-30px;background:color-mix(in srgb,var(--bg
 @supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
   body.scrolled #topbar::before{-webkit-backdrop-filter:blur(16px) saturate(1.5);backdrop-filter:blur(16px) saturate(1.5)}
 }
-#topspace{height:var(--tbh,0px)}
+#topspace{height:calc(var(--tbh,0px) + 18px)}   /* extra room so the first card starts clear of the blur fade */
 header{position:relative}
 .barwrap{max-width:980px;margin:0 auto;padding:0 20px}
 .controls{position:relative;top:auto;z-index:auto;border-bottom:0;background:transparent;padding:10px 0 12px}
@@ -1094,7 +1094,7 @@ $("placechip").onclick = () => setPlace(null);
     const d = Math.sign(y - lastY);
     if (d && d !== dir) { dir = d; anchor = lastY; }
     // tucking the title away before it has scrolled past would uncover the empty space it leaves behind
-    if (y < H) hidden = false;
+    if (y < H + 24) hidden = false;
     else if (dir > 0 && y - anchor > 14) hidden = true;       // scrolled down a little: tuck the title away
     else if (dir < 0 && anchor - y > 40) hidden = false;      // scrolled up a bit more: bring it back
     lastY = y;
