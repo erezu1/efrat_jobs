@@ -21193,13 +21193,11 @@
    "reason": "keyword: laborator"
   },
   "score": {
-   "blockers": [
-    "3+ years of experience asked"
-   ],
+   "blockers": [],
    "category": "industry",
    "deadline": null,
    "dutch_required": "basic",
-   "fit_score": 0,
+   "fit_score": 1,
    "in_netherlands": true,
    "model": "keywords",
    "summary": "JOB DESCRIPTION: Do you enjoy helping colleagues get the most out of their IT environment and do you want to play a key role in supporting critical laboratory operations? At Eurofins, you’ll have the opportunity to make…",
@@ -21229,7 +21227,7 @@
   },
   "score": {
    "blockers": [
-    "5+ years of experience asked"
+    "3+ years of experience asked"
    ],
    "category": "industry",
    "deadline": null,
@@ -21366,9 +21364,7 @@
    "reason": "keyword: laborator"
   },
   "score": {
-   "blockers": [
-    "3+ years of experience asked"
-   ],
+   "blockers": [],
    "category": "industry",
    "deadline": null,
    "dutch_required": "fluent",
@@ -22020,7 +22016,7 @@
   },
   "score": {
    "blockers": [
-    "5+ years of experience asked"
+    "3+ years of experience asked"
    ],
    "category": "industry",
    "deadline": null,
@@ -26223,7 +26219,7 @@
   },
   "score": {
    "blockers": [
-    "5+ years of experience asked"
+    "3+ years of experience asked"
    ],
    "category": "conservation_zoo_ngo",
    "deadline": null,
@@ -26466,9 +26462,7 @@
    "reason": "keyword: natuur"
   },
   "score": {
-   "blockers": [
-    "3+ years of experience asked"
-   ],
+   "blockers": [],
    "category": "conservation_zoo_ngo",
    "deadline": null,
    "dutch_required": "fluent",
@@ -27044,7 +27038,7 @@
   },
   "score": {
    "blockers": [
-    "10+ years of experience asked"
+    "5+ years of experience asked"
    ],
    "category": "conservation_zoo_ngo",
    "deadline": null,
@@ -30152,7 +30146,7 @@
   },
   "score": {
    "blockers": [
-    "10+ years of experience asked"
+    "5+ years of experience asked"
    ],
    "category": "conservation_zoo_ngo",
    "deadline": null,
@@ -31444,13 +31438,11 @@
    "reason": "keyword: genom"
   },
   "score": {
-   "blockers": [
-    "5+ years of experience asked"
-   ],
+   "blockers": [],
    "category": "conservation_zoo_ngo",
    "deadline": null,
    "dutch_required": "fluent",
-   "fit_score": 0,
+   "fit_score": 1,
    "in_netherlands": true,
    "model": "keywords",
    "summary": "Wil je een brede commerciële rol waarin je zelf verantwoordelijk bent voor het binnenhalen van nieuwe klanten én het verder uitbouwen van bestaande klantrelaties? Als Account Executive bij Brenger begeleid je het…",
@@ -35209,9 +35201,7 @@
    "reason": "domain-specific source"
   },
   "score": {
-   "blockers": [
-    "5+ years of experience asked"
-   ],
+   "blockers": [],
    "category": "industry",
    "deadline": null,
    "dutch_required": "fluent",
@@ -35869,7 +35859,7 @@
   },
   "score": {
    "blockers": [
-    "8+ years of experience asked"
+    "6+ years of experience asked"
    ],
    "category": "industry",
    "deadline": null,
@@ -36224,7 +36214,7 @@
   },
   "score": {
    "blockers": [
-    "15+ years of experience asked"
+    "12+ years of experience asked"
    ],
    "category": "industry",
    "deadline": null,
@@ -36321,7 +36311,7 @@
   },
   "score": {
    "blockers": [
-    "10+ years of experience asked"
+    "5+ years of experience asked"
    ],
    "category": "industry",
    "deadline": null,
@@ -36385,7 +36375,7 @@
   },
   "score": {
    "blockers": [
-    "12+ years of experience asked"
+    "8+ years of experience asked"
    ],
    "category": "industry",
    "deadline": null,
@@ -36705,7 +36695,7 @@
   },
   "score": {
    "blockers": [
-    "10+ years of experience asked"
+    "5+ years of experience asked"
    ],
    "category": "industry",
    "deadline": null,
@@ -36737,7 +36727,7 @@
   },
   "score": {
    "blockers": [
-    "8+ years of experience asked"
+    "6+ years of experience asked"
    ],
    "category": "industry",
    "deadline": null,
@@ -37505,7 +37495,7 @@
   },
   "score": {
    "blockers": [
-    "5+ years of experience asked"
+    "3+ years of experience asked"
    ],
    "category": "industry",
    "deadline": null,
@@ -37717,7 +37707,7 @@
   },
   "score": {
    "blockers": [
-    "5+ years of experience asked"
+    "3+ years of experience asked"
    ],
    "category": "industry",
    "deadline": null,
@@ -37999,7 +37989,7 @@
   },
   "score": {
    "blockers": [
-    "10+ years of experience asked"
+    "5+ years of experience asked"
    ],
    "category": "industry",
    "deadline": null,
@@ -38544,7 +38534,7 @@
   },
   "score": {
    "blockers": [
-    "5+ years of experience asked"
+    "3+ years of experience asked"
    ],
    "category": "industry",
    "deadline": null,
@@ -38843,7 +38833,7 @@
   },
   "score": {
    "blockers": [
-    "7+ years of experience asked"
+    "3+ years of experience asked"
    ],
    "category": "industry",
    "deadline": null,
@@ -42126,13 +42116,11 @@
    "reason": "keyword: analist"
   },
   "score": {
-   "blockers": [
-    "20+ years of experience asked"
-   ],
+   "blockers": [],
    "category": "technician_research",
    "deadline": "2026-09-15",
    "dutch_required": "fluent",
-   "fit_score": 7,
+   "fit_score": 9,
    "in_netherlands": true,
    "model": "keywords",
    "summary": "Je hebt nog 3 dag(en) om te solliciteren Stap in de voorhoede van baanbrekend onderzoek als researchanalist bij het Center for Cell & Gene Therapy (CCG) van het LUMC.",
@@ -52413,7 +52401,7 @@
   },
   "score": {
    "blockers": [
-    "5+ years of experience asked"
+    "3+ years of experience asked"
    ],
    "category": "industry",
    "deadline": null,
@@ -52730,7 +52718,7 @@
   },
   "score": {
    "blockers": [
-    "4+ years of experience asked"
+    "3+ years of experience asked"
    ],
    "category": "other",
    "deadline": "2026-09-28",
@@ -55155,9 +55143,7 @@
    "reason": "keyword: natuur"
   },
   "score": {
-   "blockers": [
-    "3+ years of experience asked"
-   ],
+   "blockers": [],
    "category": "conservation_zoo_ngo",
    "deadline": "2026-09-29",
    "dutch_required": "fluent",
@@ -56382,9 +56368,7 @@
    "reason": "keyword: natuur"
   },
   "score": {
-   "blockers": [
-    "3+ years of experience asked"
-   ],
+   "blockers": [],
    "category": "conservation_zoo_ngo",
    "deadline": "2026-09-17",
    "dutch_required": "fluent",
@@ -58436,9 +58420,7 @@
    "reason": "keyword: genom"
   },
   "score": {
-   "blockers": [
-    "3+ years of experience asked"
-   ],
+   "blockers": [],
    "category": "other",
    "deadline": "2026-09-17",
    "dutch_required": "fluent",
@@ -62288,7 +62270,7 @@
   },
   "score": {
    "blockers": [
-    "10+ years of experience asked"
+    "5+ years of experience asked"
    ],
    "category": "technician_research",
    "deadline": "2026-09-26",
@@ -64644,7 +64626,9 @@
    "reason": "keyword: laborator"
   },
   "score": {
-   "blockers": [],
+   "blockers": [
+    "5+ years of experience asked"
+   ],
    "category": "other",
    "deadline": "2026-09-30",
    "dutch_required": "fluent",
@@ -66178,7 +66162,7 @@
   },
   "score": {
    "blockers": [
-    "5+ years of experience asked"
+    "3+ years of experience asked"
    ],
    "category": "other",
    "deadline": "2026-09-14",
@@ -66265,11 +66249,13 @@
    "reason": "keyword: laborator"
   },
   "score": {
-   "blockers": [],
+   "blockers": [
+    "3+ years of experience asked"
+   ],
    "category": "other",
    "deadline": "2026-09-30",
    "dutch_required": "fluent",
-   "fit_score": 1,
+   "fit_score": 0,
    "in_netherlands": true,
    "model": "keywords",
    "summary": "Dit ga je doen Ben je net als wij ook gepassioneerd over de toekomst en potentie van sensordata en AI en vind jij het leuk om te werken op de meest speciale locaties die je maar kunt bedenken? Wil jij meebouwen aan het…",
@@ -67433,7 +67419,7 @@
   },
   "score": {
    "blockers": [
-    "5+ years of experience asked"
+    "3+ years of experience asked"
    ],
    "category": "technician_research",
    "deadline": null,
@@ -68533,7 +68519,7 @@
   },
   "score": {
    "blockers": [
-    "5+ years of experience asked"
+    "3+ years of experience asked"
    ],
    "category": "technician_research",
    "deadline": null,
@@ -70758,13 +70744,11 @@
    "reason": "keyword: laborator"
   },
   "score": {
-   "blockers": [
-    "15+ years of experience asked"
-   ],
+   "blockers": [],
    "category": "technician_research",
    "deadline": null,
    "dutch_required": "fluent",
-   "fit_score": 0,
+   "fit_score": 2,
    "in_netherlands": true,
    "model": "keywords",
    "summary": "Logo Eminent Groep Betonlaborant . Jouw contactpersoon Julius Luning, Adviseur Civiele Techniek Betonlaborant - Amsterdam - 3500 - 5000 euro Functieomschrijving .",
@@ -72746,9 +72730,7 @@
    "reason": "keyword: Dier"
   },
   "score": {
-   "blockers": [
-    "25+ years of experience asked"
-   ],
+   "blockers": [],
    "category": "other",
    "deadline": null,
    "dutch_required": "fluent",
@@ -76500,13 +76482,11 @@
    "reason": "keyword: Analist"
   },
   "score": {
-   "blockers": [
-    "3+ years of experience asked"
-   ],
+   "blockers": [],
    "category": "technician_research",
    "deadline": null,
    "dutch_required": "fluent",
-   "fit_score": 1,
+   "fit_score": 3,
    "in_netherlands": true,
    "model": "keywords",
    "summary": "Analist Microbiologie | FrieslandCampina | Beilen Wil jij een belangrijke bijdrage leveren aan de kwaliteit en voedselveiligheid van baby- en kindervoeding? Heb jij ervaring met microbiologische analyses en werk je…",
@@ -77068,7 +77048,7 @@
   },
   "score": {
    "blockers": [
-    "5+ years of experience asked"
+    "3+ years of experience asked"
    ],
    "category": "technician_research",
    "deadline": null,
@@ -86801,7 +86781,7 @@
   },
   "score": {
    "blockers": [
-    "5+ years of experience asked"
+    "3+ years of experience asked"
    ],
    "category": "conservation_zoo_ngo",
    "deadline": null,
@@ -87027,7 +87007,7 @@
   },
   "score": {
    "blockers": [
-    "5+ years of experience asked"
+    "3+ years of experience asked"
    ],
    "category": "conservation_zoo_ngo",
    "deadline": null,
@@ -87065,7 +87045,7 @@
   },
   "score": {
    "blockers": [
-    "5+ years of experience asked"
+    "3+ years of experience asked"
    ],
    "category": "conservation_zoo_ngo",
    "deadline": null,

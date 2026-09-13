@@ -24,6 +24,8 @@
   At Enza Zaden, innovation in breeding starts with turning data and genomics into practical solutions that create impact in the field.
 - **[9/10] [Analist Moleculaire Technieken](https://enzazaden.wd103.myworkdayjobs.com/Enza-Careers/job/Enkhuizen-The-Netherlands/Analist-Moleculaire-Technieken_JR105516)** — Enza Zaden (vegetable breeding)
   Als Analist Moleculaire technieken speel je een sleutelrol in het opsporen van pathogenen in zaden – cruciaal voor het telen van gezonde planten.
+- **[9/10] [Researchanalist Controlled Human Infection Models](https://www.lumc.nl/over-het-lumc/werken-bij/vacatures/d-26-jd-rd-87-researchanalist-controlled-human-infection-models/)** — LUMC — CCG — deadline 2026-09-15
+  Je hebt nog 3 dag(en) om te solliciteren Stap in de voorhoede van baanbrekend onderzoek als researchanalist bij het Center for Cell & Gene Therapy (CCG) van het LUMC.
 - **[9/10] [Researcher & Fieldworker Marine Monitoring (Bonaire)](https://werkenbij.diergaardeblijdorp.nl/researcher-fieldworker-marine-monitoring-bonaire---freelance-assignment)** — Diergaarde Blijdorp (Rotterdam Zoo)
   Rotterdam Zoo (Diergaarde Blijdorp) is currently undergoing an important development phase to realize the ambitions outlined in its Master Plan 2050.
 - **[8/10] [Three PhD positions in ML-guided directed evolution](https://www.academictransfer.com/en/jobs/363254/three-phd-positions-in-ml-guided-directed-evolution/)** — University of Groningen — deadline 2026-10-15
@@ -54,8 +56,6 @@
   Make a real impact at the crossroads of biodiversity, legislation, and global collaboration.
 - **[7/10] [Seed Health Development Analyst](https://jobs.smartrecruiters.com/SyngentaGroup/744000146903009)** — Syngenta (seeds / vegetable breeding)
   JOB DESCRIPTION: QC Seed Health Development Analyst Into action As a QC Seed Health Development Analyst at Syngenta, you help ensure that growers around the world can rely on healthy, high-quality vegetable seeds.
-- **[7/10] [Researchanalist Controlled Human Infection Models](https://www.lumc.nl/over-het-lumc/werken-bij/vacatures/d-26-jd-rd-87-researchanalist-controlled-human-infection-models/)** — LUMC — CCG — deadline 2026-09-15
-  Je hebt nog 3 dag(en) om te solliciteren Stap in de voorhoede van baanbrekend onderzoek als researchanalist bij het Center for Cell & Gene Therapy (CCG) van het LUMC.
 - **[7/10] [Medewerk(st)er Ei-onderzoek (0,6 - 1 FTE)](https://careers.hendrix-genetics.com/en/annonce/4496281-medewerkster-ei-onderzoek-06-1-fte-5853-gd-siebengewald)** — Hendrix Genetics (animal & aquaculture breeding)
   Heb jij oog voor detail? Elke dag werken we bij Hendrix Genetics aan de genetica van morgen. Achter gezonde, sterke en productieve leghennen schuilt jarenlang onderzoek.
 - **[7/10] [Medewerk(st)er Kuikenbroederij (M/V/X) (+- 0,6 FTE)](https://careers.hendrix-genetics.com/en/annonce/4496343-medewerkster-kuikenbroederij-mvx-06-fte-5831-ad-boxmeer)** — Hendrix Genetics (animal & aquaculture breeding)

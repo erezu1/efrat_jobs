@@ -98,9 +98,26 @@ DUTCH_FLUENT = re.compile(
     r"Nederlands\s+(op\s+)?(C1|C2|moedertaal)|(zeer\s+)?goede\s+beheersing\s+van\s+de\s+Nederlandse\s+taal|"
     r"Nederlands\s+(in\s+)?woord\s+en\s+geschrift")
 DUTCH_ANY = re.compile(r"(?i)\bDutch\b|Nederlandse\s+taal|\bNederlands\b")
+# "3+ years of experience", "minimaal 5 jaar werkervaring", "5-10 jaar ervaring" (a range counts by its lower bound)
 YEARS_EXP = re.compile(
-    r"(?i)(?:at\s+least|minimum\s+(?:of\s+)?|minimaal|ten\s+minste|minstens)?\s*(\d{1,2})\+?\s*"
-    r"(?:or\s+more\s+)?(?:years?|jaar)\s+(?:of\s+)?(?:relevant\w*\s+|professional\s+|werk)?(?:experience|ervaring|werkervaring)")
+    r"(?i)(\d{1,2})\+?\s*(?:(?:-|–|to|tot)\s*\d{1,2}\+?\s*)?(?:or\s+more\s+)?(?:years?|jaar)\s+"
+    r"(?:of\s+)?(?:relevant\w*\s+|professional\s+|werk|practical\s+|hands-on\s+)?(?:experience|ervaring|werkervaring)")
+# the organisation's own track record, not a requirement: "het LUMC heeft meer dan 20 jaar ervaring", "we have 30 years of experience"
+ORG_EXPERIENCE = re.compile(
+    r"(?i)(\b(heeft|hebben|has|wij|we|our|ons|onze|bedrijf|company|organisati\w*|opdrachtgever|since|sinds)\b[^.;:\n]{0,40}$)|"
+    r"((^|[.!]\s*)(met|with)\s+(ruim|meer\s+dan|over|more\s+than|bijna|al)?\s*$)")
+
+
+def experience_years(text: str) -> list[int]:
+    out = []
+    for m in YEARS_EXP.finditer(text):
+        n = int(m.group(1))
+        before = text[max(0, m.start() - 60):m.start()]
+        if 0 < n <= 15 and not ORG_EXPERIENCE.search(before):
+            out.append(n)
+    return out
+
+
 FOREIGN_IN_TITLE = re.compile(r"\((?:[^)]*,\s*)?(?!NL\b)([A-Z]{2}|UK|Spain|France|Germany|Italy|Belgium|Cyprus|Switzerland)\)\s*$")
 
 
@@ -181,7 +198,7 @@ def score(job: Job) -> dict:
         blockers.append("PhD degree seems required")
     if DVM_REQUIRED.search(text) and not hits:
         blockers.append("vet/medical degree seems required")
-    years = [int(n) for n in YEARS_EXP.findall(text) if 0 < int(n) < 30]
+    years = experience_years(text)
     if years and max(years) >= 3:
         blockers.append(f"{max(years)}+ years of experience asked")
 
