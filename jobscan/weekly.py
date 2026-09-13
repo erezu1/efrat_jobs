@@ -120,7 +120,9 @@ def main() -> int:
         (ROOT / "data" / "weekly_preview.html").write_text(body)
         return 0
 
-    host, user, pw, to = (os.environ.get(k) for k in ("SMTP_HOST", "SMTP_USER", "SMTP_PASSWORD", "EMAIL_TO"))
+    host, user, pw, to = ((os.environ.get(k) or "").strip().strip("'\"")
+                          for k in ("SMTP_HOST", "SMTP_USER", "SMTP_PASSWORD", "EMAIL_TO"))
+    pw = pw.replace(" ", "")   # Google shows app passwords in groups of 4 with spaces
     if not (host and user and pw and to):
         print("SMTP_HOST / SMTP_USER / SMTP_PASSWORD / EMAIL_TO not set — cannot send.", file=sys.stderr)
         return 1
