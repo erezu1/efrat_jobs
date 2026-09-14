@@ -1,3 +1,11 @@
+## 🆕 3 new matches
+
+- **[10/10] [Analist B Moleculaire Pathologie](https://www.werk.nl/nl/vacatures/71338169)** — Pathologie Zuid-West Nederland — deadline 2026-10-01
+  Analist B moleculaire pathologie | Tilburg Nieuw Wil jij als analist werken binnen de snel ontwikkelende moleculaire diagnostiek? Pathologie Zuid West Nederland zoekt een Analist B Moleculaire Pathologie voor het…
+- **[8/10] [PhD position on local food web dynamics within offshore wind farms](https://www.academictransfer.com/en/jobs/363916/phd-position-on-local-food-web-dynamics-within-offshore-wind-farms/)** — Wageningen University & Research — deadline 2026-10-20
+  PhD position on local food web dynamics within offshore wind farms in the North Sea POWER (Progress in Offshore Wind Ecological Research) consortium.
+- **[6/10] [Laborant](https://www.werk.nl/nl/vacatures/71338204)** — Sanquin
+  Research & laboratorium Werken aan betere zorg én baanbrekend onderzoek. Hier komen zorg, wetenschap en maatschappij samen Wil jij dagelijks bijdragen aan betere zorg én baanbrekend onderzoek? Dan zit je goed in de…
 
 ## ⏰ Deadlines coming up
 
@@ -11,3 +19,5 @@
   How much does epigenetic variation contribute to rapid adaptation? This PhD at Utrecht University uses CRISPR/Cas9 and SunTag-based epigenomic editing in apomictic dandelions to test whether epialleles drive heritable…
 - **[6/10] [Genomics specialist](https://www.academictransfer.com/en/jobs/363743/genomics-specialist/)** — Erasmus MC — deadline 2026-09-17 (**3 days left**)
   The Erasmus MC Genomics Core Facility (CoFa) provides a broad range of genomics services to an international client base in both research and diagnostic settings.
+
+Full list: https://erezu1.github.io/efrat_jobs/
