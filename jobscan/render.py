@@ -223,15 +223,15 @@ html,body{overflow-x:clip}
 #topbar::before{content:"";position:absolute;left:0;right:0;top:0;bottom:0;z-index:-1;background:var(--bg);transition:background .25s}
 /* the soft fade stays inside the bar's own bottom padding, so the page keeps its normal spacing */
 body.scrolled #topbar::before{background:color-mix(in srgb,var(--bg) 72%,transparent);
-  -webkit-mask-image:linear-gradient(to bottom,#000 0,#000 calc(100% - 12px),transparent 100%);
-  mask-image:linear-gradient(to bottom,#000 0,#000 calc(100% - 12px),transparent 100%)}
+  -webkit-mask-image:linear-gradient(to bottom,#000 0,#000 calc(100% - 20px),transparent 100%);
+  mask-image:linear-gradient(to bottom,#000 0,#000 calc(100% - 20px),transparent 100%)}
 @supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
   body.scrolled #topbar::before{-webkit-backdrop-filter:blur(16px) saturate(1.5);backdrop-filter:blur(16px) saturate(1.5)}
 }
 #topspace{height:var(--tbh,0px)}
 header{position:relative}
 .barwrap{max-width:980px;margin:0 auto;padding:0 20px}
-.controls{position:relative;top:auto;z-index:auto;border-bottom:0;background:transparent;padding:10px 0 12px}
+.controls{position:relative;top:auto;z-index:auto;border-bottom:0;background:transparent;padding:10px 0 24px}
 
 input[type=search],select{border:0;border-radius:12px;box-shadow:var(--e1);padding:9px 12px}
 select{-webkit-appearance:none;appearance:none;padding-right:34px;cursor:pointer;
