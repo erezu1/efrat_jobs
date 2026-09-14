@@ -1097,7 +1097,7 @@ $("placechip").onclick = () => setPlace(null);
     // tucking the title away before it has scrolled past would uncover the empty space it leaves behind
     if (y < H) hidden = false;
     else if (dir > 0 && y - anchor > 14) hidden = true;       // scrolled down a little: tuck the title away
-    else if (dir < 0 && anchor - y > 40) hidden = false;      // scrolled up a bit more: bring it back
+    else if (dir < 0 && anchor - y > 140) hidden = false;     // only a deliberate scroll up brings the title back
     lastY = y;
     body.style.setProperty("--hide", (hidden ? H : 0) + "px");
     body.classList.toggle("scrolled", y > 2);
