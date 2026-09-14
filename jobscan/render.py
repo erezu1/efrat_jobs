@@ -372,7 +372,10 @@ details.srcs{background:var(--panel);border-radius:16px;box-shadow:var(--e1);pad
 .controls.stuck .minilogo{width:38px;opacity:1;margin-right:0}
 .controls{row-gap:8px}
 .ctlrow{flex-basis:100%;display:flex;justify-content:space-between;align-items:center;gap:8px}
-.ctlrow .left{display:flex;align-items:center;gap:6px;flex-wrap:wrap;min-width:0}
+.ctlrow .left{display:flex;align-items:center;gap:6px;flex-wrap:wrap;min-width:0;padding:3px 0}
+.ctlrow .right{display:flex;align-items:center;gap:10px;flex:none}
+@media (max-width:760px){ .ctlrow .count{display:none}   /* the active tab's badge already shows the count */
+  .qchip{padding:6px 11px 6px 8px} }
 .toprow{flex-basis:100%;display:flex;gap:8px;align-items:center}
 .toprow input[type=search]{flex:1 1 auto;min-width:0}
 .filters{flex-basis:100%}
@@ -506,17 +509,15 @@ details.srcs{background:var(--panel);border-radius:16px;box-shadow:var(--e1);pad
         <label class="tog"><input type="checkbox" id="showfiltered"> include keyword-filtered jobs</label>
       </div>
     </div>
-    <div class="quick">
-      <button class="qchip" id="qNew" aria-pressed="false"><span class="mi">new_releases</span>New this week</button>
-      <button class="qchip" id="qClosing" aria-pressed="false"><span class="mi">hourglass_bottom</span>Closing soon</button>
-    </div>
     <div class="ctlrow">
       <div class="left">
-        <div class="count" id="count"></div>
+        <button class="qchip" id="qNew" aria-pressed="false" title="Only jobs first seen this week"><span class="mi">new_releases</span>New</button>
+        <button class="qchip" id="qClosing" aria-pressed="false" title="Only jobs with a deadline in the next 14 days"><span class="mi">hourglass_bottom</span>Closing</button>
         <span class="chip on fchip" id="typechip" hidden><span id="typename"></span><span class="mi">close</span></span>
         <span class="chip on fchip placechip" id="placechip" hidden><span class="mi">location_on</span><span id="placename"></span><span class="mi">close</span></span>
       </div>
-      <div class="seg"><span class="segpill" id="segpill"></span><button id="btnList" class="on"><span class="mi">view_agenda</span>List</button><button id="btnMap"><span class="mi">map</span>Map</button></div>
+      <div class="right"><div class="count" id="count"></div>
+      <div class="seg"><span class="segpill" id="segpill"></span><button id="btnList" class="on"><span class="mi">view_agenda</span>List</button><button id="btnMap"><span class="mi">map</span>Map</button></div></div>
     </div>
   </div>
 </div>

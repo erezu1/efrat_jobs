@@ -19,5 +19,3 @@
   How much does epigenetic variation contribute to rapid adaptation? This PhD at Utrecht University uses CRISPR/Cas9 and SunTag-based epigenomic editing in apomictic dandelions to test whether epialleles drive heritable…
 - **[6/10] [Genomics specialist](https://www.academictransfer.com/en/jobs/363743/genomics-specialist/)** — Erasmus MC — deadline 2026-09-17 (**3 days left**)
   The Erasmus MC Genomics Core Facility (CoFa) provides a broad range of genomics services to an international client base in both research and diagnostic settings.
-
-Full list: https://erezu1.github.io/efrat_jobs/
