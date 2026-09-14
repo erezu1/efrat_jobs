@@ -374,6 +374,7 @@ details.srcs{background:var(--panel);border-radius:16px;box-shadow:var(--e1);pad
 .ctlrow{flex-basis:100%;display:flex;justify-content:space-between;align-items:center;gap:8px}
 .ctlrow .left{display:flex;align-items:center;gap:6px;flex-wrap:wrap;min-width:0;padding:3px 0}
 .ctlrow .right{display:flex;align-items:center;gap:10px;flex:none}
+.ctlrow{align-items:flex-start}   /* List/Map stays on the first line when filter chips wrap */
 @media (max-width:760px){ .ctlrow .count{display:none}   /* the active tab's badge already shows the count */
   .qchip{padding:6px 11px 6px 8px} }
 .toprow{flex-basis:100%;display:flex;gap:8px;align-items:center}
