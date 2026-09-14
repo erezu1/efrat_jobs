@@ -752,7 +752,7 @@ function renderStats(){
       <span class="tablabel">${v.label}</span></button>`;
   }).join("");
   $("stats").querySelectorAll(".tab").forEach(el => el.onclick = () => {
-    if (view !== el.dataset.v) $("sort").value = defaultSort(el.dataset.v);   // each tab starts with its own sort
+    if (view !== el.dataset.v) $("sort").value = onlyClosing ? "deadline" : onlyNew ? "new" : defaultSort(el.dataset.v);
     view = el.dataset.v; updateFilterDot(); draw();
   });
 }
@@ -823,7 +823,7 @@ function showDeadline(btn){
 function draw(){
   renderStats();
   let rows = DATA.rows.filter(r => VIEWS[view].f(r) && passesFilters(r, view));
-  const s = onlyClosing ? "deadline" : $("sort").value;
+  const s = $("sort").value;
   const dlKey = r => { const d = daysTo(r.deadline); return d === null || d < 0 ? 9999 : d; };
   rows.sort((a,b) => s === "deadline" ? dlKey(a)-dlKey(b) || (b.score??-1)-(a.score??-1)
     : s === "new" ? (b.first_seen||"").localeCompare(a.first_seen||"") || (b.score??-1)-(a.score??-1)
@@ -1131,7 +1131,7 @@ $("btnFilters").onclick = () => {
   $("btnFilters").classList.toggle("on", open); $("btnFilters").setAttribute("aria-expanded", open);
 };
 function updateFilterDot(){
-  $("fdot").hidden = $("minscore").value === "5" && $("sort").value === defaultSort(view) && !$("showfiltered").checked;
+  $("fdot").hidden = $("minscore").value === "5" && $("sort").value === (onlyClosing ? "deadline" : onlyNew ? "new" : defaultSort(view)) && !$("showfiltered").checked;
 }
 function wirePopups(){
   map.on("popupopen", e => {
@@ -1161,8 +1161,11 @@ $("unscored").hidden = !DATA.rows.some(r => r.pre && r.score == null);
 $("gen").textContent = "updated " + new Date(DATA.generated).toLocaleString();
 $("type").insertAdjacentHTML("beforeend", Object.entries(CATS).map(([k,v]) => `<option value="${k}">${v}</option>`).join(""));
 $("type").addEventListener("input", () => setCat($("type").value, false));
-$("qNew").onclick = () => { onlyNew = !onlyNew; draw(); };
-$("qClosing").onclick = () => { onlyClosing = !onlyClosing; draw(); };
+// quick filters pick a matching sort: Closing → deadline, New → newest, none → the tab's default
+const autoSort = () => onlyClosing ? "deadline" : onlyNew ? "new" : defaultSort(view);
+const applyAutoSort = () => { $("sort").value = autoSort(); updateFilterDot(); };
+$("qNew").onclick = () => { onlyNew = !onlyNew; applyAutoSort(); draw(); };
+$("qClosing").onclick = () => { onlyClosing = !onlyClosing; applyAutoSort(); draw(); };
 ["q","minscore","sort","showfiltered"].forEach(id => $(id).addEventListener("input", () => { updateFilterDot(); draw(); }));
 $("srcs").innerHTML = Object.entries(DATA.sources).map(([k,v]) =>
   `<tr><td>${esc(k)}</td><td>${v.ok?`${v.count} jobs, ${v.new} new`:`<span class="bad">failed: ${esc(v.error)}</span>`}</td></tr>`).join("");
