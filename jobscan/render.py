@@ -233,7 +233,7 @@ details.srcs td{padding:2px 12px 2px 0}
   display:inline-block;vertical-align:middle;letter-spacing:normal;text-transform:none;white-space:nowrap;
   -webkit-font-feature-settings:"liga";font-feature-settings:"liga";font-variation-settings:"FILL" 0,"wght" 400,"GRAD" 0,"opsz" 20}
 .mi.fill{font-variation-settings:"FILL" 1,"wght" 400,"GRAD" 0,"opsz" 20}
-h1{display:flex;align-items:center;gap:12px;font-family:"Sora",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;font-weight:800;font-size:28px;letter-spacing:-.03em;line-height:1}
+h1{cursor:pointer;user-select:none;display:flex;align-items:center;gap:12px;font-family:"Sora",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;font-weight:800;font-size:28px;letter-spacing:-.03em;line-height:1}
 h1 .name{background:linear-gradient(135deg,#7b2d8e,#d6409f);-webkit-background-clip:text;background-clip:text;color:transparent}
 @media (prefers-color-scheme: dark){h1 .name{background-image:linear-gradient(135deg,#d59ce6,#f08cc0)}}
 h1 .logo{width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg,#7b2d8e,#d6409f);color:#fff;display:flex;align-items:center;justify-content:center;box-shadow:var(--e2)}
@@ -343,6 +343,11 @@ input[type=search]:focus,select:focus{outline:2px solid var(--accent);outline-of
 .card[data-dir="yes"]::after{background:linear-gradient(to right,color-mix(in srgb,var(--accent) 26%,var(--panel)) 0%,color-mix(in srgb,var(--panel) 60%,transparent) 70%)}
 .card[data-dir="no"]::after{background:linear-gradient(to left,color-mix(in srgb,var(--danger) 22%,var(--panel)) 0%,color-mix(in srgb,var(--panel) 60%,transparent) 70%)}
 .card::after{z-index:2}
+.card .sh{isolation:isolate}
+.card.expanded .actions::before,.card .sh::before{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;z-index:-1;
+  opacity:calc(var(--p,0) * .92)}
+.card[data-dir="yes"] .sh::before,.card.expanded[data-dir="yes"] .actions::before{background:linear-gradient(to right,color-mix(in srgb,var(--accent) 26%,var(--panel)) 0%,color-mix(in srgb,var(--panel) 60%,transparent) 70%)}
+.card[data-dir="no"] .sh::before,.card.expanded[data-dir="no"] .actions::before{background:linear-gradient(to left,color-mix(in srgb,var(--danger) 22%,var(--panel)) 0%,color-mix(in srgb,var(--panel) 60%,transparent) 70%)}
 .card .actions{position:relative;z-index:3}
 .toast{position:fixed;left:50%;bottom:max(20px,env(safe-area-inset-bottom));z-index:50;display:flex;align-items:center;gap:10px;
   background:#2a2030;color:#fff;border-radius:14px;padding:10px 10px 10px 16px;box-shadow:0 8px 28px rgba(20,10,25,.35);
@@ -547,6 +552,23 @@ details.srcs{background:var(--panel);border-radius:16px;box-shadow:var(--e1);pad
 .shscore{flex:none;width:26px;height:26px;border-radius:8px;color:#fff;font:700 13px/26px inherit;text-align:center}
 .shtitle{flex:1;min-width:0;font-weight:650;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .sh .mi{font-size:20px;color:var(--accent)}
+
+/* odometer roll for tab counts */
+.tabcount.roll{overflow:hidden}
+.tabcount .rsize{visibility:hidden}
+.tabcount .rold,.tabcount .rnew{position:absolute;left:0;right:0;top:0;text-align:center}
+.tabcount.roll.up .rold{animation:rollOutUp .45s cubic-bezier(.4,0,.2,1) both}
+.tabcount.roll.up .rnew{animation:rollInUp .45s cubic-bezier(.4,0,.2,1) both}
+.tabcount.roll.down .rold{animation:rollOutDown .45s cubic-bezier(.4,0,.2,1) both}
+.tabcount.roll.down .rnew{animation:rollInDown .45s cubic-bezier(.4,0,.2,1) both}
+.tabcount.gone{animation:badgeOut .45s .25s ease both}
+.tabcount.pop{animation:badgePop .4s cubic-bezier(.3,1.4,.5,1) both}
+@keyframes rollOutUp{to{transform:translateY(-100%);opacity:0}}
+@keyframes rollInUp{from{transform:translateY(100%);opacity:0}}
+@keyframes rollOutDown{to{transform:translateY(100%);opacity:0}}
+@keyframes rollInDown{from{transform:translateY(-100%);opacity:0}}
+@keyframes badgeOut{to{transform:scale(.4);opacity:0}}
+@keyframes badgePop{from{transform:scale(.3);opacity:0}}
 </style>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@700;800&display=swap">
@@ -816,13 +838,22 @@ function passesFilters(r, v){
 }
 
 const defaultSort = v => v === "interested" ? "deadline" : "score";   // interested: what to apply to first
+const prevCounts = {};
+const fmtCount = n => n > 999 ? Math.floor(n / 1000) + "k" : String(n);
+function badge(k, n){   // count badge; when the number changes it rolls like an odometer (up when it grows, down when it shrinks)
+  const prev = prevCounts[k]; prevCounts[k] = n;
+  if (prev == null || prev === n) return n ? `<span class="tabcount">${fmtCount(n)}</span>` : "";
+  const dir = n > prev ? "up" : "down";
+  if (!n) return `<span class="tabcount roll ${dir} gone"><span class="rsize">${fmtCount(prev)}</span><span class="rold">${fmtCount(prev)}</span></span>`;
+  if (!prev) return `<span class="tabcount pop">${fmtCount(n)}</span>`;
+  return `<span class="tabcount roll ${dir}"><span class="rsize">${fmtCount(n)}</span><span class="rold">${fmtCount(prev)}</span><span class="rnew">${fmtCount(n)}</span></span>`;
+}
 function renderStats(){
   const cur = view;
   $("stats").innerHTML = Object.entries(VIEWS).map(([k,v]) => {
     const n = DATA.rows.filter(r => v.f(r) && passesFilters(r, k)).length;
-    const count = n > 999 ? Math.floor(n / 1000) + "k" : n;
     return `<button class="tab ${k===cur?"on":""}" data-v="${k}" style="--hue:${v.hue}" title="${v.tip}" aria-pressed="${k===cur}">
-      <span class="tabicon"><span class="mi">${v.icon}</span>${n ? `<span class="tabcount">${count}</span>` : ""}</span>
+      <span class="tabicon"><span class="mi">${v.icon}</span>${badge(k, n)}</span>
       <span class="tablabel">${v.label}</span></button>`;
   }).join("");
   $("stats").querySelectorAll(".tab").forEach(el => el.onclick = () => {
@@ -915,8 +946,17 @@ function draw(){
   const before = new Map();
   if (flipNext) $("list").querySelectorAll(".card").forEach(c => before.set(c.dataset.k, c.getBoundingClientRect().top));
   const doFlip = flipNext; flipNext = false;
+  let skipFlip = false;
   $("list").innerHTML = rows.length ? rows.map(card).join("") : `<div class="empty">Nothing here right now.</div>`;
-  if (doFlip) {
+  if ("__scrollToKey" in window && window.__scrollToFallbackTop != null) {   // jump before FLIP measures, so cards glide from the right place
+    const nextEl = window.__scrollToKey && $("list").querySelector(`.card[data-k="${CSS.escape(window.__scrollToKey)}"]`);
+    const target = nextEl ? scrollY + nextEl.getBoundingClientRect().top : window.__scrollToFallbackTop;
+    window.__noRevealUntil = Date.now() + 800;
+    window.scrollTo(0, Math.max(0, target - (window.__barvis || 0) - 10));
+    delete window.__scrollToKey; window.__scrollToFallbackTop = null;
+    skipFlip = true;                                   // positions changed by the jump: no glide needed
+  }
+  if (doFlip && !skipFlip) {
     const moved = [];
     $("list").querySelectorAll(".card").forEach(c => {
       const prev = before.get(c.dataset.k), now = c.getBoundingClientRect().top;
@@ -1040,6 +1080,12 @@ function updateStickyHeads(){   // show a card's mini header once its real title
     c.classList.toggle("headout", t.bottom < barvis + 4 && r.bottom > barvis + 140);
   });
 }
+function rememberNextCard(el){   // leaving from deep inside an expanded card: continue at the next card's top
+  if (!el.classList.contains("expanded") || el.getBoundingClientRect().top >= (window.__barvis || 0)) return;
+  const next = el.nextElementSibling;
+  window.__scrollToKey = next && next.classList.contains("card") ? next.dataset.k : null;
+  window.__scrollToFallbackTop = scrollY + el.getBoundingClientRect().top;
+}
 function leave(c, dir){   // gentle exit for a card that no longer belongs in this tab
   c.style.transition = "transform .32s ease, opacity .32s ease";
   c.style.transform = `translateY(-6px) scale(.97) translateX(${dir * 12}px)`; c.style.opacity = "0";
@@ -1092,6 +1138,7 @@ function wireSwipe(el){
         if (el.classList.contains("disliked")) el.classList.add("stripe-out");
         el.style.transition = "transform .32s cubic-bezier(.5,0,.75,0), opacity .32s ease";
         el.style.transform = "translateX(120%) rotate(10deg)"; el.style.opacity = "0";
+        rememberNextCard(el);
         setTimeout(() => setMark(k, "interested", true), 300);
       };
       if (fromSwipe) { paint(1, "yes", 100); flyRight(); }
@@ -1135,6 +1182,7 @@ function wireSwipe(el){
     const go = () => {
       el.style.transition = "transform .32s cubic-bezier(.5,0,.75,0), opacity .32s ease";
       el.style.transform = "translateX(-120%) rotate(-10deg)"; el.style.opacity = "0";
+      rememberNextCard(el);
       setTimeout(() => setMark(k, "hidden", true), 300);
     };
     if (fromSwipe) setTimeout(go, wasLiked ? 220 : 0);
@@ -1291,6 +1339,7 @@ function jumpTo(top){ window.__noRevealUntil = Date.now() + 1200; window.scrollT
   measure(); update();
 })();
 $("minilogo").onclick = e => { e.preventDefault(); window.scrollTo({top: 0, behavior: "smooth"}); };
+document.querySelector("h1").onclick = () => window.scrollTo({top: 0, behavior: "smooth"});   // logo / title: back to top
 function setCat(c, scroll = true){   // show only this job type ("" = all types)
   cats = c ? new Set([c]) : new Set();
   $("type").value = c || "";
