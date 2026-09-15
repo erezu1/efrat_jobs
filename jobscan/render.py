@@ -540,19 +540,26 @@ details.srcs{background:var(--panel);border-radius:16px;box-shadow:var(--e1);pad
 .card.expanded .morebtn{display:none}
 .card.expanded .actions .lessbtn{display:inline-flex;border:0;border-radius:999px;background:var(--chip);color:var(--accent);
   font:600 13px/1 inherit;padding:10px 14px 10px 10px;align-items:center;gap:2px;cursor:pointer}
-/* ✓/✕ stay exactly where they are on a collapsed card: the two outer columns are always equal,
-   so Less on the left and Applied on the right can never push them or reach them */
-.card.expanded .actions{display:grid;grid-template-columns:1fr auto auto 1fr;align-items:center;column-gap:0}
-.card.expanded .actions .lessbtn{justify-self:start}
-.card.expanded .actions .applybox{justify-self:end}
-.card.expanded .actions .vote.no{margin-right:6px}
-.card.expanded .actions .vote.yes{margin-left:6px}
-@media (max-width:760px){   /* it keeps its label beside the centred buttons by getting a little smaller */
-  .card.expanded .actions .applybox{font-size:12.5px;padding:0 11px 0 8px;gap:3px}
-  .card.expanded .actions .applybox .mi{font-size:18px}
+/* ✓/✕ sit in the middle of the card in every state: the row spans the card's whole width and
+   its two outer columns are always equal, so Less on the left and Applied on the right can
+   never push them or reach them — open or closed, in any tab */
+.card .actions{display:grid;grid-template-columns:1fr auto auto 1fr;align-items:center;column-gap:0;
+  margin-left:calc(-1 * (var(--scol) + var(--sgap)))}
+.card .actions .lessbtn{grid-column:1;justify-self:start}
+.card .actions .vote.no{grid-column:2}
+.card .actions .vote.yes{grid-column:3}
+.card .actions .applybox{grid-column:4;justify-self:end}
+.card .actions .vote.no{margin-right:6px}
+.card .actions .vote.yes{margin-left:6px}
+/* while the ad is open the Applied button is out of the way; it keeps its place in the row,
+   so the ✓/✕ pair doesn't move when it goes or comes back */
+.card.expanded .actions .applybox{opacity:0;pointer-events:none;transform:scale(.85);animation:none}
+@media (max-width:760px){   /* the pill is a little smaller here, so it always fits its half of the row */
+  .card .actions .applybox{font-size:12.5px;padding:0 11px 0 8px;gap:3px}
+  .card .actions .applybox .mi{font-size:18px}
   .card.expanded .actions .lessbtn{font-size:12px;padding:9px 11px 9px 7px}
-  .card.expanded .actions .vote.no{margin-right:4px}
-  .card.expanded .actions .vote.yes{margin-left:4px}
+  .card .actions .vote.no{margin-right:4px}
+  .card .actions .vote.yes{margin-left:4px}
 }
 .card.expanded .actions .lessbtn{animation:lessIn .4s cubic-bezier(.25,.8,.3,1)}
 @keyframes lessIn{from{opacity:0;transform:scale(.8)}to{opacity:1;transform:none}}
@@ -570,7 +577,7 @@ details.srcs{background:var(--panel);border-radius:16px;box-shadow:var(--e1);pad
 .sh{position:absolute;left:calc(-1 * (var(--scol) + var(--sgap) + var(--padx)));right:calc(-1 * var(--padx));top:0;display:flex;align-items:center;gap:8px;border:0;border-radius:0;
   background:linear-gradient(to bottom,var(--panel) 72%,color-mix(in srgb,var(--panel) 0%,transparent));box-shadow:none;
   padding:27px var(--padx) 20px;cursor:pointer;color:var(--ink);text-align:left;
-  opacity:0;transform:translateY(-8px);pointer-events:none;transition:opacity .2s,transform .2s}
+  opacity:0;transform:translateY(-8px);pointer-events:none;transition:opacity .28s ease,transform .28s ease}
 .card.expanded.headout .sh{opacity:1;transform:none;pointer-events:auto}
 .shscore{flex:none;width:26px;height:26px;border-radius:8px;color:#fff;font:700 13px/26px inherit;text-align:center}
 .shtitle{flex:1;min-width:0;font-weight:650;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -1162,6 +1169,8 @@ function fullHtml(r){
   }
   return text.split(/\n+/).filter(Boolean).map(p => `<p>${esc(p)}</p>`).join("");
 }
+// A fixed duration made a long ad race open and a short one crawl; the time grows with the text.
+const growMs = px => Math.min(1200, Math.max(560, Math.round(430 + px * .25)));
 function flipActions(c, change){   // the action row changes layout: let its buttons slide there instead of jumping
   const items = [...c.querySelectorAll(".actions > *")];
   const before = items.map(el => el.getBoundingClientRect());
@@ -1181,6 +1190,9 @@ async function toggleMore(btn){
   const more = c.querySelector(".morebtn");
   if (expanded.has(k)) {
     expanded.delete(k);
+    const dur = growMs(box.scrollHeight);          // closing takes as long as opening did
+    wrap.style.transitionDuration = dur + "ms";
+    box.style.transitionDuration = Math.round(dur * .8) + "ms";
     flipActions(c, () => { wrap.classList.remove("open"); c.classList.remove("expanded", "headout", "footend"); });
     more.classList.remove("open"); more.lastElementChild.textContent = "More";
     // if we were deep inside the ad, bring the card's top back into view
@@ -1195,9 +1207,12 @@ async function toggleMore(btn){
   if (!expanded.has(k)) return;                          // she closed it again while the text was loading
   box.innerHTML = details.has(k) ? fullHtml(r) : '<p class="fullnote">Couldn\'t load the full text.</p>';
   more.classList.add("open"); more.lastElementChild.textContent = "Less";
+  const dur = growMs(box.scrollHeight);
+  wrap.style.transitionDuration = dur + "ms";
+  box.style.transitionDuration = Math.round(dur * .8) + "ms";
   flipActions(c, () => c.classList.add("expanded"));
   requestAnimationFrame(() => wrap.classList.add("open"));
-  setTimeout(updateStickyHeads, 750);   // once it has finished growing, the card knows where its footer sits
+  setTimeout(updateStickyHeads, dur + 60);   // once it has finished growing, the card knows where its footer sits
 }
 function updateStickyHeads(){   // show a card's mini header once its real title is under the top bar
   const barvis = window.__barvis || 0, list = document.querySelectorAll(".card.expanded");
@@ -1446,7 +1461,7 @@ function jumpTo(top){ freezeBar(900); window.scrollTo({top, behavior: "smooth"})
   const update = () => {
     ticking = false;
     const y = Math.max(0, scrollY);
-    if (Date.now() < (window.__frozenUntil || 0)) { lastY = y; return; }   // automatic scroll in progress
+    if (Date.now() < (window.__frozenUntil || 0)) { lastY = y; updateStickyHeads(); return; }   // automatic scroll: bar held, strips keep up
     hide = Math.min(H, Math.max(0, hide + (y - lastY)));
     if (y < H) hide = Math.min(hide, y);                 // near the top the title belongs on screen
     lastY = y;
