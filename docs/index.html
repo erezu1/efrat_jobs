@@ -806,7 +806,7 @@ function draw(){
   $("list").querySelectorAll(".sh").forEach(b => b.onclick = e => {
     e.stopPropagation();
     const c = b.closest(".card"), barvis = parseFloat(getComputedStyle(document.body).getPropertyValue("--barvis")) || 0;
-    window.scrollTo({top: scrollY + c.getBoundingClientRect().top - barvis - 10, behavior: "smooth"});
+    jumpTo(scrollY + c.getBoundingClientRect().top - barvis - 10);
   });
   updateStickyHeads();
   $("list").querySelectorAll(".dltag").forEach(b => b.onclick = e => { e.stopPropagation(); showDeadline(b); });
@@ -889,7 +889,7 @@ async function toggleMore(btn){
     more.classList.remove("open"); more.lastElementChild.textContent = "More";
     // if we were deep inside the ad, bring the card's top back into view
     const top = c.getBoundingClientRect().top, barvis = parseFloat(getComputedStyle(document.body).getPropertyValue("--barvis")) || 0;
-    if (top < barvis) window.scrollTo({top: scrollY + top - barvis - 10, behavior: "smooth"});
+    if (top < barvis) jumpTo(scrollY + top - barvis - 10);
     return;
   }
   expanded.add(k); c.classList.add("expanded"); more.classList.add("open"); more.lastElementChild.textContent = "Less";
@@ -1095,6 +1095,8 @@ function drawMap(rows){
 }
 $("placechip").onclick = () => setPlace(null);
 // show the small logo in the sticky bar once the page header has scrolled away
+window.__noRevealUntil = 0;
+function jumpTo(top){ window.__noRevealUntil = Date.now() + 1200; window.scrollTo({top, behavior: "smooth"}); }
 (() => {   // top bar: title scrolls away with the page; a deliberate scroll up slides it back
   const bar = $("topbar"), hdr = document.querySelector("header"), ctl = $("controls"), body = document.body;
   const timeline = CSS.supports("animation-timeline: scroll()");
@@ -1108,7 +1110,8 @@ $("placechip").onclick = () => setPlace(null);
     body.style.setProperty("--hh", H + "px");
     const d = Math.sign(y - lastY);
     if (d && d !== dir) { dir = d; anchor = lastY; }
-    const upALot = dir < 0 && anchor - y > 140, downABit = dir > 0 && y - anchor > 14;
+    const jumping = Date.now() < window.__noRevealUntil;       // our own "jump to card" scrolls shouldn't reveal the title
+    const upALot = !jumping && dir < 0 && anchor - y > 140, downABit = dir > 0 && y - anchor > 14;
     let eff;
     if (linked) {
       eff = Math.min(y, H);
