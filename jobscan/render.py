@@ -248,7 +248,13 @@ html,body{overflow-x:clip}
 /* Top bar = title + tabs + search/filters, fixed to the screen (composited: no jitter on fast scrolls).
    Scrolling down slides the title part up out of view; scrolling up slides it back. The whole bar moves as one. */
 #topbar{position:fixed;top:0;left:0;right:0;z-index:6;padding-top:env(safe-area-inset-top);
-  transform:translateY(calc(-1 * var(--hide,0px)));transition:transform .32s cubic-bezier(.25,.8,.3,1);will-change:transform}
+  transform:translateY(calc(-1 * var(--hide,0px)));will-change:transform}
+body.anim #topbar{transition:transform .32s cubic-bezier(.25,.8,.3,1)}
+/* near the top the title scrolls away exactly with the page, driven by the browser's scroll timeline (no lag) */
+@keyframes barCollapse{from{transform:translateY(0)}to{transform:translateY(calc(-1 * var(--hh,0px)))}}
+@supports (animation-timeline: scroll()) {
+  body.linked #topbar{animation:barCollapse linear both;animation-timeline:scroll(root block);animation-range:0px var(--hh,0px)}
+}
 #topbar::before{content:"";position:absolute;left:0;right:0;top:0;bottom:0;z-index:-1;background:var(--bg);transition:background .25s}
 /* the soft fade stays inside the bar's own bottom padding, so the page keeps its normal spacing */
 body.scrolled #topbar::before{background:color-mix(in srgb,var(--bg) 72%,transparent);
@@ -520,14 +526,21 @@ details.srcs{background:var(--panel);border-radius:16px;box-shadow:var(--e1);pad
 /* expanded card: action row sticks to the screen bottom, mini header sticks under the top bar */
 .actions .lessbtn{display:none}
 .card.expanded .morebtn{display:none}
-.card.expanded .actions .lessbtn{display:inline-flex;position:absolute;left:0;border:0;border-radius:999px;background:var(--chip);color:var(--accent);
+.card.expanded .actions .lessbtn{display:inline-flex;position:absolute;border:0;border-radius:999px;background:var(--chip);color:var(--accent);
   font:600 13px/1 inherit;padding:8px 12px 8px 8px;align-items:center;gap:2px;cursor:pointer}
 .card.expanded .lessbtn .mi{font-size:20px}
-.card.expanded .actions{position:sticky;bottom:0;z-index:2;margin-bottom:-16px;padding:22px 0 calc(14px + env(safe-area-inset-bottom));
+/* card geometry, so sticky strips can span the whole card: score column + gap + padding */
+.card{--scol:52px;--sgap:14px;--padx:18px;--pady:16px}
+@media (max-width:760px){.card{--scol:40px;--sgap:10px;--padx:14px;--pady:14px}}
+.card.expanded .actions{position:sticky;bottom:0;z-index:2;
+  margin:14px calc(-1 * var(--padx)) calc(-1 * var(--pady)) calc(-1 * (var(--scol) + var(--sgap) + var(--padx)));
+  padding:22px var(--padx) calc(var(--pady) + env(safe-area-inset-bottom));border-radius:0 0 16px 16px;
   background:linear-gradient(to top,var(--panel) 72%,color-mix(in srgb,var(--panel) 0%,transparent))}
+.card.expanded .actions .lessbtn{left:var(--padx)}
 .stickyhead{position:sticky;top:var(--barvis,0px);height:0;z-index:4;transition:top .32s cubic-bezier(.25,.8,.3,1)}
-.sh{position:absolute;left:-8px;right:-8px;top:0;display:flex;align-items:center;gap:8px;border:0;border-radius:0 0 14px 14px;
-  background:var(--panel);box-shadow:var(--e2);padding:8px 10px;cursor:pointer;color:var(--ink);text-align:left;
+.sh{position:absolute;left:calc(-1 * (var(--scol) + var(--sgap) + var(--padx)));right:calc(-1 * var(--padx));top:0;display:flex;align-items:center;gap:8px;border:0;border-radius:0;
+  background:linear-gradient(to bottom,var(--panel) 72%,color-mix(in srgb,var(--panel) 0%,transparent));box-shadow:none;
+  padding:10px var(--padx) 22px;cursor:pointer;color:var(--ink);text-align:left;
   opacity:0;transform:translateY(-8px);pointer-events:none;transition:opacity .2s,transform .2s}
 .card.expanded.headout .sh{opacity:1;transform:none;pointer-events:auto}
 .shscore{flex:none;width:26px;height:26px;border-radius:8px;color:#fff;font:700 13px/26px inherit;text-align:center}
@@ -1216,25 +1229,48 @@ function drawMap(rows){
 }
 $("placechip").onclick = () => setPlace(null);
 // show the small logo in the sticky bar once the page header has scrolled away
-(() => {   // top bar: hide the title part when scrolling down, show it again when scrolling up
+(() => {   // top bar: title scrolls away with the page; a deliberate scroll up slides it back
   const bar = $("topbar"), hdr = document.querySelector("header"), ctl = $("controls"), body = document.body;
-  // distance travelled since the scroll direction last changed, so slow scrolls count too
-  let lastY = scrollY, anchor = scrollY, dir = 0, hidden = false, ticking = false;
+  const timeline = CSS.supports("animation-timeline: scroll()");
+  // "linked": near the top the bar follows the scroll exactly. "free": JS decides shown/hidden with a slide.
+  let lastY = scrollY, anchor = scrollY, dir = 0, ticking = false;
+  let linked = timeline, shown = true, hide = 0;
+  const setHide = (v, anim) => { hide = v; body.classList.toggle("anim", anim); body.style.setProperty("--hide", v + "px"); };
   const update = () => {
     ticking = false;
     const y = Math.max(0, scrollY), H = hdr.offsetHeight;
+    body.style.setProperty("--hh", H + "px");
     const d = Math.sign(y - lastY);
     if (d && d !== dir) { dir = d; anchor = lastY; }
-    // tucking the title away before it has scrolled past would uncover the empty space it leaves behind
-    if (y < H) hidden = false;
-    else if (dir > 0 && y - anchor > 14) hidden = true;       // scrolled down a little: tuck the title away
-    else if (dir < 0 && anchor - y > 140) hidden = false;     // only a deliberate scroll up brings the title back
+    const upALot = dir < 0 && anchor - y > 140, downABit = dir > 0 && y - anchor > 14;
+    let eff;
+    if (linked) {
+      eff = Math.min(y, H);
+      if (y > H && upALot) {                                  // leave linked mode: slide the title back in
+        linked = false; shown = true; body.classList.remove("linked");
+        setHide(H, false); requestAnimationFrame(() => requestAnimationFrame(() => setHide(0, true)));
+        eff = 0;
+      }
+    } else if (shown) {
+      eff = hide;
+      if (y <= 1 && timeline) { linked = true; setHide(0, false); }          // back at the top: follow the scroll again
+      else if (y > H && downABit) { shown = false; setHide(H, true); eff = H; }
+    } else {
+      if (y < H) setHide(y, false);                             // hidden near the top: keep the title glued to the page
+      else if (upALot) { shown = true; setHide(0, true); }
+      if (y <= 1 && timeline) { linked = true; setHide(0, false); }
+      eff = hide;
+    }
+    if (!timeline) {                                             // older browsers: slide-only behaviour
+      if (y < H) shown = true; else if (downABit) shown = false; else if (upALot) shown = true;
+      setHide(shown ? 0 : H, true); eff = hide;
+    }
+    body.classList.toggle("linked", linked);
     lastY = y;
-    body.style.setProperty("--hide", (hidden ? H : 0) + "px");
-    body.style.setProperty("--barvis", (bar.offsetHeight - (hidden ? H : 0)) + "px");
+    body.style.setProperty("--barvis", (bar.offsetHeight - eff) + "px");
     updateStickyHeads();
     body.classList.toggle("scrolled", y > 2);
-    ctl.classList.toggle("stuck", hidden);            // mini logo while the title is tucked away
+    ctl.classList.toggle("stuck", eff >= H - 1);           // mini logo while the title is tucked away
   };
   const measure = () => document.body.style.setProperty("--tbh", bar.offsetHeight + "px");
   addEventListener("scroll", () => { if (!ticking) { ticking = true; requestAnimationFrame(update); } }, {passive: true});
