@@ -1,21 +1,15 @@
 ## 🆕 3 new matches
 
-- **[10/10] [Analist B Moleculaire Pathologie](https://www.werk.nl/nl/vacatures/71338169)** — Pathologie Zuid-West Nederland — deadline 2026-10-01
-  Analist B moleculaire pathologie | Tilburg Nieuw Wil jij als analist werken binnen de snel ontwikkelende moleculaire diagnostiek? Pathologie Zuid West Nederland zoekt een Analist B Moleculaire Pathologie voor het…
-- **[8/10] [PhD position on local food web dynamics within offshore wind farms](https://www.academictransfer.com/en/jobs/363916/phd-position-on-local-food-web-dynamics-within-offshore-wind-farms/)** — Wageningen University & Research — deadline 2026-10-20
-  PhD position on local food web dynamics within offshore wind farms in the North Sea POWER (Progress in Offshore Wind Ecological Research) consortium.
-- **[6/10] [Laborant](https://www.werk.nl/nl/vacatures/71338204)** — Sanquin
-  Research & laboratorium Werken aan betere zorg én baanbrekend onderzoek. Hier komen zorg, wetenschap en maatschappij samen Wil jij dagelijks bijdragen aan betere zorg én baanbrekend onderzoek? Dan zit je goed in de…
+- **[10/10] [PhD Student: Decoding Epigenetic Mechanisms of Gene Regulation in T Cells](https://www.werkenbijavl.nl/vacatures/phd-student-decoding-epigenetic-mechanisms-of-gene-regulation-in-t-cells/)** — Netherlands Cancer Institute – Antoni van Leeuwenhoek — deadline 2026-10-01
+  PhD Student: Decoding Epigenetic Mechanisms of Gene Regulation in T Cells Solliciteer PhD Student: Decoding Epigenetic Mechanisms of Gene Regulation in T Cells 36 € 3.813 - € 4.629 wo Sluitingsdatum: 1 okt.
+- **[7/10] [Boswachter Ecologie, Noordwest-Veluwe](https://www.fondsen.org/vacature/boswachter-ecologie-noordwest-veluwe/)** — Natuurmonumenten — deadline 2026-10-04
+  Als Boswachter Ecologie breng je met jouw adviezen op het gebied van natuurwaarden en ecologie ons natuurbeheer, plannen en projecten naar een hoger niveau.
+- **[7/10] [PhD position on bio-optics, in the North Sea POWER (Progress in Offshore Wind Ecological Research) consortium](https://workingat.nioz.nl/o/phd-position-on-bio-optics-in-the-north-sea-power-progress-in-offshore-wind-ecological-research-consortium)** — NIOZ Royal Netherlands Institute for Sea Research — deadline 2026-10-04
+  PhD position on bio-optics, in the North Sea POWER (Progress in Offshore Wind Ecological Research) consortium The Department of Estuarine & Delta Systems (EDS) - location Yerseke of NIOZ is looking for a highly…
 
 ## ⏰ Deadlines coming up
 
-- **[9/10] [Researchanalist Controlled Human Infection Models](https://www.lumc.nl/over-het-lumc/werken-bij/vacatures/d-26-jd-rd-87-researchanalist-controlled-human-infection-models/)** — LUMC — CCG — deadline 2026-09-15 (**1 day left**)
-  Je hebt nog 3 dag(en) om te solliciteren Stap in de voorhoede van baanbrekend onderzoek als researchanalist bij het Center for Cell & Gene Therapy (CCG) van het LUMC.
-- **[8/10] [PhD Candidate Bioengineering Autonomic Innervation & Optogenetic Control in 3D Tissue Models](https://www.academictransfer.com/en/jobs/363328/phd-candidate-bioengineering-autonomic-innervation-optogenetic-control-in-3d-tissue-models/)** — Maastricht University — deadline 2026-09-15 (**1 day left**)
-  Welcome to Maastricht University! Help us build the first optogenetically controllable model of sympathetic innervation in engineered 3D tissue, combining stem cell biology, genetic engineering, and advanced imaging.
-- **[10/10] [Research Technician Endometrial Biology and Gynaecological Cancer Research](https://www.academictransfer.com/en/jobs/363722/research-technician-endometrial-biology-and-gynaecological-cancer-research/)** — Maastricht University — deadline 2026-09-17 (**3 days left**)
-  Welcome to Maastricht University! Help us better understand endometrial physiology, diseases and cancer, and contribute to new treatment strategies.
-- **[9/10] [PhD position on Exposing the Contribution of Epialleles to Heritable Variation](https://www.academictransfer.com/en/jobs/363446/phd-position-on-exposing-the-contribution-of-epialleles-to-heritable-variation/)** — Universiteit Utrecht — deadline 2026-09-17 (**3 days left**)
-  How much does epigenetic variation contribute to rapid adaptation? This PhD at Utrecht University uses CRISPR/Cas9 and SunTag-based epigenomic editing in apomictic dandelions to test whether epialleles drive heritable…
-- **[6/10] [Genomics specialist](https://www.academictransfer.com/en/jobs/363743/genomics-specialist/)** — Erasmus MC — deadline 2026-09-17 (**3 days left**)
-  The Erasmus MC Genomics Core Facility (CoFa) provides a broad range of genomics services to an international client base in both research and diagnostic settings.
+- **[6/10] [Promovendus erfelijke hartspierziekten bij kinderen](https://www.academictransfer.com/en/jobs/363586/promovendus-erfelijke-hartspierziekten-bij-kinderen/)** — Erasmus MC — deadline 2026-09-16 (**1 day left**)
+  Als promovendus onderzoek je hoe we hartfalen bij kinderen met erfelijke hartspierziekten beter kunnen voorspellen, diagnosticeren en behandelen.
+
+Full list: https://erezu1.github.io/efrat_jobs/
