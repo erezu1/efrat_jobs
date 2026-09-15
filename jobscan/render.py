@@ -599,6 +599,10 @@ details.srcs{background:var(--panel);border-radius:16px;box-shadow:var(--e1);pad
     mask-image:linear-gradient(to bottom,#000 0,#000 calc(100% - 14px),transparent 100%)}
   .ctlrow .left{padding:1px 0}
 }
+
+/* keep the interested / rejected edge stripe visible on the sticky strips of an expanded card */
+.card.liked .sh,.card.liked.expanded .actions{box-shadow:inset 4px 0 0 var(--accent)}
+.card.disliked .sh,.card.disliked.expanded .actions{box-shadow:inset -4px 0 0 var(--danger)}
 </style>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@700;800&display=swap">
@@ -1007,7 +1011,7 @@ function draw(){
     const nextEl = window.__scrollToKey && $("list").querySelector(`.card[data-k="${CSS.escape(window.__scrollToKey)}"]`);
     const target = nextEl ? scrollY + nextEl.getBoundingClientRect().top : window.__scrollToFallbackTop;
     const dest = Math.max(0, target - (window.__barvis || 0) - 10);
-    window.__noRevealUntil = Date.now() + 1400;
+    freezeBar(1500);
     window.scrollTo(0, Math.max(0, target - (window.__scrollFromTop ?? innerHeight)));   // put it back where it was on screen…
     requestAnimationFrame(() => window.scrollTo({top: dest, behavior: "smooth"}));       // …then glide it up under the bar
     if (nextEl) settleOn(nextEl.dataset.k);
@@ -1144,7 +1148,7 @@ function settleOn(key, tries = 0){   // after the glide, make sure the card sits
     if (!el) return;
     const d = el.getBoundingClientRect().top - ((window.__barvis || 0) + 10);
     if (Math.abs(d) > 2 && tries < 3) {
-      window.__noRevealUntil = Date.now() + 1200;
+      freezeBar(700);
       window.scrollTo({top: scrollY + d, behavior: "smooth"});
       settleOn(key, tries + 1);
     }
@@ -1352,7 +1356,19 @@ function drawMap(rows){
 $("placechip").onclick = () => setPlace(null);
 // show the small logo in the sticky bar once the page header has scrolled away
 window.__noRevealUntil = 0;
-function jumpTo(top){ window.__noRevealUntil = Date.now() + 1200; window.scrollTo({top, behavior: "smooth"}); }
+// Automatic scrolls (jump to card, land on next card) must not move the search bar: freeze it where it is.
+function freezeBar(ms){
+  const bar = $("topbar");
+  if (!window.__frozenUntil || Date.now() > window.__frozenUntil) {
+    bar.style.transition = "none"; bar.style.animation = "none";
+    bar.style.transform = `translateY(${-(window.__barEff || 0)}px)`;   // from the bar's state (DOM reads can be stale mid-render)
+  }
+  window.__frozenUntil = Date.now() + ms;
+  window.__noRevealUntil = Math.max(window.__noRevealUntil, Date.now() + ms + 1200);   // the glide's last bit mustn't reveal the title
+  clearTimeout(window.__unfreezeTimer);
+  window.__unfreezeTimer = setTimeout(() => window.__barUnfreeze?.(), ms + 30);
+}
+function jumpTo(top){ freezeBar(900); window.scrollTo({top, behavior: "smooth"}); }
 (() => {   // top bar: title scrolls away with the page; a deliberate scroll up slides it back
   const bar = $("topbar"), hdr = document.querySelector("header"), ctl = $("controls");
   const timeline = CSS.supports("animation-timeline: scroll()");
@@ -1368,6 +1384,7 @@ function jumpTo(top){ window.__noRevealUntil = Date.now() + 1200; window.scrollT
   const update = () => {
     ticking = false;
     const y = Math.max(0, scrollY);
+    if (Date.now() < (window.__frozenUntil || 0)) { lastY = anchor = y; dir = 0; return; }   // automatic scroll in progress
     const d = Math.sign(y - lastY);
     if (d && d !== dir) { dir = d; anchor = lastY; }
     const jumping = Date.now() < window.__noRevealUntil;       // our own "jump to card" scrolls shouldn't reveal the title
@@ -1396,7 +1413,7 @@ function jumpTo(top){ window.__noRevealUntil = Date.now() + 1200; window.scrollT
     }
     cls(bar, "linked", linked);
     lastY = y;
-    window.__barvis = B - eff;
+    window.__barvis = B - eff; window.__barEff = eff;
     updateStickyHeads();
     cls(bar, "scrolled", y > 2);
     cls(ctl, "stuck", eff >= H - 1);           // mini logo while the title is tucked away
@@ -1411,6 +1428,16 @@ function jumpTo(top){ window.__noRevealUntil = Date.now() + 1200; window.scrollT
   new ResizeObserver(() => { measure(); update(); }).observe(bar);
   measure(); update();
   window.__barUpdate = () => { measure(); update(); };
+  window.__barUnfreeze = () => {
+    const y = Math.max(0, scrollY), shownPx = -(window.__barEff || 0);   // e.g. -H when tucked away
+    // continue in "free" mode from exactly where the bar is, so nothing snaps
+    linked = false; cls(bar, "linked", false);
+    shown = shownPx > -H / 2; setHide(-shownPx, false);
+    bar.style.animation = ""; bar.style.transform = ""; void bar.offsetHeight; bar.style.transition = "";
+    if (y < H) { shown = true; setHide(0, true); }        // near the top the title belongs on screen
+    lastY = anchor = y; dir = 0;
+    update();
+  };
 })();
 $("minilogo").onclick = e => { e.preventDefault(); window.scrollTo({top: 0, behavior: "smooth"}); };
 document.querySelector("h1").onclick = () => window.scrollTo({top: 0, behavior: "smooth"});   // logo / title: back to top
