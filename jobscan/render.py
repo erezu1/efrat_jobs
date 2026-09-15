@@ -123,8 +123,12 @@ def write_details(state: dict, rows: list[dict], folder: Path) -> None:
             desc = re.sub(r"\n{3,}", "\n\n", (state[row["key"]].get("description") or "").strip())
             shards[shard_of(row["key"])][row["key"]] = desc[:DETAIL_MAX]
     folder.mkdir(parents=True, exist_ok=True)
+    for old in folder.glob("*.json"):
+        old.unlink()
     for i, d in enumerate(shards):
-        (folder / f"{i}.json").write_text(json.dumps(d, ensure_ascii=False, sort_keys=True))
+        # loaded with a <script> tag (not fetch), so it also works when the page is opened as a local file
+        body = json.dumps(d, ensure_ascii=False, sort_keys=True).replace("</", "<\\/")
+        (folder / f"{i}.js").write_text(f"window.__biojobsDetails({i},{body});\n")
 
 
 TEMPLATE = r"""<!doctype html>
@@ -940,12 +944,17 @@ function draw(){
 
 // ---- "More": full ad text, loaded on demand from docs/details/<shard>.json ----
 const expanded = new Set(), details = new Map(), shardLoads = new Map();
+window.__biojobsDetails = (i, d) => { for (const [kk, v] of Object.entries(d)) details.set(kk, v); };
 const shardOf = k => { let h = 0; for (let i = 0; i < k.length; i++) h += k.charCodeAt(i); return h % 16; };
 function loadDetail(k){
   const i = shardOf(k);
-  if (!shardLoads.has(i)) shardLoads.set(i, fetch(`details/${i}.json`).then(r => r.json())
-    .then(d => { for (const [kk, v] of Object.entries(d)) details.set(kk, v); })
-    .catch(() => shardLoads.delete(i)));
+  if (!shardLoads.has(i)) shardLoads.set(i, new Promise(resolve => {
+    const el = document.createElement("script");
+    el.src = `details/${i}.js`;
+    el.onload = resolve;
+    el.onerror = () => { shardLoads.delete(i); el.remove(); resolve(); };
+    document.head.appendChild(el);
+  }));
   return shardLoads.get(i);
 }
 function fullHtml(r){
