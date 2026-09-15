@@ -339,7 +339,7 @@ input[type=search]:focus,select:focus{outline:2px solid var(--accent);outline-of
 .card[data-dir="no"]::after{background:linear-gradient(to left,color-mix(in srgb,var(--danger) 22%,var(--panel)) 0%,color-mix(in srgb,var(--panel) 60%,transparent) 70%)}
 .card::after{z-index:2}
 .card .sh{isolation:isolate}
-.card.expanded .actions::before,.card .sh::before{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;z-index:-1;
+.card.expanded .actions::before,.card .sh::before{content:"";position:absolute;inset:0;border-radius:0;pointer-events:none;z-index:-1;
   opacity:calc(var(--p,0) * .92)}
 /* fade the strips' tint exactly like their background, so it doesn't stack with the card's tint in the fade zone */
 .card .sh::before{-webkit-mask-image:linear-gradient(to bottom,#000 72%,transparent);mask-image:linear-gradient(to bottom,#000 72%,transparent)}
@@ -520,9 +520,9 @@ details.srcs{background:var(--panel);border-radius:16px;box-shadow:var(--e1);pad
 #dlpop small{display:block;color:var(--muted);margin-top:2px}
 
 /* "More": full ad text expands in place */
-.fullwrap{display:grid;grid-template-rows:0fr;transition:grid-template-rows .35s cubic-bezier(.4,0,.2,1)}
+.fullwrap{display:grid;grid-template-rows:0fr;transition:grid-template-rows .55s cubic-bezier(.33,0,.15,1)}
 .fullwrap.open{grid-template-rows:1fr}
-.fulltext{min-height:0;overflow:hidden;opacity:0;transition:opacity .3s ease;cursor:auto}
+.fulltext{min-height:0;overflow:hidden;opacity:0;transition:opacity .45s ease;cursor:auto}
 .fullwrap.open .fulltext{opacity:1}
 .fulltext p{margin:8px 0;font-size:14px;line-height:1.55;color:var(--ink);white-space:pre-line;overflow-wrap:anywhere}
 .fulltext .fullnote{color:var(--muted);font-size:13px;display:flex;align-items:center;gap:6px}
@@ -537,8 +537,18 @@ details.srcs{background:var(--panel);border-radius:16px;box-shadow:var(--e1);pad
 .actions .lessbtn{display:none}
 .card.expanded .morebtn{display:none}
 .card.expanded .actions .lessbtn{display:inline-flex;border:0;border-radius:999px;background:var(--chip);color:var(--accent);
-  font:600 13px/1 inherit;padding:10px 14px 10px 10px;align-items:center;gap:2px;cursor:pointer;margin-right:auto}
-.card.expanded .actions .applybox{margin-left:auto}
+  font:600 13px/1 inherit;padding:10px 14px 10px 10px;align-items:center;gap:2px;cursor:pointer}
+/* ✓/✕ stay exactly where they are on a collapsed card: the two outer columns are always equal,
+   so Less on the left and Applied on the right can never push them or reach them */
+.card.expanded .actions{display:grid;grid-template-columns:1fr auto auto 1fr;align-items:center;column-gap:0}
+.card.expanded .actions .lessbtn{justify-self:start}
+.card.expanded .actions .applybox{justify-self:end}
+.card.expanded .actions .vote.no{margin-right:6px}
+.card.expanded .actions .vote.yes{margin-left:6px}
+@media (max-width:760px){   /* a phone has no room for the full pill beside centred buttons */
+  .card.expanded .actions .applybox{width:48px;padding:0;gap:0;justify-content:center;max-width:48px}
+  .card.expanded .actions .applybox .txt{display:none}
+}
 .card.expanded .lessbtn .mi{font-size:20px}
 /* card geometry, so sticky strips can span the whole card: score column + gap + padding */
 .card{--scol:52px;--sgap:14px;--padx:18px;--pady:16px}
@@ -549,7 +559,7 @@ details.srcs{background:var(--panel);border-radius:16px;box-shadow:var(--e1);pad
   background:linear-gradient(to top,var(--panel) 72%,color-mix(in srgb,var(--panel) 0%,transparent))}
 
 /* tucks under the bar's bottom fade so no text shows between the search bar and this strip */
-.stickyhead{position:sticky;top:calc(var(--sht,0px) - 26px);height:0;z-index:4;transition:top .32s cubic-bezier(.25,.8,.3,1)}
+.stickyhead{position:sticky;top:calc(var(--sht,0px) - 26px);height:0;z-index:4}
 .sh{position:absolute;left:calc(-1 * (var(--scol) + var(--sgap) + var(--padx)));right:calc(-1 * var(--padx));top:0;display:flex;align-items:center;gap:8px;border:0;border-radius:0;
   background:linear-gradient(to bottom,var(--panel) 72%,color-mix(in srgb,var(--panel) 0%,transparent));box-shadow:none;
   padding:27px var(--padx) 20px;cursor:pointer;color:var(--ink);text-align:left;
@@ -598,7 +608,8 @@ details.srcs{background:var(--panel);border-radius:16px;box-shadow:var(--e1);pad
 
 /* keep the interested / rejected edge stripe visible on the sticky strips of an expanded card */
 .card.liked .sh::after,.card.liked.expanded .actions::after,
-.card.disliked .sh::after,.card.disliked.expanded .actions::after{content:"";position:absolute;inset:0;pointer-events:none;border-radius:inherit}
+.card.disliked .sh::after,.card.disliked.expanded .actions::after{content:"";position:absolute;inset:0;pointer-events:none;border-radius:0}
+.card.expanded.footend .actions::after,.card.expanded.footend .actions::before{border-radius:inherit}
 .card.liked .sh::after,.card.liked.expanded .actions::after{background:linear-gradient(to right,var(--accent) 0 4px,transparent 4px)}
 .card.disliked .sh::after,.card.disliked.expanded .actions::after{background:linear-gradient(to left,var(--danger) 0 4px,transparent 4px)}
 .card .sh::after{-webkit-mask-image:linear-gradient(to bottom,#000 72%,transparent);mask-image:linear-gradient(to bottom,#000 72%,transparent)}
@@ -857,6 +868,19 @@ const VIEWS = {
   applied:    {label:"Applied",    icon:"send",         hue:"#2f7dd1", tip:"Applied", f: r => marks[r.key] === "interested" && !!applied[r.key]},
   rejected:   {label:"Rejected",   icon:"thumb_down",   hue:"#8a7f90", tip:"Marked not interested", f: r => marks[r.key] === "hidden"},
 };
+// Each tab keeps its own place in the list, so switching back and forth doesn't lose it.
+const tabScroll = {};
+try { Object.assign(tabScroll, JSON.parse(sessionStorage.getItem("tabScroll") || "{}")); } catch(e) {}
+function restoreScroll(){
+  const max = Math.max(0, document.documentElement.scrollHeight - innerHeight);
+  freezeBar(80);                               // the jump isn't a scroll gesture: don't move the search bar with it
+  window.scrollTo(0, Math.min(tabScroll[view] || 0, max));
+  try { sessionStorage.setItem("tabScroll", JSON.stringify(tabScroll)); } catch(e) {}
+}
+addEventListener("pagehide", () => {
+  tabScroll[view] = scrollY;
+  try { sessionStorage.setItem("tabScroll", JSON.stringify(tabScroll)); } catch(e) {}
+});
 try {   // reopen on the tab she left
   const v = localStorage.getItem("view");
   if (v && VIEWS[v]) view = v;
@@ -908,10 +932,13 @@ function renderStats(){
   mb.classList.toggle("has", curN > 0);
   $("minibadge").title = `${curN} in ${VIEWS[view].label}`;
   $("stats").querySelectorAll(".tab").forEach(el => el.onclick = () => {
-    if (view !== el.dataset.v) $("sort").value = onlyClosing ? "deadline" : onlyNew ? "new" : defaultSort(el.dataset.v);
+    if (view === el.dataset.v) return;
+    tabScroll[view] = scrollY;                 // leave this tab where she was reading
+    $("sort").value = onlyClosing ? "deadline" : onlyNew ? "new" : defaultSort(el.dataset.v);
     view = el.dataset.v;
     try { localStorage.setItem("view", view); } catch(e) {}
     updateFilterDot(); draw();
+    restoreScroll();
   });
 }
 
@@ -961,7 +988,7 @@ function card(r){
         ${r.more ? `<button class="lessbtn" data-k="${esc(r.key)}"><span class="mi">expand_less</span>Less</button>` : ""}
         <button class="vote yes ${m==="interested"?"on":""}" data-k="${esc(r.key)}" data-m="interested" title="Interested (or swipe right)" aria-label="Interested"><span class="fill"></span><span class="mi">check</span></button>
         <button class="vote no ${m==="hidden"?"on":""}" data-k="${esc(r.key)}" data-m="hidden" title="Not interested (or swipe left)" aria-label="Not interested"><span class="fill"></span><span class="mi">close</span></button>
-        ${m==="interested" ? `<label class="applybox ${applied[r.key]?"on":""} ${justLiked===r.key?"appear":""}" title="${applied[r.key]?"Marked as applied — tap to undo":"Did you apply? Tap to mark"}"><input type="checkbox" data-k="${esc(r.key)}" ${applied[r.key]?"checked":""}><span class="mi">${applied[r.key]?"task_alt":"send"}</span><span>${applied[r.key]?"Applied":"Applied?"}</span></label>` : ""}
+        ${m==="interested" ? `<label class="applybox ${applied[r.key]?"on":""} ${justLiked===r.key?"appear":""}" title="${applied[r.key]?"Marked as applied — tap to undo":"Did you apply? Tap to mark"}"><input type="checkbox" data-k="${esc(r.key)}" ${applied[r.key]?"checked":""}><span class="mi">${applied[r.key]?"task_alt":"send"}</span><span class="txt">${applied[r.key]?"Applied":"Applied?"}</span></label>` : ""}
       </div>
     </div></article>`;
 }
@@ -1145,6 +1172,7 @@ async function toggleMore(btn){
   if (!details.has(k)) { box.innerHTML = '<p class="fullnote">Loading…</p>'; wrap.classList.add("open"); await loadDetail(k); }
   box.innerHTML = details.has(k) ? fullHtml(r) : '<p class="fullnote">Couldn\'t load the full text.</p>';
   requestAnimationFrame(() => wrap.classList.add("open"));
+  setTimeout(updateStickyHeads, 600);   // once it has finished growing, the card knows where its footer sits
 }
 function updateStickyHeads(){   // show a card's mini header once its real title is under the top bar
   const barvis = window.__barvis || 0, list = document.querySelectorAll(".card.expanded");
@@ -1154,6 +1182,8 @@ function updateStickyHeads(){   // show a card's mini header once its real title
     if (sh && sh.__top !== barvis) { sh.__top = barvis; sh.style.setProperty("--sht", barvis + "px"); }
     const t = c.querySelector(".title").getBoundingClientRect(), r = c.getBoundingClientRect();
     c.classList.toggle("headout", t.bottom < barvis + 4 && r.bottom > barvis + 140);
+    const a = c.querySelector(".actions");
+    if (a) c.classList.toggle("footend", r.bottom - a.getBoundingClientRect().bottom < 1.5);
   });
 }
 function settleOn(key, tries = 0){   // after the glide, make sure the card sits exactly under the bar (bar height can change meanwhile)
