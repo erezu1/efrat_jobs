@@ -516,6 +516,23 @@ details.srcs{background:var(--panel);border-radius:16px;box-shadow:var(--e1);pad
 .morebtn .mi{font-size:20px;transition:transform .3s ease}
 .morebtn.open .mi{transform:rotate(180deg)}
 .morebtn:hover{background:var(--accent-soft)}
+
+/* expanded card: action row sticks to the screen bottom, mini header sticks under the top bar */
+.actions .lessbtn{display:none}
+.card.expanded .morebtn{display:none}
+.card.expanded .actions .lessbtn{display:inline-flex;position:absolute;left:0;border:0;border-radius:999px;background:var(--chip);color:var(--accent);
+  font:600 13px/1 inherit;padding:8px 12px 8px 8px;align-items:center;gap:2px;cursor:pointer}
+.card.expanded .lessbtn .mi{font-size:20px}
+.card.expanded .actions{position:sticky;bottom:0;z-index:2;margin-bottom:-16px;padding:22px 0 calc(14px + env(safe-area-inset-bottom));
+  background:linear-gradient(to top,var(--panel) 72%,color-mix(in srgb,var(--panel) 0%,transparent))}
+.stickyhead{position:sticky;top:var(--barvis,0px);height:0;z-index:4;transition:top .32s cubic-bezier(.25,.8,.3,1)}
+.sh{position:absolute;left:-8px;right:-8px;top:0;display:flex;align-items:center;gap:8px;border:0;border-radius:0 0 14px 14px;
+  background:var(--panel);box-shadow:var(--e2);padding:8px 10px;cursor:pointer;color:var(--ink);text-align:left;
+  opacity:0;transform:translateY(-8px);pointer-events:none;transition:opacity .2s,transform .2s}
+.card.expanded.headout .sh{opacity:1;transform:none;pointer-events:auto}
+.shscore{flex:none;width:26px;height:26px;border-radius:8px;color:#fff;font:700 13px/26px inherit;text-align:center}
+.shtitle{flex:1;min-width:0;font-weight:650;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sh .mi{font-size:20px;color:var(--accent)}
 </style>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@700;800&display=swap">
@@ -830,9 +847,10 @@ function card(r){
   if (!r.pre) tags.push(`<span class="tag">filtered: ${esc(r.pre_reason)}</span>`);
   if (translated) tags.push(`<a class="tag trtag" href="https://translate.google.com/translate?sl=nl&tl=en&u=${encodeURIComponent(r.url)}" target="_blank" rel="noopener" title="Translated from Dutch — open the full ad in Google Translate"><span class="mi">translate</span>Translated · full ad</a>`);
   const m = marks[r.key];
-  return `<article class="card  ${m==="interested"?"liked":""} ${m==="hidden"?"disliked":""} ${justLiked===r.key?"stripe-in":""}" data-k="${esc(r.key)}" data-url="${esc(r.url)}">
+  return `<article class="card  ${m==="interested"?"liked":""} ${m==="hidden"?"disliked":""} ${justLiked===r.key?"stripe-in":""} ${expanded.has(r.key)?"expanded":""}" data-k="${esc(r.key)}" data-url="${esc(r.url)}">
     <div class="score ${sc==null?"na":""}" style="${col?`background:${col}`:""}" title="Fit score (0-10)">${sc==null?"–":sc}</div>
     <div>
+      ${r.more ? `<div class="stickyhead"><button class="sh" data-k="${esc(r.key)}" title="Back to the top of this job"><span class="shscore" style="${col?`background:${col}`:""}">${sc==null?"–":sc}</span><span class="shtitle">${esc(title)}</span><span class="mi">vertical_align_top</span></button></div>` : ""}
       <a class="title" href="${esc(r.url)}" target="_blank" rel="noopener">${esc(title)}</a>
       <div class="meta"><span><span class="mi">apartment</span>${esc(r.org)}</span>${r.loc?`<a class="placelink" href="#" data-place="${esc(placeKey(r))}" data-label="${esc(r.loc)}" title="Show only jobs in ${esc(r.loc)}"><span class="mi">location_on</span>${esc(r.loc)}</a>`:""}<span><span class="mi">visibility</span>first seen ${esc(r.first_seen)}</span></div>
       <div class="tags">${tags.join("")}</div>
@@ -842,6 +860,7 @@ function card(r){
       ${r.why?`<p class="why">${esc(r.why)}</p>`:""}
       ${r.blockers?.length?`<p class="blockers"><span class="mi">warning</span> ${r.blockers.map(esc).join(" · ")}</p>`:""}
       <div class="actions">
+        ${r.more ? `<button class="lessbtn" data-k="${esc(r.key)}"><span class="mi">expand_less</span>Less</button>` : ""}
         <button class="vote yes ${m==="interested"?"on":""}" data-k="${esc(r.key)}" data-m="interested" title="Interested (or swipe right)" aria-label="Interested"><span class="fill"></span><span class="mi">check</span></button>
         <button class="vote no ${m==="hidden"?"on":""}" data-k="${esc(r.key)}" data-m="hidden" title="Not interested (or swipe left)" aria-label="Not interested"><span class="fill"></span><span class="mi">close</span></button>
         ${m==="interested" ? `<label class="applybox ${applied[r.key]?"on":""} ${justLiked===r.key?"appear":""}" title="${applied[r.key]?"Marked as applied — tap to undo":"Did you apply? Tap to mark"}"><input type="checkbox" data-k="${esc(r.key)}" ${applied[r.key]?"checked":""}><span class="mi">${applied[r.key]?"task_alt":"send"}</span><span>${applied[r.key]?"Applied":"Applied?"}</span></label>` : ""}
@@ -902,7 +921,13 @@ function draw(){
       });
     }
   }
-  $("list").querySelectorAll(".morebtn").forEach(b => b.onclick = e => { e.stopPropagation(); toggleMore(b); });
+  $("list").querySelectorAll(".morebtn,.lessbtn").forEach(b => b.onclick = e => { e.stopPropagation(); toggleMore(b); });
+  $("list").querySelectorAll(".sh").forEach(b => b.onclick = e => {
+    e.stopPropagation();
+    const c = b.closest(".card"), barvis = parseFloat(getComputedStyle(document.body).getPropertyValue("--barvis")) || 0;
+    window.scrollTo({top: scrollY + c.getBoundingClientRect().top - barvis - 10, behavior: "smooth"});
+  });
+  updateStickyHeads();
   $("list").querySelectorAll(".dltag").forEach(b => b.onclick = e => { e.stopPropagation(); showDeadline(b); });
   $("list").querySelectorAll(".cattag").forEach(a => a.onclick = e => { e.preventDefault(); setCat(a.dataset.c); });
   $("list").querySelectorAll(".placelink").forEach(a => a.onclick = e => { e.preventDefault(); setPlace(a.dataset.place, a.dataset.label); });
@@ -974,14 +999,26 @@ function fullHtml(r){
 async function toggleMore(btn){
   const c = btn.closest(".card"), k = btn.dataset.k, wrap = c.querySelector(".fullwrap"), box = c.querySelector(".fulltext");
   const r = DATA.rows.find(x => x.key === k);
+  const more = c.querySelector(".morebtn");
   if (expanded.has(k)) {
-    expanded.delete(k); wrap.classList.remove("open"); btn.classList.remove("open"); btn.lastElementChild.textContent = "More";
+    expanded.delete(k); wrap.classList.remove("open"); c.classList.remove("expanded", "headout");
+    more.classList.remove("open"); more.lastElementChild.textContent = "More";
+    // if we were deep inside the ad, bring the card's top back into view
+    const top = c.getBoundingClientRect().top, barvis = parseFloat(getComputedStyle(document.body).getPropertyValue("--barvis")) || 0;
+    if (top < barvis) window.scrollTo({top: scrollY + top - barvis - 10, behavior: "smooth"});
     return;
   }
-  expanded.add(k); btn.classList.add("open"); btn.lastElementChild.textContent = "Less";
+  expanded.add(k); c.classList.add("expanded"); more.classList.add("open"); more.lastElementChild.textContent = "Less";
   if (!details.has(k)) { box.innerHTML = '<p class="fullnote">Loading…</p>'; wrap.classList.add("open"); await loadDetail(k); }
   box.innerHTML = details.has(k) ? fullHtml(r) : '<p class="fullnote">Couldn\'t load the full text.</p>';
   requestAnimationFrame(() => wrap.classList.add("open"));
+}
+function updateStickyHeads(){   // show a card's mini header once its real title is under the top bar
+  const barvis = parseFloat(getComputedStyle(document.body).getPropertyValue("--barvis")) || 0;
+  document.querySelectorAll(".card.expanded").forEach(c => {
+    const t = c.querySelector(".title").getBoundingClientRect(), r = c.getBoundingClientRect();
+    c.classList.toggle("headout", t.bottom < barvis + 4 && r.bottom > barvis + 140);
+  });
 }
 function leave(c, dir){   // gentle exit for a card that no longer belongs in this tab
   c.style.transition = "transform .32s ease, opacity .32s ease";
@@ -1189,6 +1226,8 @@ $("placechip").onclick = () => setPlace(null);
     else if (dir < 0 && anchor - y > 140) hidden = false;     // only a deliberate scroll up brings the title back
     lastY = y;
     body.style.setProperty("--hide", (hidden ? H : 0) + "px");
+    body.style.setProperty("--barvis", (bar.offsetHeight - (hidden ? H : 0)) + "px");
+    updateStickyHeads();
     body.classList.toggle("scrolled", y > 2);
     ctl.classList.toggle("stuck", hidden);            // mini logo while the title is tucked away
   };
