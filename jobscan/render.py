@@ -295,7 +295,7 @@ input[type=search]:focus,select:focus{outline:2px solid var(--accent);outline-of
 .applybox{display:inline-flex;align-items:center;gap:7px;height:48px;padding:0 20px 0 15px;border-radius:999px;cursor:pointer;user-select:none;
   font-size:15px;font-weight:650;color:#2f7dd1;background:color-mix(in srgb,#2f7dd1 12%,var(--panel));
   box-shadow:var(--e1),inset 0 0 0 1.5px color-mix(in srgb,#2f7dd1 45%,transparent);
-  transition:transform .15s,box-shadow .2s,background .25s,color .25s}
+  transition:transform .15s,box-shadow .2s,background .25s,color .25s,max-width .45s cubic-bezier(.25,.8,.3,1),padding .45s cubic-bezier(.25,.8,.3,1)}
 .applybox:hover{transform:translateY(-1px);box-shadow:var(--e2),inset 0 0 0 1.5px color-mix(in srgb,#2f7dd1 60%,transparent)}
 .applybox:active{transform:scale(.96)}
 .applybox input{display:none}
@@ -520,9 +520,9 @@ details.srcs{background:var(--panel);border-radius:16px;box-shadow:var(--e1);pad
 #dlpop small{display:block;color:var(--muted);margin-top:2px}
 
 /* "More": full ad text expands in place */
-.fullwrap{display:grid;grid-template-rows:0fr;transition:grid-template-rows .55s cubic-bezier(.33,0,.15,1)}
+.fullwrap{display:grid;grid-template-rows:0fr;transition:grid-template-rows .7s cubic-bezier(.33,0,.15,1)}
 .fullwrap.open{grid-template-rows:1fr}
-.fulltext{min-height:0;overflow:hidden;opacity:0;transition:opacity .45s ease;cursor:auto}
+.fulltext{min-height:0;overflow:hidden;opacity:0;transition:opacity .5s ease;cursor:auto}
 .fullwrap.open .fulltext{opacity:1}
 .fulltext p{margin:8px 0;font-size:14px;line-height:1.55;color:var(--ink);white-space:pre-line;overflow-wrap:anywhere}
 .fulltext .fullnote{color:var(--muted);font-size:13px;display:flex;align-items:center;gap:6px}
@@ -532,6 +532,7 @@ details.srcs{background:var(--panel);border-radius:16px;box-shadow:var(--e1);pad
 .morebtn .mi{font-size:20px;transition:transform .3s ease}
 .morebtn.open .mi{transform:rotate(180deg)}
 .morebtn:hover{background:var(--accent-soft)}
+.morebtn.busy{opacity:.5}   /* fetching the full text; the card opens once it's here */
 
 /* expanded card: action row sticks to the screen bottom, mini header sticks under the top bar */
 .actions .lessbtn{display:none}
@@ -546,9 +547,10 @@ details.srcs{background:var(--panel);border-radius:16px;box-shadow:var(--e1);pad
 .card.expanded .actions .vote.no{margin-right:6px}
 .card.expanded .actions .vote.yes{margin-left:6px}
 @media (max-width:760px){   /* a phone has no room for the full pill beside centred buttons */
-  .card.expanded .actions .applybox{width:48px;padding:0;gap:0;justify-content:center;max-width:48px}
-  .card.expanded .actions .applybox .txt{display:none}
+  .card.expanded .actions .applybox{min-width:48px;max-width:48px;padding:0;justify-content:center}
 }
+.card.expanded .actions .lessbtn{animation:lessIn .4s .05s cubic-bezier(.25,.8,.3,1) both}
+@keyframes lessIn{from{opacity:0;transform:scale(.8)}to{opacity:1;transform:none}}
 .card.expanded .lessbtn .mi{font-size:20px}
 /* card geometry, so sticky strips can span the whole card: score column + gap + padding */
 .card{--scol:52px;--sgap:14px;--padx:18px;--pady:16px}
@@ -612,8 +614,7 @@ details.srcs{background:var(--panel);border-radius:16px;box-shadow:var(--e1);pad
 .card.expanded.footend .actions::after,.card.expanded.footend .actions::before{border-radius:inherit}
 .card.liked .sh::after,.card.liked.expanded .actions::after{background:linear-gradient(to right,var(--accent) 0 4px,transparent 4px)}
 .card.disliked .sh::after,.card.disliked.expanded .actions::after{background:linear-gradient(to left,var(--danger) 0 4px,transparent 4px)}
-.card .sh::after{-webkit-mask-image:linear-gradient(to bottom,#000 72%,transparent);mask-image:linear-gradient(to bottom,#000 72%,transparent)}
-.card.expanded .actions::after{-webkit-mask-image:linear-gradient(to top,#000 72%,transparent);mask-image:linear-gradient(to top,#000 72%,transparent)}
+
 </style>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@700;800&display=swap">
@@ -1156,23 +1157,47 @@ function fullHtml(r){
   }
   return text.split(/\n+/).filter(Boolean).map(p => `<p>${esc(p)}</p>`).join("");
 }
+function flipActions(c, change){   // the action row changes layout: let its buttons slide there instead of jumping
+  const items = [...c.querySelectorAll(".actions > *")];
+  const before = items.map(el => el.getBoundingClientRect());
+  change();
+  items.forEach((el, i) => {
+    if (!before[i].width) return;                       // wasn't on screen before (the Less button): it fades in
+    const now = el.getBoundingClientRect();
+    const dx = before[i].left - now.left, dy = before[i].top - now.top;
+    if (!dx && !dy) return;
+    el.style.transition = "none";
+    el.style.transform = `translate(${dx}px,${dy}px)`;
+    requestAnimationFrame(() => {
+      el.style.transition = "transform .45s cubic-bezier(.25,.8,.3,1)";
+      el.style.transform = "";
+      setTimeout(() => { el.style.transition = ""; }, 460);
+    });
+  });
+}
 async function toggleMore(btn){
   const c = btn.closest(".card"), k = btn.dataset.k, wrap = c.querySelector(".fullwrap"), box = c.querySelector(".fulltext");
   const r = DATA.rows.find(x => x.key === k);
   const more = c.querySelector(".morebtn");
   if (expanded.has(k)) {
-    expanded.delete(k); wrap.classList.remove("open"); c.classList.remove("expanded", "headout");
+    expanded.delete(k);
+    flipActions(c, () => { wrap.classList.remove("open"); c.classList.remove("expanded", "headout", "footend"); });
     more.classList.remove("open"); more.lastElementChild.textContent = "More";
     // if we were deep inside the ad, bring the card's top back into view
     const top = c.getBoundingClientRect().top, barvis = window.__barvis || 0;
     if (top < barvis) jumpTo(scrollY + top - barvis - 10);
     return;
   }
-  expanded.add(k); c.classList.add("expanded"); more.classList.add("open"); more.lastElementChild.textContent = "Less";
-  if (!details.has(k)) { box.innerHTML = '<p class="fullnote">Loading…</p>'; wrap.classList.add("open"); await loadDetail(k); }
+  expanded.add(k);
+  // load the text BEFORE opening: growing into a "Loading…" box and then swapping in the real text
+  // skipped the animation entirely, which is why it used to snap open
+  if (!details.has(k)) { more.classList.add("busy"); await loadDetail(k); more.classList.remove("busy"); }
+  if (!expanded.has(k)) return;                          // she closed it again while the text was loading
   box.innerHTML = details.has(k) ? fullHtml(r) : '<p class="fullnote">Couldn\'t load the full text.</p>';
+  more.classList.add("open"); more.lastElementChild.textContent = "Less";
+  flipActions(c, () => c.classList.add("expanded"));
   requestAnimationFrame(() => wrap.classList.add("open"));
-  setTimeout(updateStickyHeads, 600);   // once it has finished growing, the card knows where its footer sits
+  setTimeout(updateStickyHeads, 750);   // once it has finished growing, the card knows where its footer sits
 }
 function updateStickyHeads(){   // show a card's mini header once its real title is under the top bar
   const barvis = window.__barvis || 0, list = document.querySelectorAll(".card.expanded");
