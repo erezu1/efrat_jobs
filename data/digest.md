@@ -11,5 +11,3 @@
 
 - **[6/10] [Promovendus erfelijke hartspierziekten bij kinderen](https://www.academictransfer.com/en/jobs/363586/promovendus-erfelijke-hartspierziekten-bij-kinderen/)** — Erasmus MC — deadline 2026-09-16 (**1 day left**)
   Als promovendus onderzoek je hoe we hartfalen bij kinderen met erfelijke hartspierziekten beter kunnen voorspellen, diagnosticeren en behandelen.
-
-Full list: https://erezu1.github.io/efrat_jobs/

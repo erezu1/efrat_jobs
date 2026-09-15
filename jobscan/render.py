@@ -97,9 +97,34 @@ def render(state: dict, runs: list[dict], out: Path) -> None:
         "rows": rows,
         "sources": last.get("sources", {}),
     }
+    for row in rows:   # tell the page whether there is more text than the summary
+        desc = (state[row["key"]].get("description") or "").strip()
+        row["more"] = len(desc) > len(row.get("summary") or "") + 40
     data = json.dumps(payload, ensure_ascii=False).replace("</", "<\\/")
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(TEMPLATE.replace("__DATA__", data))
+    write_details(state, rows, out.parent / "details")
+
+
+DETAIL_SHARDS = 16
+DETAIL_MAX = 6000
+
+
+def shard_of(key: str) -> int:
+    """Same tiny hash as the page's JS (sum of UTF-16 code units), so it knows which file to load."""
+    return sum(ord(c) if ord(c) < 0x10000 else 2 for c in key) % DETAIL_SHARDS
+
+
+def write_details(state: dict, rows: list[dict], folder: Path) -> None:
+    """Full ad texts, split into small files the page loads only when "More" is tapped."""
+    shards = [dict() for _ in range(DETAIL_SHARDS)]
+    for row in rows:
+        if row.get("more"):
+            desc = re.sub(r"\n{3,}", "\n\n", (state[row["key"]].get("description") or "").strip())
+            shards[shard_of(row["key"])][row["key"]] = desc[:DETAIL_MAX]
+    folder.mkdir(parents=True, exist_ok=True)
+    for i, d in enumerate(shards):
+        (folder / f"{i}.json").write_text(json.dumps(d, ensure_ascii=False, sort_keys=True))
 
 
 TEMPLATE = r"""<!doctype html>
@@ -473,6 +498,20 @@ details.srcs{background:var(--panel);border-radius:16px;box-shadow:var(--e1);pad
 #dlpop.show{opacity:1;transform:none;visibility:visible}
 #dlpop .mi{font-size:24px;color:var(--accent)}
 #dlpop small{display:block;color:var(--muted);margin-top:2px}
+
+/* "More": full ad text expands in place */
+.fullwrap{display:grid;grid-template-rows:0fr;transition:grid-template-rows .35s cubic-bezier(.4,0,.2,1)}
+.fullwrap.open{grid-template-rows:1fr}
+.fulltext{min-height:0;overflow:hidden;opacity:0;transition:opacity .3s ease;cursor:auto}
+.fullwrap.open .fulltext{opacity:1}
+.fulltext p{margin:8px 0;font-size:14px;line-height:1.55;color:var(--ink);white-space:pre-line;overflow-wrap:anywhere}
+.fulltext .fullnote{color:var(--muted);font-size:13px;display:flex;align-items:center;gap:6px}
+.fulltext .fullnote .mi{font-size:17px;color:var(--accent)}
+.morebtn{border:0;background:transparent;color:var(--accent);font:600 13px/1 inherit;padding:6px 8px 6px 2px;margin:2px 0 0;
+  display:inline-flex;align-items:center;gap:2px;border-radius:8px;cursor:pointer}
+.morebtn .mi{font-size:20px;transition:transform .3s ease}
+.morebtn.open .mi{transform:rotate(180deg)}
+.morebtn:hover{background:var(--accent-soft)}
 </style>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@700;800&display=swap">
@@ -794,6 +833,8 @@ function card(r){
       <div class="meta"><span><span class="mi">apartment</span>${esc(r.org)}</span>${r.loc?`<a class="placelink" href="#" data-place="${esc(placeKey(r))}" data-label="${esc(r.loc)}" title="Show only jobs in ${esc(r.loc)}"><span class="mi">location_on</span>${esc(r.loc)}</a>`:""}<span><span class="mi">visibility</span>first seen ${esc(r.first_seen)}</span></div>
       <div class="tags">${tags.join("")}</div>
       ${summary?`<p class="summary">${esc(summary)}</p>`:""}
+      ${r.more ? `<div class="fullwrap ${expanded.has(r.key)?"open":""}"><div class="fulltext">${expanded.has(r.key) && details.has(r.key) ? fullHtml(r) : ""}</div></div>
+      <button class="morebtn ${expanded.has(r.key)?"open":""}" data-k="${esc(r.key)}"><span class="mi">expand_more</span><span>${expanded.has(r.key)?"Less":"More"}</span></button>` : ""}
       ${r.why?`<p class="why">${esc(r.why)}</p>`:""}
       ${r.blockers?.length?`<p class="blockers"><span class="mi">warning</span> ${r.blockers.map(esc).join(" · ")}</p>`:""}
       <div class="actions">
@@ -857,6 +898,7 @@ function draw(){
       });
     }
   }
+  $("list").querySelectorAll(".morebtn").forEach(b => b.onclick = e => { e.stopPropagation(); toggleMore(b); });
   $("list").querySelectorAll(".dltag").forEach(b => b.onclick = e => { e.stopPropagation(); showDeadline(b); });
   $("list").querySelectorAll(".cattag").forEach(a => a.onclick = e => { e.preventDefault(); setCat(a.dataset.c); });
   $("list").querySelectorAll(".placelink").forEach(a => a.onclick = e => { e.preventDefault(); setPlace(a.dataset.place, a.dataset.label); });
@@ -889,13 +931,49 @@ function draw(){
   $("list").querySelectorAll(".card").forEach(c => {
     wireSwipe(c);
     c.addEventListener("click", e => {          // whole card opens the ad (except its own controls)
-      if (e.target.closest("a,button,input,label,select") || c.dataset.dragged) return;
+      if (e.target.closest("a,button,input,label,select,.fullwrap") || c.dataset.dragged) return;
       if (String(getSelection()).length) return;   // don't hijack text selection
       window.open(c.dataset.url, "_blank", "noopener");
     });
   });
 }
 
+// ---- "More": full ad text, loaded on demand from docs/details/<shard>.json ----
+const expanded = new Set(), details = new Map(), shardLoads = new Map();
+const shardOf = k => { let h = 0; for (let i = 0; i < k.length; i++) h += k.charCodeAt(i); return h % 16; };
+function loadDetail(k){
+  const i = shardOf(k);
+  if (!shardLoads.has(i)) shardLoads.set(i, fetch(`details/${i}.json`).then(r => r.json())
+    .then(d => { for (const [kk, v] of Object.entries(d)) details.set(kk, v); })
+    .catch(() => shardLoads.delete(i)));
+  return shardLoads.get(i);
+}
+function fullHtml(r){
+  let text = details.get(r.key) || "";
+  // the card already shows the start of the ad as its summary: continue from there instead of repeating it
+  const shown = (r.summary || "").replace(/…$/, "").replace(/\s+/g, " ").trim();
+  const flat = text.replace(/\s+/g, " ");
+  if (shown.length > 40 && flat.startsWith(shown)) {
+    let i = 0, n = 0;                                 // map the flattened offset back onto the original text
+    while (i < text.length && n < shown.length) { if (/\s/.test(text[i])) { while (/\s/.test(text[i+1]||"")) i++; } i++; n++; }
+    text = text.slice(i).replace(/^[\s.,;:]+/, "");
+  }
+  const dutchNote = lang === "en" && (r.title_en || r.summary_en)
+    ? `<p class="fullnote"><span class="mi">translate</span>The full ad is in Dutch — <a href="https://translate.google.com/translate?sl=nl&tl=en&u=${encodeURIComponent(r.url)}" target="_blank" rel="noopener">open it translated</a></p>` : "";
+  return dutchNote + text.split(/\n+/).filter(Boolean).map(p => `<p>${esc(p)}</p>`).join("");
+}
+async function toggleMore(btn){
+  const c = btn.closest(".card"), k = btn.dataset.k, wrap = c.querySelector(".fullwrap"), box = c.querySelector(".fulltext");
+  const r = DATA.rows.find(x => x.key === k);
+  if (expanded.has(k)) {
+    expanded.delete(k); wrap.classList.remove("open"); btn.classList.remove("open"); btn.lastElementChild.textContent = "More";
+    return;
+  }
+  expanded.add(k); btn.classList.add("open"); btn.lastElementChild.textContent = "Less";
+  if (!details.has(k)) { box.innerHTML = '<p class="fullnote">Loading…</p>'; wrap.classList.add("open"); await loadDetail(k); }
+  box.innerHTML = details.has(k) ? fullHtml(r) : '<p class="fullnote">Couldn\'t load the full text.</p>';
+  requestAnimationFrame(() => wrap.classList.add("open"));
+}
 function leave(c, dir){   // gentle exit for a card that no longer belongs in this tab
   c.style.transition = "transform .32s ease, opacity .32s ease";
   c.style.transform = `translateY(-6px) scale(.97) translateX(${dir * 12}px)`; c.style.opacity = "0";
