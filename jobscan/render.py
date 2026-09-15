@@ -563,13 +563,13 @@ details.srcs{background:var(--panel);border-radius:16px;box-shadow:var(--e1);pad
 .sh .mi{font-size:20px;color:var(--accent)}
 
 /* odometer roll for tab counts */
-.tabcount.roll{overflow:hidden}
-.tabcount .rsize{visibility:hidden}
-.tabcount .rold,.tabcount .rnew{position:absolute;left:0;right:0;top:0;text-align:center}
-.tabcount.roll.up .rold{animation:rollOutUp .45s cubic-bezier(.4,0,.2,1) both}
-.tabcount.roll.up .rnew{animation:rollInUp .45s cubic-bezier(.4,0,.2,1) both}
-.tabcount.roll.down .rold{animation:rollOutDown .45s cubic-bezier(.4,0,.2,1) both}
-.tabcount.roll.down .rnew{animation:rollInDown .45s cubic-bezier(.4,0,.2,1) both}
+.tabcount.roll,.minibadge.roll{overflow:hidden}
+.tabcount .rsize,.minibadge .rsize{visibility:hidden}
+.tabcount .rold,.tabcount .rnew,.minibadge .rold,.minibadge .rnew{position:absolute;left:0;right:0;top:0;text-align:center}
+.tabcount.roll.up .rold,.minibadge.roll.up .rold{animation:rollOutUp .45s cubic-bezier(.4,0,.2,1) both}
+.tabcount.roll.up .rnew,.minibadge.roll.up .rnew{animation:rollInUp .45s cubic-bezier(.4,0,.2,1) both}
+.tabcount.roll.down .rold,.minibadge.roll.down .rold{animation:rollOutDown .45s cubic-bezier(.4,0,.2,1) both}
+.tabcount.roll.down .rnew,.minibadge.roll.down .rnew{animation:rollInDown .45s cubic-bezier(.4,0,.2,1) both}
 .tabcount.gone{animation:badgeOut .45s .25s ease both}
 .tabcount.pop{animation:badgePop .4s cubic-bezier(.3,1.4,.5,1) both}
 @keyframes rollOutUp{to{transform:translateY(-100%);opacity:0}}
@@ -878,7 +878,17 @@ function renderStats(){
       <span class="tablabel">${v.label}</span></button>`;
   }).join("");
   const curN = DATA.rows.filter(r => VIEWS[view].f(r) && passesFilters(r, view)).length;
-  $("minibadge").textContent = fmtCount(curN); $("minibadge").classList.toggle("has", curN > 0);
+  const mb = $("minibadge"), prevMini = mb.dataset.n == null ? null : +mb.dataset.n;
+  if (prevMini !== curN) {                   // same odometer roll as the tab badges
+    const dir = prevMini != null && curN > prevMini ? "up" : "down";
+    mb.classList.remove("roll", "up", "down");
+    if (prevMini != null && prevMini > 0 && curN > 0) {
+      mb.innerHTML = `<span class="rsize">${fmtCount(curN)}</span><span class="rold">${fmtCount(prevMini)}</span><span class="rnew">${fmtCount(curN)}</span>`;
+      void mb.offsetWidth; mb.classList.add("roll", dir);
+    } else if (curN > 0) mb.textContent = fmtCount(curN);
+    mb.dataset.n = curN;
+  }
+  mb.classList.toggle("has", curN > 0);
   $("minibadge").title = `${curN} in ${VIEWS[view].label}`;
   $("stats").querySelectorAll(".tab").forEach(el => el.onclick = () => {
     if (view !== el.dataset.v) $("sort").value = onlyClosing ? "deadline" : onlyNew ? "new" : defaultSort(el.dataset.v);
