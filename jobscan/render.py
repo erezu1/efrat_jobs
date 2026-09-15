@@ -346,6 +346,9 @@ input[type=search]:focus,select:focus{outline:2px solid var(--accent);outline-of
 .card .sh{isolation:isolate}
 .card.expanded .actions::before,.card .sh::before{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;z-index:-1;
   opacity:calc(var(--p,0) * .92)}
+/* fade the strips' tint exactly like their background, so it doesn't stack with the card's tint in the fade zone */
+.card .sh::before{-webkit-mask-image:linear-gradient(to bottom,#000 72%,transparent);mask-image:linear-gradient(to bottom,#000 72%,transparent)}
+.card.expanded .actions::before{-webkit-mask-image:linear-gradient(to top,#000 72%,transparent);mask-image:linear-gradient(to top,#000 72%,transparent)}
 .card[data-dir="yes"] .sh::before,.card.expanded[data-dir="yes"] .actions::before{background:linear-gradient(to right,color-mix(in srgb,var(--accent) 26%,var(--panel)) 0%,color-mix(in srgb,var(--panel) 60%,transparent) 70%)}
 .card[data-dir="no"] .sh::before,.card.expanded[data-dir="no"] .actions::before{background:linear-gradient(to left,color-mix(in srgb,var(--danger) 22%,var(--panel)) 0%,color-mix(in srgb,var(--panel) 60%,transparent) 70%)}
 .card .actions{position:relative;z-index:3}
@@ -569,6 +572,18 @@ details.srcs{background:var(--panel);border-radius:16px;box-shadow:var(--e1);pad
 @keyframes rollInDown{from{transform:translateY(-100%);opacity:0}}
 @keyframes badgeOut{to{transform:scale(.4);opacity:0}}
 @keyframes badgePop{from{transform:scale(.3);opacity:0}}
+
+/* phone map mode: the map fills the screen below the top bar and the page itself doesn't scroll */
+@media (max-width:760px){
+  html.mapmode,html.mapmode body{overflow:hidden;height:100%;overscroll-behavior:none}
+  html.mapmode main{padding-bottom:0}
+  html.mapmode #topbar{animation:none!important;transform:none!important}   /* full top bar in map mode */
+  html.mapmode #map{height:calc(100dvh - var(--tbh,0px) - 12px - env(safe-area-inset-bottom));margin-top:0}
+  html.mapmode .srcs{display:none}
+  html.mapmode .nomap{position:fixed;left:14px;right:14px;bottom:calc(18px + env(safe-area-inset-bottom));z-index:5;
+    background:var(--panel);border-radius:10px;padding:6px 10px;box-shadow:var(--e1);text-align:center}
+  html.mapmode .nomap:empty{display:none}
+}
 </style>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@700;800&display=swap">
@@ -941,6 +956,10 @@ function draw(){
   $("qNew").classList.toggle("on", onlyNew); $("qNew").setAttribute("aria-pressed", onlyNew);
   $("qClosing").classList.toggle("on", onlyClosing); $("qClosing").setAttribute("aria-pressed", onlyClosing);
   $("map").hidden = !mapMode; $("list").hidden = mapMode; $("nomap").hidden = !mapMode;
+  const phoneMap = mapMode && matchMedia("(max-width: 760px)").matches;
+  if (phoneMap && !document.documentElement.classList.contains("mapmode")) window.scrollTo(0, 0);
+  document.documentElement.classList.toggle("mapmode", phoneMap);
+  window.__barUpdate?.();
   if (mapMode) return drawMap(rows);
   // FLIP: remember where cards were, so after re-rendering they glide to their new places
   const before = new Map();
@@ -951,8 +970,10 @@ function draw(){
   if ("__scrollToKey" in window && window.__scrollToFallbackTop != null) {   // jump before FLIP measures, so cards glide from the right place
     const nextEl = window.__scrollToKey && $("list").querySelector(`.card[data-k="${CSS.escape(window.__scrollToKey)}"]`);
     const target = nextEl ? scrollY + nextEl.getBoundingClientRect().top : window.__scrollToFallbackTop;
-    window.__noRevealUntil = Date.now() + 800;
-    window.scrollTo(0, Math.max(0, target - (window.__barvis || 0) - 10));
+    const dest = Math.max(0, target - (window.__barvis || 0) - 10);
+    window.__noRevealUntil = Date.now() + 1400;
+    window.scrollTo(0, Math.max(0, target - (window.__scrollFromTop ?? innerHeight)));   // put it back where it was on screen…
+    requestAnimationFrame(() => window.scrollTo({top: dest, behavior: "smooth"}));       // …then glide it up under the bar
     delete window.__scrollToKey; window.__scrollToFallbackTop = null;
     skipFlip = true;                                   // positions changed by the jump: no glide needed
   }
@@ -1084,6 +1105,8 @@ function rememberNextCard(el){   // leaving from deep inside an expanded card: c
   if (!el.classList.contains("expanded") || el.getBoundingClientRect().top >= (window.__barvis || 0)) return;
   const next = el.nextElementSibling;
   window.__scrollToKey = next && next.classList.contains("card") ? next.dataset.k : null;
+  // where the next card was on screen (just below the screen if it was further down): the glide starts there
+  window.__scrollFromTop = next ? Math.min(next.getBoundingClientRect().top, innerHeight + 20) : innerHeight;
   window.__scrollToFallbackTop = scrollY + el.getBoundingClientRect().top;
 }
 function leave(c, dir){   // gentle exit for a card that no longer belongs in this tab
@@ -1290,8 +1313,8 @@ function jumpTo(top){ window.__noRevealUntil = Date.now() + 1200; window.scrollT
   let lastY = scrollY, anchor = scrollY, dir = 0, ticking = false;
   let linked = timeline, shown = true, hide = 0;
   const last = {};
-  const put = (el, name, v) => { const key = name; if (last[key] !== v) { last[key] = v; el.style.setProperty(name, v); } };
-  const cls = (el, name, on) => { const key = "c:" + name; if (last[key] !== on) { last[key] = on; el.classList.toggle(name, on); } };
+  const put = (el, name, v) => { const key = (el.id || "") + name; if (last[key] !== v) { last[key] = v; el.style.setProperty(name, v); } };
+  const cls = (el, name, on) => { const key = "c:" + (el.id || "") + name; if (last[key] !== on) { last[key] = on; el.classList.toggle(name, on); } };
   const setHide = (v, anim) => { hide = v; cls(bar, "anim", anim); put(bar, "--hide", v + "px"); };
   const update = () => {
     ticking = false;
@@ -1333,10 +1356,12 @@ function jumpTo(top){ window.__noRevealUntil = Date.now() + 1200; window.scrollT
     H = hdr.offsetHeight; B = bar.offsetHeight;
     put(bar, "--hh", H + "px");
     put($("topspace"), "--tbh", B + "px");
+    put($("map"), "--tbh", B + "px");
   };
   addEventListener("scroll", () => { if (!ticking) { ticking = true; requestAnimationFrame(update); } }, {passive: true});
   new ResizeObserver(() => { measure(); update(); }).observe(bar);
   measure(); update();
+  window.__barUpdate = () => { measure(); update(); };
 })();
 $("minilogo").onclick = e => { e.preventDefault(); window.scrollTo({top: 0, behavior: "smooth"}); };
 document.querySelector("h1").onclick = () => window.scrollTo({top: 0, behavior: "smooth"});   // logo / title: back to top
