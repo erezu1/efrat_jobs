@@ -248,13 +248,8 @@ html,body{overflow-x:clip}
 /* Top bar = title + tabs + search/filters, fixed to the screen (composited: no jitter on fast scrolls).
    Scrolling down slides the title part up out of view; scrolling up slides it back. The whole bar moves as one. */
 #topbar{position:fixed;top:0;left:0;right:0;z-index:6;padding-top:env(safe-area-inset-top);
-  transform:translateY(calc(-1 * var(--hide,0px)));will-change:transform;contain:layout style}
+  will-change:transform;contain:layout style}
 #topbar.anim{transition:transform .32s cubic-bezier(.25,.8,.3,1)}
-/* near the top the title scrolls away exactly with the page, driven by the browser's scroll timeline (no lag) */
-@keyframes barCollapse{from{transform:translateY(0)}to{transform:translateY(calc(-1 * var(--hh,0px)))}}
-@supports (animation-timeline: scroll()) {
-  #topbar.linked{animation:barCollapse linear both;animation-timeline:scroll(root block);animation-range:0px var(--hh,0px)}
-}
 #topbar::before{content:"";position:absolute;left:0;right:0;top:0;bottom:0;z-index:-1;background:var(--bg);transition:background .25s}
 /* the soft fade stays inside the bar's own bottom padding, so the page keeps its normal spacing */
 #topbar.scrolled::before{background:color-mix(in srgb,var(--bg) 72%,transparent);
@@ -541,22 +536,23 @@ details.srcs{background:var(--panel);border-radius:16px;box-shadow:var(--e1);pad
 /* expanded card: action row sticks to the screen bottom, mini header sticks under the top bar */
 .actions .lessbtn{display:none}
 .card.expanded .morebtn{display:none}
-.card.expanded .actions .lessbtn{display:inline-flex;position:absolute;border:0;border-radius:999px;background:var(--chip);color:var(--accent);
-  font:600 13px/1 inherit;padding:8px 12px 8px 8px;align-items:center;gap:2px;cursor:pointer}
+.card.expanded .actions .lessbtn{display:inline-flex;border:0;border-radius:999px;background:var(--chip);color:var(--accent);
+  font:600 13px/1 inherit;padding:10px 14px 10px 10px;align-items:center;gap:2px;cursor:pointer;margin-right:auto}
+.card.expanded .actions .applybox{margin-left:auto}
 .card.expanded .lessbtn .mi{font-size:20px}
 /* card geometry, so sticky strips can span the whole card: score column + gap + padding */
 .card{--scol:52px;--sgap:14px;--padx:18px;--pady:16px}
 @media (max-width:760px){.card{--scol:40px;--sgap:10px;--padx:14px;--pady:14px}}
-.card.expanded .actions{position:sticky;bottom:0;z-index:2;
+.card.expanded .actions{position:sticky;bottom:0;z-index:3;
   margin:14px calc(-1 * var(--padx)) calc(-1 * var(--pady)) calc(-1 * (var(--scol) + var(--sgap) + var(--padx)));
   padding:22px var(--padx) calc(var(--pady) + env(safe-area-inset-bottom));border-radius:0 0 16px 16px;
   background:linear-gradient(to top,var(--panel) 72%,color-mix(in srgb,var(--panel) 0%,transparent))}
-.card.expanded .actions .lessbtn{left:var(--padx)}
+
 /* tucks under the bar's bottom fade so no text shows between the search bar and this strip */
 .stickyhead{position:sticky;top:calc(var(--sht,0px) - 26px);height:0;z-index:4;transition:top .32s cubic-bezier(.25,.8,.3,1)}
 .sh{position:absolute;left:calc(-1 * (var(--scol) + var(--sgap) + var(--padx)));right:calc(-1 * var(--padx));top:0;display:flex;align-items:center;gap:8px;border:0;border-radius:0;
   background:linear-gradient(to bottom,var(--panel) 72%,color-mix(in srgb,var(--panel) 0%,transparent));box-shadow:none;
-  padding:36px var(--padx) 22px;cursor:pointer;color:var(--ink);text-align:left;
+  padding:27px var(--padx) 20px;cursor:pointer;color:var(--ink);text-align:left;
   opacity:0;transform:translateY(-8px);pointer-events:none;transition:opacity .2s,transform .2s}
 .card.expanded.headout .sh{opacity:1;transform:none;pointer-events:auto}
 .shscore{flex:none;width:26px;height:26px;border-radius:8px;color:#fff;font:700 13px/26px inherit;text-align:center}
@@ -584,7 +580,7 @@ details.srcs{background:var(--panel);border-radius:16px;box-shadow:var(--e1);pad
 @media (max-width:760px){
   html.mapmode,html.mapmode body{overflow:hidden;height:100%;overscroll-behavior:none}
   html.mapmode main{padding-bottom:0}
-  html.mapmode #topbar{animation:none!important}   /* full top bar in map mode (slid in by JS) */
+  html.mapmode #topbar{transform:none!important}   /* full top bar in map mode */
   html.mapmode #map{height:calc(100dvh - var(--tbh,0px) - 12px - env(safe-area-inset-bottom));margin-top:0}
   html.mapmode .srcs{display:none}
   html.mapmode .nomap{position:fixed;left:14px;right:14px;bottom:calc(18px + env(safe-area-inset-bottom));z-index:5;
@@ -601,8 +597,12 @@ details.srcs{background:var(--panel);border-radius:16px;box-shadow:var(--e1);pad
 }
 
 /* keep the interested / rejected edge stripe visible on the sticky strips of an expanded card */
-.card.liked .sh,.card.liked.expanded .actions{box-shadow:inset 4px 0 0 var(--accent)}
-.card.disliked .sh,.card.disliked.expanded .actions{box-shadow:inset -4px 0 0 var(--danger)}
+.card.liked .sh::after,.card.liked.expanded .actions::after,
+.card.disliked .sh::after,.card.disliked.expanded .actions::after{content:"";position:absolute;inset:0;pointer-events:none;border-radius:inherit}
+.card.liked .sh::after,.card.liked.expanded .actions::after{background:linear-gradient(to right,var(--accent) 0 4px,transparent 4px)}
+.card.disliked .sh::after,.card.disliked.expanded .actions::after{background:linear-gradient(to left,var(--danger) 0 4px,transparent 4px)}
+.card .sh::after{-webkit-mask-image:linear-gradient(to bottom,#000 72%,transparent);mask-image:linear-gradient(to bottom,#000 72%,transparent)}
+.card.expanded .actions::after{-webkit-mask-image:linear-gradient(to top,#000 72%,transparent);mask-image:linear-gradient(to top,#000 72%,transparent)}
 </style>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@700;800&display=swap">
@@ -857,6 +857,10 @@ const VIEWS = {
   applied:    {label:"Applied",    icon:"send",         hue:"#2f7dd1", tip:"Applied", f: r => marks[r.key] === "interested" && !!applied[r.key]},
   rejected:   {label:"Rejected",   icon:"thumb_down",   hue:"#8a7f90", tip:"Marked not interested", f: r => marks[r.key] === "hidden"},
 };
+try {   // reopen on the tab she left
+  const v = localStorage.getItem("view");
+  if (v && VIEWS[v]) view = v;
+} catch(e) {}
 function passesFilters(r, v){
   if (v === "review") {
     if (!r.pre && !$("showfiltered").checked) return false;
@@ -905,7 +909,9 @@ function renderStats(){
   $("minibadge").title = `${curN} in ${VIEWS[view].label}`;
   $("stats").querySelectorAll(".tab").forEach(el => el.onclick = () => {
     if (view !== el.dataset.v) $("sort").value = onlyClosing ? "deadline" : onlyNew ? "new" : defaultSort(el.dataset.v);
-    view = el.dataset.v; updateFilterDot(); draw();
+    view = el.dataset.v;
+    try { localStorage.setItem("view", view); } catch(e) {}
+    updateFilterDot(); draw();
   });
 }
 
@@ -990,15 +996,9 @@ function draw(){
   $("map").hidden = !mapMode; $("list").hidden = mapMode; $("nomap").hidden = !mapMode;
   const phoneMap = mapMode && matchMedia("(max-width: 760px)").matches;
   const entering = phoneMap && !document.documentElement.classList.contains("mapmode");
-  const bar = $("topbar"), fromY = entering ? bar.getBoundingClientRect().top : 0;   // where the bar is right now
-  if (entering) window.scrollTo(0, 0);
+  if (entering) window.__barShow?.();                     // map mode needs the whole bar: slide it open
   document.documentElement.classList.toggle("mapmode", phoneMap);
-  if (entering && fromY < -1) {                       // bar was minimized: slide it open instead of jumping
-    bar.style.transition = "none"; bar.style.transform = `translateY(${fromY}px)`;
-    void bar.offsetHeight;
-    bar.style.transition = "transform .36s cubic-bezier(.25,.8,.3,1)"; bar.style.transform = "translateY(0)";
-    setTimeout(() => { bar.style.transition = ""; bar.style.transform = ""; }, 380);
-  }
+  if (entering) window.scrollTo(0, 0);
   window.__barUpdate?.();
   if (mapMode) return drawMap(rows);
   // FLIP: remember where cards were, so after re-rendering they glide to their new places
@@ -1007,16 +1007,30 @@ function draw(){
   const doFlip = flipNext; flipNext = false;
   let skipFlip = false;
   $("list").innerHTML = rows.length ? rows.map(card).join("") : `<div class="empty">Nothing here right now.</div>`;
-  if ("__scrollToKey" in window && window.__scrollToFallbackTop != null) {   // jump before FLIP measures, so cards glide from the right place
+  if ("__scrollToKey" in window && window.__scrollToFallbackTop != null) {
+    // Keep the gone card's space as a placeholder and shrink it while scrolling: the next card
+    // glides up in one continuous motion instead of jumping when the card is removed.
     const nextEl = window.__scrollToKey && $("list").querySelector(`.card[data-k="${CSS.escape(window.__scrollToKey)}"]`);
-    const target = nextEl ? scrollY + nextEl.getBoundingClientRect().top : window.__scrollToFallbackTop;
-    const dest = Math.max(0, target - (window.__barvis || 0) - 10);
-    freezeBar(1500);
-    window.scrollTo(0, Math.max(0, target - (window.__scrollFromTop ?? innerHeight)));   // put it back where it was on screen…
-    requestAnimationFrame(() => window.scrollTo({top: dest, behavior: "smooth"}));       // …then glide it up under the bar
-    if (nextEl) settleOn(nextEl.dataset.k);
+    const removedH = window.__removedH || 0;
     delete window.__scrollToKey; window.__scrollToFallbackTop = null;
-    skipFlip = true;                                   // positions changed by the jump: no glide needed
+    skipFlip = true;
+    if (nextEl && removedH > 0) {
+      const spacer = document.createElement("div");
+      spacer.style.height = removedH + "px";
+      nextEl.before(spacer);
+      const startScroll = scrollY;
+      const nextAbs = scrollY + nextEl.getBoundingClientRect().top;
+      const dest = Math.max(0, nextAbs - removedH - (window.__barvis || 0) - 10);
+      freezeBar(900);
+      const dur = 420, t0 = performance.now();
+      const step = now => {
+        const t = Math.min(1, (now - t0) / dur), e = 1 - Math.pow(1 - t, 3);   // ease-out
+        spacer.style.height = removedH * (1 - e) + "px";
+        window.scrollTo(0, startScroll + (dest - startScroll) * e);
+        if (t < 1) requestAnimationFrame(step); else { spacer.remove(); settleOn(nextEl.dataset.k); }
+      };
+      requestAnimationFrame(step);
+    }
   }
   if (doFlip && !skipFlip) {
     const moved = [];
@@ -1159,8 +1173,9 @@ function rememberNextCard(el){   // a card whose top is hidden under the bar lea
   const next = el.nextElementSibling;
   window.__scrollToKey = next && next.classList.contains("card") ? next.dataset.k : null;
   // where the next card was on screen (just below the screen if it was further down): the glide starts there
-  window.__scrollFromTop = next ? Math.min(next.getBoundingClientRect().top, innerHeight + 20) : innerHeight;
-  window.__scrollToFallbackTop = scrollY + el.getBoundingClientRect().top;
+  const r = el.getBoundingClientRect();
+  window.__removedH = r.height;                       // its space is kept as a placeholder, then shrunk away
+  window.__scrollToFallbackTop = scrollY + r.top;
 }
 function leave(c, dir){   // gentle exit for a card that no longer belongs in this tab
   c.style.transition = "transform .32s ease, opacity .32s ease";
@@ -1354,89 +1369,51 @@ function drawMap(rows){
   $("nomap").textContent = missing ? `${missing} job${missing===1?"":"s"} without a known location aren't shown on the map.` : "";
 }
 $("placechip").onclick = () => setPlace(null);
-// show the small logo in the sticky bar once the page header has scrolled away
-window.__noRevealUntil = 0;
 // Automatic scrolls (jump to card, land on next card) must not move the search bar: freeze it where it is.
 function freezeBar(ms){
-  const bar = $("topbar");
-  if (!window.__frozenUntil || Date.now() > window.__frozenUntil) {
-    bar.style.transition = "none"; bar.style.animation = "none";
-    bar.style.transform = `translateY(${-(window.__barEff || 0)}px)`;   // from the bar's state (DOM reads can be stale mid-render)
-  }
   window.__frozenUntil = Date.now() + ms;
-  window.__noRevealUntil = Math.max(window.__noRevealUntil, Date.now() + ms + 1200);   // the glide's last bit mustn't reveal the title
   clearTimeout(window.__unfreezeTimer);
   window.__unfreezeTimer = setTimeout(() => window.__barUnfreeze?.(), ms + 30);
 }
 function jumpTo(top){ freezeBar(900); window.scrollTo({top, behavior: "smooth"}); }
-(() => {   // top bar: title scrolls away with the page; a deliberate scroll up slides it back
+(() => {
+  // The title part of the bar follows the scroll like a phone toolbar: scrolling down pushes it up
+  // by the same amount, scrolling up pulls it back — anywhere in the list. One rule, no modes.
   const bar = $("topbar"), hdr = document.querySelector("header"), ctl = $("controls");
-  const timeline = CSS.supports("animation-timeline: scroll()");
-  // sizes are measured only when they change (ResizeObserver) — never inside the scroll handler
-  let H = hdr.offsetHeight, B = bar.offsetHeight;
-  // "linked": near the top the bar follows the scroll exactly (browser scroll timeline). "free": JS slides it.
-  let lastY = scrollY, anchor = scrollY, dir = 0, ticking = false;
-  let linked = timeline, shown = true, hide = 0;
-  const last = {};
-  const put = (el, name, v) => { const key = (el.id || "") + name; if (last[key] !== v) { last[key] = v; el.style.setProperty(name, v); } };
-  const cls = (el, name, on) => { const key = "c:" + (el.id || "") + name; if (last[key] !== on) { last[key] = on; el.classList.toggle(name, on); } };
-  const setHide = (v, anim) => { hide = v; cls(bar, "anim", anim); put(bar, "--hide", v + "px"); };
+  let H = hdr.offsetHeight, B = bar.offsetHeight, hide = 0, lastY = Math.max(0, scrollY), ticking = false;
+  const apply = () => {
+    bar.style.transform = `translateY(${-hide}px)`;
+    window.__barEff = hide;
+    window.__barvis = B - hide;
+    ctl.classList.toggle("stuck", hide > H - 4);        // mini logo once the title is tucked away
+    updateStickyHeads();
+  };
   const update = () => {
     ticking = false;
     const y = Math.max(0, scrollY);
-    if (Date.now() < (window.__frozenUntil || 0)) { lastY = anchor = y; dir = 0; return; }   // automatic scroll in progress
-    const d = Math.sign(y - lastY);
-    if (d && d !== dir) { dir = d; anchor = lastY; }
-    const jumping = Date.now() < window.__noRevealUntil;       // our own "jump to card" scrolls shouldn't reveal the title
-    const upALot = !jumping && dir < 0 && anchor - y > 140, downABit = dir > 0 && y - anchor > 14;
-    let eff;
-    if (linked) {
-      eff = Math.min(y, H);
-      if (y > H && upALot) {                                  // leave linked mode: slide the title back in
-        linked = false; shown = true; cls(bar, "linked", false);
-        setHide(H, false); requestAnimationFrame(() => requestAnimationFrame(() => setHide(0, true)));
-        eff = 0;
-      }
-    } else if (shown) {
-      eff = hide;
-      if (y <= 1 && timeline) { linked = true; setHide(0, false); }          // back at the top: follow the scroll again
-      else if (y > H && downABit) { shown = false; setHide(H, true); eff = H; }
-    } else {
-      if (y < H) setHide(y, false);                             // hidden near the top: keep the title glued to the page
-      else if (upALot) { shown = true; setHide(0, true); }
-      if (y <= 1 && timeline) { linked = true; setHide(0, false); }
-      eff = hide;
-    }
-    if (!timeline) {                                             // older browsers: slide-only behaviour
-      if (y < H) shown = true; else if (downABit) shown = false; else if (upALot) shown = true;
-      setHide(shown ? 0 : H, true); eff = hide;
-    }
-    cls(bar, "linked", linked);
+    if (Date.now() < (window.__frozenUntil || 0)) { lastY = y; return; }   // automatic scroll in progress
+    hide = Math.min(H, Math.max(0, hide + (y - lastY)));
+    if (y < H) hide = Math.min(hide, y);                 // near the top the title belongs on screen
     lastY = y;
-    window.__barvis = B - eff; window.__barEff = eff;
-    updateStickyHeads();
-    cls(bar, "scrolled", y > 2);
-    cls(ctl, "stuck", eff >= H - 1);           // mini logo while the title is tucked away
+    bar.classList.remove("anim");
+    apply();
+    bar.classList.toggle("scrolled", y > 2);
   };
   const measure = () => {
     H = hdr.offsetHeight; B = bar.offsetHeight;
-    put(bar, "--hh", H + "px");
-    put($("topspace"), "--tbh", B + "px");
-    put($("map"), "--tbh", B + "px");
+    for (const el of [$("topspace"), $("map")]) el.style.setProperty("--tbh", B + "px");
+    apply();
   };
   addEventListener("scroll", () => { if (!ticking) { ticking = true; requestAnimationFrame(update); } }, {passive: true});
   new ResizeObserver(() => { measure(); update(); }).observe(bar);
   measure(); update();
   window.__barUpdate = () => { measure(); update(); };
-  window.__barUnfreeze = () => {
-    const y = Math.max(0, scrollY), shownPx = -(window.__barEff || 0);   // e.g. -H when tucked away
-    // continue in "free" mode from exactly where the bar is, so nothing snaps
-    linked = false; cls(bar, "linked", false);
-    shown = shownPx > -H / 2; setHide(-shownPx, false);
-    bar.style.animation = ""; bar.style.transform = ""; void bar.offsetHeight; bar.style.transition = "";
-    if (y < H) { shown = true; setHide(0, true); }        // near the top the title belongs on screen
-    lastY = anchor = y; dir = 0;
-    update();
+  window.__barUnfreeze = () => { lastY = Math.max(0, scrollY); update(); };
+  window.__barShow = () => {                              // e.g. entering map mode: slide the title back in
+    freezeBar(420);                                       // ignore the scroll this causes, so the slide isn't cut short
+    if (!hide) return;
+    bar.classList.add("anim"); hide = 0; apply();
+    setTimeout(() => bar.classList.remove("anim"), 400);
   };
 })();
 $("minilogo").onclick = e => { e.preventDefault(); window.scrollTo({top: 0, behavior: "smooth"}); };
@@ -1499,6 +1476,7 @@ $("qClosing").onclick = () => { onlyClosing = !onlyClosing; applyAutoSort(); dra
 ["q","minscore","sort","showfiltered"].forEach(id => $(id).addEventListener("input", () => { updateFilterDot(); draw(); }));
 $("srcs").innerHTML = Object.entries(DATA.sources).map(([k,v]) =>
   `<tr><td>${esc(k)}</td><td>${v.ok?`${v.count} jobs, ${v.new} new`:`<span class="bad">failed: ${esc(v.error)}</span>`}</td></tr>`).join("");
+applyAutoSort();   // the restored tab picks its own default sort
 draw();
 // Service worker: always look for a newer version (bypassing HTTP cache) and reload once when it takes over
 if ("serviceWorker" in navigator) {
