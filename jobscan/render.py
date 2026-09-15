@@ -415,7 +415,7 @@ details.srcs{background:var(--panel);border-radius:16px;box-shadow:var(--e1);pad
 .controls.stuck .minilogo{width:38px;opacity:1;margin-right:0}
 /* current tab's count on the mini logo while the tabs are tucked away */
 .miniwrap{position:relative;display:flex;flex:none}
-.minibadge{position:absolute;top:-7px;left:-7px;min-width:20px;height:18px;padding:0 5px;border-radius:999px;pointer-events:none;
+.minibadge{position:absolute;top:-7px;right:-7px;min-width:20px;height:18px;padding:0 5px;border-radius:999px;pointer-events:none;
   background:var(--ink);color:var(--bg);font:700 10.5px/18px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;text-align:center;
   box-shadow:var(--e1);opacity:0;transform:scale(.4);transition:opacity .22s ease,transform .3s cubic-bezier(.3,1.4,.5,1)}
 .controls.stuck .minibadge.has{opacity:1;transform:scale(1);transition-delay:.08s}
