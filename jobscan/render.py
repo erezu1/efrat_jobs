@@ -295,11 +295,12 @@ input[type=search]:focus,select:focus{outline:2px solid var(--accent);outline-of
 .applybox{display:inline-flex;align-items:center;gap:7px;height:48px;padding:0 20px 0 15px;border-radius:999px;cursor:pointer;user-select:none;
   font-size:15px;font-weight:650;color:#2f7dd1;background:color-mix(in srgb,#2f7dd1 12%,var(--panel));
   box-shadow:var(--e1),inset 0 0 0 1.5px color-mix(in srgb,#2f7dd1 45%,transparent);
-  transition:transform .15s,box-shadow .2s,background .25s,color .25s,max-width .45s cubic-bezier(.25,.8,.3,1),padding .45s cubic-bezier(.25,.8,.3,1)}
+  transition:transform .15s,box-shadow .2s,background .25s,color .25s,
+    font-size .45s cubic-bezier(.25,.8,.3,1),padding .45s cubic-bezier(.25,.8,.3,1),gap .45s cubic-bezier(.25,.8,.3,1)}
 .applybox:hover{transform:translateY(-1px);box-shadow:var(--e2),inset 0 0 0 1.5px color-mix(in srgb,#2f7dd1 60%,transparent)}
 .applybox:active{transform:scale(.96)}
 .applybox input{display:none}
-.applybox .mi{font-size:22px;font-variation-settings:"FILL" 0,"wght" 600,"GRAD" 0,"opsz" 24;transform:rotate(-20deg)}
+.applybox .mi{font-size:22px;transition:font-size .45s cubic-bezier(.25,.8,.3,1);font-variation-settings:"FILL" 0,"wght" 600,"GRAD" 0,"opsz" 24;transform:rotate(-20deg)}
 .applybox.on{color:#fff;background:linear-gradient(135deg,#2f7dd1,#1f9a8a);box-shadow:0 6px 14px -5px rgba(47,125,209,.7)}
 .applybox.on .mi{transform:none;font-variation-settings:"FILL" 1,"wght" 600,"GRAD" 0,"opsz" 24}
 .applybox{overflow:hidden;white-space:nowrap;max-width:170px}
@@ -546,10 +547,14 @@ details.srcs{background:var(--panel);border-radius:16px;box-shadow:var(--e1);pad
 .card.expanded .actions .applybox{justify-self:end}
 .card.expanded .actions .vote.no{margin-right:6px}
 .card.expanded .actions .vote.yes{margin-left:6px}
-@media (max-width:760px){   /* a phone has no room for the full pill beside centred buttons */
-  .card.expanded .actions .applybox{min-width:48px;max-width:48px;padding:0;justify-content:center}
+@media (max-width:760px){   /* it keeps its label beside the centred buttons by getting a little smaller */
+  .card.expanded .actions .applybox{font-size:12.5px;padding:0 11px 0 8px;gap:3px}
+  .card.expanded .actions .applybox .mi{font-size:18px}
+  .card.expanded .actions .lessbtn{font-size:12px;padding:9px 11px 9px 7px}
+  .card.expanded .actions .vote.no{margin-right:4px}
+  .card.expanded .actions .vote.yes{margin-left:4px}
 }
-.card.expanded .actions .lessbtn{animation:lessIn .4s .05s cubic-bezier(.25,.8,.3,1) both}
+.card.expanded .actions .lessbtn{animation:lessIn .4s cubic-bezier(.25,.8,.3,1)}
 @keyframes lessIn{from{opacity:0;transform:scale(.8)}to{opacity:1;transform:none}}
 .card.expanded .lessbtn .mi{font-size:20px}
 /* card geometry, so sticky strips can span the whole card: score column + gap + padding */
@@ -1166,13 +1171,8 @@ function flipActions(c, change){   // the action row changes layout: let its but
     const now = el.getBoundingClientRect();
     const dx = before[i].left - now.left, dy = before[i].top - now.top;
     if (!dx && !dy) return;
-    el.style.transition = "none";
-    el.style.transform = `translate(${dx}px,${dy}px)`;
-    requestAnimationFrame(() => {
-      el.style.transition = "transform .45s cubic-bezier(.25,.8,.3,1)";
-      el.style.transform = "";
-      setTimeout(() => { el.style.transition = ""; }, 460);
-    });
+    el.animate([{transform: `translate(${dx}px,${dy}px)`}, {transform: "none"}],
+               {duration: 450, easing: "cubic-bezier(.25,.8,.3,1)"});
   });
 }
 async function toggleMore(btn){
