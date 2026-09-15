@@ -1010,6 +1010,7 @@ function draw(){
     window.__noRevealUntil = Date.now() + 1400;
     window.scrollTo(0, Math.max(0, target - (window.__scrollFromTop ?? innerHeight)));   // put it back where it was on screen…
     requestAnimationFrame(() => window.scrollTo({top: dest, behavior: "smooth"}));       // …then glide it up under the bar
+    if (nextEl) settleOn(nextEl.dataset.k);
     delete window.__scrollToKey; window.__scrollToFallbackTop = null;
     skipFlip = true;                                   // positions changed by the jump: no glide needed
   }
@@ -1137,8 +1138,20 @@ function updateStickyHeads(){   // show a card's mini header once its real title
     c.classList.toggle("headout", t.bottom < barvis + 4 && r.bottom > barvis + 140);
   });
 }
-function rememberNextCard(el){   // leaving from deep inside an expanded card: continue at the next card's top
-  if (!el.classList.contains("expanded") || el.getBoundingClientRect().top >= (window.__barvis || 0)) return;
+function settleOn(key, tries = 0){   // after the glide, make sure the card sits exactly under the bar (bar height can change meanwhile)
+  setTimeout(() => {
+    const el = $("list").querySelector(`.card[data-k="${CSS.escape(key)}"]`);
+    if (!el) return;
+    const d = el.getBoundingClientRect().top - ((window.__barvis || 0) + 10);
+    if (Math.abs(d) > 2 && tries < 3) {
+      window.__noRevealUntil = Date.now() + 1200;
+      window.scrollTo({top: scrollY + d, behavior: "smooth"});
+      settleOn(key, tries + 1);
+    }
+  }, tries ? 450 : 750);
+}
+function rememberNextCard(el){   // a card whose top is hidden under the bar leaves: continue at the next card's top
+  if (el.getBoundingClientRect().top >= (window.__barvis || 0) - 2) return;   // fully visible: cards just glide up into its place
   const next = el.nextElementSibling;
   window.__scrollToKey = next && next.classList.contains("card") ? next.dataset.k : null;
   // where the next card was on screen (just below the screen if it was further down): the glide starts there
