@@ -413,6 +413,12 @@ details.srcs{background:var(--panel);border-radius:16px;box-shadow:var(--e1);pad
   transition:width .2s,opacity .2s,margin .2s;box-shadow:var(--e1);text-decoration:none;flex:none}
 .minilogo .mi{font-size:22px}
 .controls.stuck .minilogo{width:38px;opacity:1;margin-right:0}
+/* current tab's count on the mini logo while the tabs are tucked away */
+.miniwrap{position:relative;display:flex;flex:none}
+.minibadge{position:absolute;top:-7px;left:-7px;min-width:20px;height:18px;padding:0 5px;border-radius:999px;pointer-events:none;
+  background:var(--ink);color:var(--bg);font:700 10.5px/18px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;text-align:center;
+  box-shadow:var(--e1);opacity:0;transform:scale(.4);transition:opacity .22s ease,transform .3s cubic-bezier(.3,1.4,.5,1)}
+.controls.stuck .minibadge.has{opacity:1;transform:scale(1);transition-delay:.08s}
 .controls{row-gap:8px}
 .ctlrow{flex-basis:100%;display:flex;justify-content:space-between;align-items:center;gap:8px}
 .ctlrow .left{display:flex;align-items:center;gap:6px;flex-wrap:wrap;min-width:0;padding:3px 0}
@@ -605,7 +611,7 @@ details.srcs{background:var(--panel);border-radius:16px;box-shadow:var(--e1);pad
 <div class="barwrap">
   <div class="controls" id="controls">
     <div class="toprow">
-      <a class="minilogo" href="#" id="minilogo" title="Back to top"><svg class="helix" viewBox="0 0 64 64" aria-hidden="true"><g fill="none" stroke="#fff" stroke-width="4.5" stroke-linecap="round"><path d="M21 10C21 23 43 23 43 32S21 41 21 54"/><path d="M43 10C43 23 21 23 21 32S43 41 43 54"/></g><g stroke="#fff" stroke-width="3" stroke-linecap="round" opacity=".8"><path d="M25 15h14M25 49h14M29 22h6M29 42h6"/></g></svg></a>
+      <span class="miniwrap"><a class="minilogo" href="#" id="minilogo" title="Back to top"><svg class="helix" viewBox="0 0 64 64" aria-hidden="true"><g fill="none" stroke="#fff" stroke-width="4.5" stroke-linecap="round"><path d="M21 10C21 23 43 23 43 32S21 41 21 54"/><path d="M43 10C43 23 21 23 21 32S43 41 43 54"/></g><g stroke="#fff" stroke-width="3" stroke-linecap="round" opacity=".8"><path d="M25 15h14M25 49h14M29 22h6M29 42h6"/></g></svg></a><span class="minibadge" id="minibadge"></span></span>
       <input type="search" id="q" placeholder="Search jobs…">
       <button class="iconbtn langbtn" id="btnLang" title="Show Dutch ads in English / original Dutch"><span class="mi">translate</span><b id="langlabel">EN</b></button>
       <button class="iconbtn" id="btnFilters" title="Filters" aria-expanded="false"><span class="mi">tune</span><span class="fdot" id="fdot" hidden></span></button>
@@ -871,6 +877,9 @@ function renderStats(){
       <span class="tabicon"><span class="mi">${v.icon}</span>${badge(k, n)}</span>
       <span class="tablabel">${v.label}</span></button>`;
   }).join("");
+  const curN = DATA.rows.filter(r => VIEWS[view].f(r) && passesFilters(r, view)).length;
+  $("minibadge").textContent = fmtCount(curN); $("minibadge").classList.toggle("has", curN > 0);
+  $("minibadge").title = `${curN} in ${VIEWS[view].label}`;
   $("stats").querySelectorAll(".tab").forEach(el => el.onclick = () => {
     if (view !== el.dataset.v) $("sort").value = onlyClosing ? "deadline" : onlyNew ? "new" : defaultSort(el.dataset.v);
     view = el.dataset.v; updateFilterDot(); draw();
