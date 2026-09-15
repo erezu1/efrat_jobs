@@ -982,6 +982,11 @@ function loadDetail(k){
   }));
   return shardLoads.get(i);
 }
+function isDutchText(t){   // rough check: share of very common Dutch vs English words
+  const nl = (t.match(/\b(de|het|een|en|van|voor|wij|jij|je|met|zijn|naar|bij|onze|ons|als|ook|niet|wordt)\b/gi) || []).length;
+  const en = (t.match(/\b(the|and|of|for|with|you|we|our|are|is|to|in|will|this|that|be)\b/gi) || []).length;
+  return nl > 20 && nl > en * 1.5;
+}
 function fullHtml(r){
   let text = details.get(r.key) || "";
   // the card already shows the start of the ad as its summary: continue from there instead of repeating it
@@ -992,7 +997,7 @@ function fullHtml(r){
     while (i < text.length && n < shown.length) { if (/\s/.test(text[i])) { while (/\s/.test(text[i+1]||"")) i++; } i++; n++; }
     text = text.slice(i).replace(/^[\s.,;:]+/, "");
   }
-  const dutchNote = lang === "en" && (r.title_en || r.summary_en)
+  const dutchNote = lang === "en" && isDutchText(text)
     ? `<p class="fullnote"><span class="mi">translate</span>The full ad is in Dutch — <a href="https://translate.google.com/translate?sl=nl&tl=en&u=${encodeURIComponent(r.url)}" target="_blank" rel="noopener">open it translated</a></p>` : "";
   return dutchNote + text.split(/\n+/).filter(Boolean).map(p => `<p>${esc(p)}</p>`).join("");
 }

@@ -425,17 +425,6 @@
    "pass": true,
    "reason": "keyword: ecolog"
   },
-  "score": {
-   "blockers": [],
-   "category": "phd",
-   "deadline": "2026-09-15",
-   "dutch_required": "basic",
-   "fit_score": 0,
-   "in_netherlands": true,
-   "model": "keywords",
-   "summary": "Faculty of Humanities, Leiden University Centre for Linguistics has a vacancy for a PhD candidate (Anthropological Linguistics, Descriptive Linguistics) Vacancy number: 16732 Deadline: September 15th , 2026 Description:…",
-   "why": "Matches: ecolog · PhD position · Off-profile: linguist"
-  },
   "source": "academictransfer",
   "source_id": "362289",
   "title": "PhD candidate (Anthropological Linguistics, Descriptive Linguistics)",
@@ -937,17 +926,6 @@
    "pass": true,
    "reason": "keyword: Biolog"
   },
-  "score": {
-   "blockers": [],
-   "category": "phd",
-   "deadline": "2026-09-15",
-   "dutch_required": "basic",
-   "fit_score": 2,
-   "in_netherlands": true,
-   "model": "keywords",
-   "summary": "What You’ll Be Doing Successful candidates will conduct independent research within one of the institute’s high-profile research groups, while enrolling in a PhD program at a Dutch university (e.g., Utrecht University’s…",
-   "why": "Matches: molecular biolog, biolog · PhD position · Off-profile: physics"
-  },
   "source": "academictransfer",
   "source_id": "362912",
   "title": "Hubrecht International PhD Program (HIPP) - Utrecht",
@@ -1019,17 +997,6 @@
   "prefilter": {
    "pass": true,
    "reason": "keyword: Biolog"
-  },
-  "score": {
-   "blockers": [],
-   "category": "phd",
-   "deadline": "2026-09-15",
-   "dutch_required": "basic",
-   "fit_score": 2,
-   "in_netherlands": true,
-   "model": "keywords",
-   "summary": "The Faculty of Science, the Mathematical Institute and the Institute of Biology are looking for a PhD Student in Theoretical or Mathematical Biology What you will do The opening is for a research position within the…",
-   "why": "Matches: molecul, lab, biolog · PhD position · Off-profile: physics, plant"
   },
   "source": "academictransfer",
   "source_id": "363039",
@@ -1152,17 +1119,6 @@
   "prefilter": {
    "pass": true,
    "reason": "keyword: biolog"
-  },
-  "score": {
-   "blockers": [],
-   "category": "phd",
-   "deadline": "2026-09-15",
-   "dutch_required": "basic",
-   "fit_score": 2,
-   "in_netherlands": true,
-   "model": "keywords",
-   "summary": "The Mathematical Institute of Leiden University and the Centre for Mathematical Sciences of Lund University have a position for a PhD candidate to join the project \"Analysis of Inhomogeneous Wave Euqations\" under the…",
-   "why": "Matches: biolog · PhD position"
   },
   "source": "academictransfer",
   "source_id": "363151",
@@ -1653,17 +1609,6 @@
   "prefilter": {
    "pass": true,
    "reason": "keyword: genet"
-  },
-  "score": {
-   "blockers": [],
-   "category": "phd",
-   "deadline": "2026-09-15",
-   "dutch_required": "no",
-   "fit_score": 8,
-   "in_netherlands": true,
-   "model": "keywords",
-   "summary": "Welcome to Maastricht University! Help us build the first optogenetically controllable model of sympathetic innervation in engineered 3D tissue, combining stem cell biology, genetic engineering, and advanced imaging.",
-   "why": "Matches: genetic, mammal, cloning, cell biolog, cell culture, lab, biolog · PhD position"
   },
   "source": "academictransfer",
   "source_id": "363328",
@@ -6787,17 +6732,6 @@
    "pass": true,
    "reason": "keyword: ecolog"
   },
-  "score": {
-   "blockers": [],
-   "category": "other",
-   "deadline": "2026-09-15",
-   "dutch_required": "fluent",
-   "fit_score": 1,
-   "in_netherlands": true,
-   "model": "keywords",
-   "summary": "Fellow Urologie Solliciteer Fellow Urologie 36 € 8.868 - € 15.392 professional Sluitingsdatum: 15 sep. 2026 Over de afdeling Op de afdeling Urologie van het NKI-AVL is een vacature voor een fellow uroloog (0.8 fte).",
-   "why": "Matches: ecolog"
-  },
   "source": "avl",
   "source_id": "fellow-urologie",
   "title": "Fellow Urologie",
@@ -8395,17 +8329,6 @@
    "pass": true,
    "reason": "keyword: molecul"
   },
-  "score": {
-   "blockers": [],
-   "category": "phd",
-   "deadline": "2026-09-15",
-   "dutch_required": "basic",
-   "fit_score": 2,
-   "in_netherlands": true,
-   "model": "keywords",
-   "summary": "€3,059 - €3,881; Master's; 38 hours Join our team! Join us in pushing the frontiers of molecular photophysics and gain hands-on experience with state-of-the-art spectroscopic techniques.",
-   "why": "Matches: next generation, molecul · PhD position · Off-profile: chemistry"
-  },
   "source": "euraxess",
   "source_id": "445400",
   "title": "PhD Position in Physical Chemistry: Time-Resolved Spectroscopy of Multichromophoric Systems",
@@ -8779,17 +8702,6 @@
   "prefilter": {
    "pass": true,
    "reason": "keyword: ecolog"
-  },
-  "score": {
-   "blockers": [],
-   "category": "phd",
-   "deadline": "2026-09-15",
-   "dutch_required": "basic",
-   "fit_score": 0,
-   "in_netherlands": true,
-   "model": "keywords",
-   "summary": "Faculty of Humanities, Leiden University Centre for Linguistics has a vacancy for a PhD candidate (Anthropological Linguistics, Descriptive Linguistics) Vacancy number: 16732 Deadline: September 15th , 2026 Description:…",
-   "why": "Matches: ecolog · PhD position · Off-profile: linguist"
   },
   "source": "euraxess",
   "source_id": "449984",
@@ -9465,17 +9377,6 @@
    "pass": true,
    "reason": "keyword: Biolog"
   },
-  "score": {
-   "blockers": [],
-   "category": "phd",
-   "deadline": "2026-09-15",
-   "dutch_required": "basic",
-   "fit_score": 2,
-   "in_netherlands": true,
-   "model": "keywords",
-   "summary": "What You’ll Be Doing Successful candidates will conduct independent research within one of the institute’s high-profile research groups, while enrolling in a PhD program at a Dutch university (e.g., Utrecht University’s…",
-   "why": "Matches: molecular biolog, biolog · PhD position · Off-profile: physics"
-  },
   "source": "euraxess",
   "source_id": "455463",
   "title": "Hubrecht International PhD Program (HIPP) - Utrecht",
@@ -9645,17 +9546,6 @@
   "prefilter": {
    "pass": true,
    "reason": "keyword: laborator"
-  },
-  "score": {
-   "blockers": [],
-   "category": "phd",
-   "deadline": "2026-09-15",
-   "dutch_required": "no",
-   "fit_score": 0,
-   "in_netherlands": true,
-   "model": "keywords",
-   "summary": "You will develop the theory that connects quantum experiments with mechanical systems to questions in fundamental physics, establishing what such experiments can and cannot reveal about nature.",
-   "why": "Matches: nature, laborator · PhD position · Off-profile: physics"
   },
   "source": "euraxess",
   "source_id": "456108",
@@ -10176,17 +10066,6 @@
   "prefilter": {
    "pass": true,
    "reason": "keyword: biolog"
-  },
-  "score": {
-   "blockers": [],
-   "category": "phd",
-   "deadline": "2026-09-15",
-   "dutch_required": "basic",
-   "fit_score": 2,
-   "in_netherlands": true,
-   "model": "keywords",
-   "summary": "The Mathematical Institute of Leiden University and the Centre for Mathematical Sciences of Lund University have a position for a PhD candidate to join the project \"Analysis of Inhomogeneous Wave Euqations\" under the…",
-   "why": "Matches: biolog · PhD position"
   },
   "source": "euraxess",
   "source_id": "459166",
@@ -11044,17 +10923,6 @@
   "prefilter": {
    "pass": true,
    "reason": "keyword: genet"
-  },
-  "score": {
-   "blockers": [],
-   "category": "phd",
-   "deadline": "2026-09-15",
-   "dutch_required": "no",
-   "fit_score": 8,
-   "in_netherlands": true,
-   "model": "keywords",
-   "summary": "Welcome to Maastricht University! Help us build the first optogenetically controllable model of sympathetic innervation in engineered 3D tissue, combining stem cell biology, genetic engineering, and advanced imaging.",
-   "why": "Matches: genetic, mammal, cloning, cell biolog, cell culture, lab, biolog · PhD position"
   },
   "source": "euraxess",
   "source_id": "460610",
@@ -13747,17 +13615,6 @@
   "prefilter": {
    "pass": true,
    "reason": "keyword: Life Science"
-  },
-  "score": {
-   "blockers": [],
-   "category": "phd",
-   "deadline": "2026-09-15",
-   "dutch_required": "no",
-   "fit_score": 0,
-   "in_netherlands": true,
-   "model": "keywords",
-   "summary": "Welcome to Maastricht University! Do you want to contribute to advancing AI in medical imaging? In this PhD position, you will conduct research on explainable artificial intelligence and foundation models for CT…",
-   "why": "Matches: life science · PhD position · Off-profile: ai"
   },
   "source": "euraxess",
   "source_id": "463242",
@@ -23982,17 +23839,6 @@
    "pass": true,
    "reason": "keyword: natuur"
   },
-  "score": {
-   "blockers": [],
-   "category": "conservation_zoo_ngo",
-   "deadline": "2026-09-15",
-   "dutch_required": "fluent",
-   "fit_score": 2,
-   "in_netherlands": true,
-   "model": "keywords",
-   "summary": "Ben jij een veelzijdige communicatieprofessional die graag de handen uit de mouwen steekt? Kun jij een communicatievraagstuk snel doorgronden, overzicht houden en verschillende mensen en belangen met elkaar verbinden?…",
-   "why": "Matches: biodiversit, boswachter · nature organisation · Off-profile: communicat"
-  },
   "source": "fondsen",
   "source_id": "13328",
   "title": "Boswachter Communicatie en Beleven, Zuid-Veluwe en IJsselvallei",
@@ -30604,17 +30450,6 @@
   "prefilter": {
    "pass": true,
    "reason": "keyword: natuur"
-  },
-  "score": {
-   "blockers": [],
-   "category": "conservation_zoo_ngo",
-   "deadline": "2026-09-15",
-   "dutch_required": "fluent",
-   "fit_score": 2,
-   "in_netherlands": true,
-   "model": "keywords",
-   "summary": "Ben jij een veelzijdige communicatieprofessional die graag de handen uit de mouwen steekt? Kun jij een communicatievraagstuk snel doorgronden, overzicht houden en verschillende mensen en belangen met elkaar verbinden?…",
-   "why": "Matches: biodiversit, boswachter · nature organisation · Off-profile: communicat"
   },
   "source": "greenjobs",
   "source_id": "34918",
@@ -40378,17 +40213,6 @@
    "pass": true,
    "reason": "keyword: Biolog"
   },
-  "score": {
-   "blockers": [],
-   "category": "phd",
-   "deadline": "2026-09-15",
-   "dutch_required": "basic",
-   "fit_score": 2,
-   "in_netherlands": true,
-   "model": "keywords",
-   "summary": "What You’ll Be Doing Successful candidates will conduct independent research within one of the institute’s high-profile research groups, while enrolling in a PhD program at a Dutch university (e.g., Utrecht University’s…",
-   "why": "Matches: molecular biolog, biolog · PhD position · Off-profile: physics"
-  },
   "source": "knaw",
   "source_id": "3106",
   "title": "Hubrecht International PhD Program (HIPP) - Utrecht",
@@ -40666,17 +40490,6 @@
    "pass": true,
    "reason": "keyword: ecolog"
   },
-  "score": {
-   "blockers": [],
-   "category": "phd",
-   "deadline": "2026-09-15",
-   "dutch_required": "basic",
-   "fit_score": 0,
-   "in_netherlands": true,
-   "model": "keywords",
-   "summary": "Faculty of Humanities, Leiden University Centre for Linguistics has a vacancy for a PhD candidate (Anthropological Linguistics, Descriptive Linguistics) Vacancy number: 16732 Deadline: September 15th , 2026 Description:…",
-   "why": "Matches: ecolog · PhD position · Off-profile: linguist"
-  },
   "source": "leiden",
   "source_id": "16732",
   "title": "PhD candidate (Anthropological Linguistics, Descriptive Linguistics)",
@@ -40888,17 +40701,6 @@
    "pass": true,
    "reason": "keyword: biolog"
   },
-  "score": {
-   "blockers": [],
-   "category": "phd",
-   "deadline": "2026-09-15",
-   "dutch_required": "basic",
-   "fit_score": 2,
-   "in_netherlands": true,
-   "model": "keywords",
-   "summary": "The Mathematical Institute of Leiden University and the Centre for Mathematical Sciences of Lund University have a position for a PhD candidate to join the project \"Analysis of Inhomogeneous Wave Euqations\" under the…",
-   "why": "Matches: biolog · PhD position"
-  },
   "source": "leiden",
   "source_id": "16781",
   "title": "PhD position: Analysis of inhomogeneous wave equations",
@@ -41087,17 +40889,6 @@
   "prefilter": {
    "pass": true,
    "reason": "keyword: Biolog"
-  },
-  "score": {
-   "blockers": [],
-   "category": "phd",
-   "deadline": "2026-09-15",
-   "dutch_required": "basic",
-   "fit_score": 2,
-   "in_netherlands": true,
-   "model": "keywords",
-   "summary": "The Faculty of Science, the Mathematical Institute and the Institute of Biology are looking for a PhD Student in Theoretical or Mathematical Biology What you will do The opening is for a research position within the…",
-   "why": "Matches: molecul, lab, biolog · PhD position · Off-profile: physics, plant"
   },
   "source": "leiden",
   "source_id": "16814",
@@ -42966,17 +42757,6 @@
    "pass": true,
    "reason": "keyword: Microbiol"
   },
-  "score": {
-   "blockers": [],
-   "category": "other",
-   "deadline": "2026-09-15",
-   "dutch_required": "fluent",
-   "fit_score": 0,
-   "in_netherlands": true,
-   "model": "keywords",
-   "summary": "Je hebt nog 3 dag(en) om te solliciteren Werken aan complexe infectieziekten én jezelf ontwikkelen tot arts-microbioloog in een academische omgeving.",
-   "why": "Matches: molecul · Off-profile: aios"
-  },
   "source": "lumc",
   "source_id": "2690604",
   "title": "AIOS Medische Microbiologie",
@@ -43166,17 +42946,6 @@
   "prefilter": {
    "pass": true,
    "reason": "keyword: analist"
-  },
-  "score": {
-   "blockers": [],
-   "category": "technician_research",
-   "deadline": "2026-09-15",
-   "dutch_required": "fluent",
-   "fit_score": 9,
-   "in_netherlands": true,
-   "model": "keywords",
-   "summary": "Je hebt nog 3 dag(en) om te solliciteren Stap in de voorhoede van baanbrekend onderzoek als researchanalist bij het Center for Cell & Gene Therapy (CCG) van het LUMC.",
-   "why": "Matches: gene, ngs, moleculaire biolog, celkweek, laborator, biolog · technician / research role"
   },
   "source": "lumc",
   "source_id": "2701796",
@@ -45941,17 +45710,6 @@
    "pass": true,
    "reason": "domain-specific source"
   },
-  "score": {
-   "blockers": [],
-   "category": "conservation_zoo_ngo",
-   "deadline": "2026-09-15",
-   "dutch_required": "fluent",
-   "fit_score": 0,
-   "in_netherlands": true,
-   "model": "keywords",
-   "summary": "Vacature: atlasdistrictscoördinator Circa 1-2 uur per week. Vrijwilligersfunctie Met het nieuwe project Vogelatlas heeft Sovon het doel om het jaarrond voorkomen van alle in het wild voorkomende vogels in Nederland in…",
-   "why": "Matches: vogels · nature organisation · Off-profile: ict"
-  },
   "source": "nature_employers",
   "source_id": "www.sovon.nl/vacature-atlasdistrictscoordinator",
   "title": "Vacature: atlasdistrictscoördinator",
@@ -46896,17 +46654,6 @@
   "prefilter": {
    "pass": true,
    "reason": "keyword: natuur"
-  },
-  "score": {
-   "blockers": [],
-   "category": "conservation_zoo_ngo",
-   "deadline": "2026-09-15",
-   "dutch_required": "fluent",
-   "fit_score": 2,
-   "in_netherlands": true,
-   "model": "keywords",
-   "summary": "Ben jij een veelzijdige communicatieprofessional die graag de handen uit de mouwen steekt? Kun jij een communicatievraagstuk snel doorgronden, overzicht houden en verschillende mensen en belangen met elkaar verbinden?…",
-   "why": "Matches: biodiversit, boswachter · nature organisation · Off-profile: communicat"
   },
   "source": "sustainablejobs",
   "source_id": "109564",
@@ -49724,17 +49471,6 @@
    "pass": true,
    "reason": "keyword: analist"
   },
-  "score": {
-   "blockers": [],
-   "category": "other",
-   "deadline": "2026-09-15",
-   "dutch_required": "fluent",
-   "fit_score": 0,
-   "in_netherlands": true,
-   "model": "keywords",
-   "summary": "Laboranten en analisten; 24 - 32 uur; €2.744 - €3.470 Als medewerker pre-analyse & bloedafname ga je werken op het polilaboratorium in het UMC en WKZ Utrecht. Ook doe je mee in de afnamerondes in de kliniek.",
-   "why": "Matches: laborator"
-  },
   "source": "umcu",
   "source_id": "7398",
   "title": "Medewerker pre-analyse & bloedafname",
@@ -49951,17 +49687,6 @@
   "prefilter": {
    "pass": true,
    "reason": "keyword: genom"
-  },
-  "score": {
-   "blockers": [],
-   "category": "technician_research",
-   "deadline": "2026-09-15",
-   "dutch_required": "fluent",
-   "fit_score": 0,
-   "in_netherlands": true,
-   "model": "keywords",
-   "summary": "Medisch ondersteuners; 24 - 32 uur; €2.669 - €3.717 Als doktersassistent werk je op de triage-afdeling. Hier beoordeel je zwangere of net bevallen patiënten met klachten of problemen.",
-   "why": "Matches: monitoring · Off-profile: doktersassistent"
   },
   "source": "umcu",
   "source_id": "7415",
@@ -51924,17 +51649,6 @@
    "pass": true,
    "reason": "keyword: molecul"
   },
-  "score": {
-   "blockers": [],
-   "category": "phd",
-   "deadline": "2026-09-15",
-   "dutch_required": "basic",
-   "fit_score": 2,
-   "in_netherlands": true,
-   "model": "keywords",
-   "summary": "€3,059 - €3,881; Master's; 38 hours Join our team! Join us in pushing the frontiers of molecular photophysics and gain hands-on experience with state-of-the-art spectroscopic techniques.",
-   "why": "Matches: next generation, molecul · PhD position · Off-profile: chemistry"
-  },
   "source": "uva",
   "source_id": "15249",
   "title": "PhD Position in Physical Chemistry:  Time-Resolved Spectroscopy of Multichromophoric Systems",
@@ -52513,17 +52227,6 @@
   "prefilter": {
    "pass": true,
    "reason": "keyword: Lab"
-  },
-  "score": {
-   "blockers": [],
-   "category": "technician_research",
-   "deadline": "2026-09-15",
-   "dutch_required": "fluent",
-   "fit_score": 0,
-   "in_netherlands": true,
-   "model": "keywords",
-   "summary": "€3.202 - €4.159; HBO; Minimaal 20 uur Kom bij ons werken! Ben je goed in organiseren, nauwkeurig en servicegericht? Lijkt het je leuk om onderzoeksteams van het Instituut voor Informatierecht te ondersteunen bij…",
-   "why": "Matches: lab · Off-profile: office"
   },
   "source": "uva",
   "source_id": "15415",
