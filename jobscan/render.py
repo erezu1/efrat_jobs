@@ -537,10 +537,11 @@ details.srcs{background:var(--panel);border-radius:16px;box-shadow:var(--e1);pad
   padding:22px var(--padx) calc(var(--pady) + env(safe-area-inset-bottom));border-radius:0 0 16px 16px;
   background:linear-gradient(to top,var(--panel) 72%,color-mix(in srgb,var(--panel) 0%,transparent))}
 .card.expanded .actions .lessbtn{left:var(--padx)}
-.stickyhead{position:sticky;top:var(--barvis,0px);height:0;z-index:4;transition:top .32s cubic-bezier(.25,.8,.3,1)}
+/* tucks under the bar's bottom fade so no text shows between the search bar and this strip */
+.stickyhead{position:sticky;top:calc(var(--barvis,0px) - 26px);height:0;z-index:4;transition:top .32s cubic-bezier(.25,.8,.3,1)}
 .sh{position:absolute;left:calc(-1 * (var(--scol) + var(--sgap) + var(--padx)));right:calc(-1 * var(--padx));top:0;display:flex;align-items:center;gap:8px;border:0;border-radius:0;
   background:linear-gradient(to bottom,var(--panel) 72%,color-mix(in srgb,var(--panel) 0%,transparent));box-shadow:none;
-  padding:10px var(--padx) 22px;cursor:pointer;color:var(--ink);text-align:left;
+  padding:36px var(--padx) 22px;cursor:pointer;color:var(--ink);text-align:left;
   opacity:0;transform:translateY(-8px);pointer-events:none;transition:opacity .2s,transform .2s}
 .card.expanded.headout .sh{opacity:1;transform:none;pointer-events:auto}
 .shscore{flex:none;width:26px;height:26px;border-radius:8px;color:#fff;font:700 13px/26px inherit;text-align:center}
@@ -1010,9 +1011,7 @@ function fullHtml(r){
     while (i < text.length && n < shown.length) { if (/\s/.test(text[i])) { while (/\s/.test(text[i+1]||"")) i++; } i++; n++; }
     text = text.slice(i).replace(/^[\s.,;:]+/, "");
   }
-  const dutchNote = lang === "en" && isDutchText(text)
-    ? `<p class="fullnote"><span class="mi">translate</span>The full ad is in Dutch — <a href="https://translate.google.com/translate?sl=nl&tl=en&u=${encodeURIComponent(r.url)}" target="_blank" rel="noopener">open it translated</a></p>` : "";
-  return dutchNote + text.split(/\n+/).filter(Boolean).map(p => `<p>${esc(p)}</p>`).join("");
+  return text.split(/\n+/).filter(Boolean).map(p => `<p>${esc(p)}</p>`).join("");
 }
 async function toggleMore(btn){
   const c = btn.closest(".card"), k = btn.dataset.k, wrap = c.querySelector(".fullwrap"), box = c.querySelector(".fulltext");
