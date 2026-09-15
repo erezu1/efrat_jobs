@@ -437,7 +437,7 @@ details.srcs{background:var(--panel);border-radius:16px;box-shadow:var(--e1);pad
 .fchip{display:inline-flex;align-items:center;gap:3px;font-size:12px;padding:3px 8px}
 .fchip .mi{font-size:15px}
 @media (max-width: 760px){
-  header{padding:18px 14px 4px}
+  header{padding:12px 14px 0}
   main{padding:0 14px 60px}
   .barwrap{padding:0 14px}
   .sub{font-size:12px}
@@ -492,7 +492,7 @@ details.srcs{background:var(--panel);border-radius:16px;box-shadow:var(--e1);pad
 .tablabel{font-size:12px;font-weight:600;white-space:nowrap}
 .tab.on .tablabel{color:var(--ink)}
 @media (max-width:760px){
-  .stats{margin:12px -14px 4px;padding:8px 14px 6px;gap:2px}
+  .stats{margin:6px -14px 0;padding:8px 14px 0;gap:2px}
   .stats{-webkit-mask-image:linear-gradient(to right,#000 85%,transparent);mask-image:linear-gradient(to right,#000 85%,transparent)}
   .tab{min-width:64px}
   .tabicon{width:46px;height:46px;border-radius:16px}
@@ -590,6 +590,14 @@ details.srcs{background:var(--panel);border-radius:16px;box-shadow:var(--e1);pad
   html.mapmode .nomap{position:fixed;left:14px;right:14px;bottom:calc(18px + env(safe-area-inset-bottom));z-index:5;
     background:var(--panel);border-radius:10px;padding:6px 10px;box-shadow:var(--e1);text-align:center}
   html.mapmode .nomap:empty{display:none}
+}
+
+/* phone: tighter vertical rhythm in the top bar (both expanded and minimized) */
+@media (max-width:760px){
+  .controls{padding:9px 0 16px;row-gap:6px}
+  #topbar.scrolled::before{-webkit-mask-image:linear-gradient(to bottom,#000 0,#000 calc(100% - 14px),transparent 100%);
+    mask-image:linear-gradient(to bottom,#000 0,#000 calc(100% - 14px),transparent 100%)}
+  .ctlrow .left{padding:1px 0}
 }
 </style>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
