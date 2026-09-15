@@ -248,20 +248,20 @@ html,body{overflow-x:clip}
 /* Top bar = title + tabs + search/filters, fixed to the screen (composited: no jitter on fast scrolls).
    Scrolling down slides the title part up out of view; scrolling up slides it back. The whole bar moves as one. */
 #topbar{position:fixed;top:0;left:0;right:0;z-index:6;padding-top:env(safe-area-inset-top);
-  transform:translateY(calc(-1 * var(--hide,0px)));will-change:transform}
-body.anim #topbar{transition:transform .32s cubic-bezier(.25,.8,.3,1)}
+  transform:translateY(calc(-1 * var(--hide,0px)));will-change:transform;contain:layout style}
+#topbar.anim{transition:transform .32s cubic-bezier(.25,.8,.3,1)}
 /* near the top the title scrolls away exactly with the page, driven by the browser's scroll timeline (no lag) */
 @keyframes barCollapse{from{transform:translateY(0)}to{transform:translateY(calc(-1 * var(--hh,0px)))}}
 @supports (animation-timeline: scroll()) {
-  body.linked #topbar{animation:barCollapse linear both;animation-timeline:scroll(root block);animation-range:0px var(--hh,0px)}
+  #topbar.linked{animation:barCollapse linear both;animation-timeline:scroll(root block);animation-range:0px var(--hh,0px)}
 }
 #topbar::before{content:"";position:absolute;left:0;right:0;top:0;bottom:0;z-index:-1;background:var(--bg);transition:background .25s}
 /* the soft fade stays inside the bar's own bottom padding, so the page keeps its normal spacing */
-body.scrolled #topbar::before{background:color-mix(in srgb,var(--bg) 72%,transparent);
+#topbar.scrolled::before{background:color-mix(in srgb,var(--bg) 72%,transparent);
   -webkit-mask-image:linear-gradient(to bottom,#000 0,#000 calc(100% - 20px),transparent 100%);
   mask-image:linear-gradient(to bottom,#000 0,#000 calc(100% - 20px),transparent 100%)}
 @supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
-  body.scrolled #topbar::before{-webkit-backdrop-filter:blur(16px) saturate(1.5);backdrop-filter:blur(16px) saturate(1.5)}
+  #topbar.scrolled::before{-webkit-backdrop-filter:blur(12px) saturate(1.4);backdrop-filter:blur(12px) saturate(1.4)}
 }
 #topspace{height:var(--tbh,0px)}
 header{position:relative}
@@ -538,7 +538,7 @@ details.srcs{background:var(--panel);border-radius:16px;box-shadow:var(--e1);pad
   background:linear-gradient(to top,var(--panel) 72%,color-mix(in srgb,var(--panel) 0%,transparent))}
 .card.expanded .actions .lessbtn{left:var(--padx)}
 /* tucks under the bar's bottom fade so no text shows between the search bar and this strip */
-.stickyhead{position:sticky;top:calc(var(--barvis,0px) - 26px);height:0;z-index:4;transition:top .32s cubic-bezier(.25,.8,.3,1)}
+.stickyhead{position:sticky;top:calc(var(--sht,0px) - 26px);height:0;z-index:4;transition:top .32s cubic-bezier(.25,.8,.3,1)}
 .sh{position:absolute;left:calc(-1 * (var(--scol) + var(--sgap) + var(--padx)));right:calc(-1 * var(--padx));top:0;display:flex;align-items:center;gap:8px;border:0;border-radius:0;
   background:linear-gradient(to bottom,var(--panel) 72%,color-mix(in srgb,var(--panel) 0%,transparent));box-shadow:none;
   padding:36px var(--padx) 22px;cursor:pointer;color:var(--ink);text-align:left;
@@ -938,7 +938,7 @@ function draw(){
   $("list").querySelectorAll(".morebtn,.lessbtn").forEach(b => b.onclick = e => { e.stopPropagation(); toggleMore(b); });
   $("list").querySelectorAll(".sh").forEach(b => b.onclick = e => {
     e.stopPropagation();
-    const c = b.closest(".card"), barvis = parseFloat(getComputedStyle(document.body).getPropertyValue("--barvis")) || 0;
+    const c = b.closest(".card"), barvis = window.__barvis || 0;
     jumpTo(scrollY + c.getBoundingClientRect().top - barvis - 10);
   });
   updateStickyHeads();
@@ -1021,7 +1021,7 @@ async function toggleMore(btn){
     expanded.delete(k); wrap.classList.remove("open"); c.classList.remove("expanded", "headout");
     more.classList.remove("open"); more.lastElementChild.textContent = "More";
     // if we were deep inside the ad, bring the card's top back into view
-    const top = c.getBoundingClientRect().top, barvis = parseFloat(getComputedStyle(document.body).getPropertyValue("--barvis")) || 0;
+    const top = c.getBoundingClientRect().top, barvis = window.__barvis || 0;
     if (top < barvis) jumpTo(scrollY + top - barvis - 10);
     return;
   }
@@ -1031,8 +1031,11 @@ async function toggleMore(btn){
   requestAnimationFrame(() => wrap.classList.add("open"));
 }
 function updateStickyHeads(){   // show a card's mini header once its real title is under the top bar
-  const barvis = parseFloat(getComputedStyle(document.body).getPropertyValue("--barvis")) || 0;
-  document.querySelectorAll(".card.expanded").forEach(c => {
+  const barvis = window.__barvis || 0, list = document.querySelectorAll(".card.expanded");
+  if (!list.length) return;                 // nothing expanded: no layout reads at all
+  list.forEach(c => {
+    const sh = c.querySelector(".stickyhead");
+    if (sh && sh.__top !== barvis) { sh.__top = barvis; sh.style.setProperty("--sht", barvis + "px"); }
     const t = c.querySelector(".title").getBoundingClientRect(), r = c.getBoundingClientRect();
     c.classList.toggle("headout", t.bottom < barvis + 4 && r.bottom > barvis + 140);
   });
@@ -1231,16 +1234,20 @@ $("placechip").onclick = () => setPlace(null);
 window.__noRevealUntil = 0;
 function jumpTo(top){ window.__noRevealUntil = Date.now() + 1200; window.scrollTo({top, behavior: "smooth"}); }
 (() => {   // top bar: title scrolls away with the page; a deliberate scroll up slides it back
-  const bar = $("topbar"), hdr = document.querySelector("header"), ctl = $("controls"), body = document.body;
+  const bar = $("topbar"), hdr = document.querySelector("header"), ctl = $("controls");
   const timeline = CSS.supports("animation-timeline: scroll()");
-  // "linked": near the top the bar follows the scroll exactly. "free": JS decides shown/hidden with a slide.
+  // sizes are measured only when they change (ResizeObserver) — never inside the scroll handler
+  let H = hdr.offsetHeight, B = bar.offsetHeight;
+  // "linked": near the top the bar follows the scroll exactly (browser scroll timeline). "free": JS slides it.
   let lastY = scrollY, anchor = scrollY, dir = 0, ticking = false;
   let linked = timeline, shown = true, hide = 0;
-  const setHide = (v, anim) => { hide = v; body.classList.toggle("anim", anim); body.style.setProperty("--hide", v + "px"); };
+  const last = {};
+  const put = (el, name, v) => { const key = name; if (last[key] !== v) { last[key] = v; el.style.setProperty(name, v); } };
+  const cls = (el, name, on) => { const key = "c:" + name; if (last[key] !== on) { last[key] = on; el.classList.toggle(name, on); } };
+  const setHide = (v, anim) => { hide = v; cls(bar, "anim", anim); put(bar, "--hide", v + "px"); };
   const update = () => {
     ticking = false;
-    const y = Math.max(0, scrollY), H = hdr.offsetHeight;
-    body.style.setProperty("--hh", H + "px");
+    const y = Math.max(0, scrollY);
     const d = Math.sign(y - lastY);
     if (d && d !== dir) { dir = d; anchor = lastY; }
     const jumping = Date.now() < window.__noRevealUntil;       // our own "jump to card" scrolls shouldn't reveal the title
@@ -1249,7 +1256,7 @@ function jumpTo(top){ window.__noRevealUntil = Date.now() + 1200; window.scrollT
     if (linked) {
       eff = Math.min(y, H);
       if (y > H && upALot) {                                  // leave linked mode: slide the title back in
-        linked = false; shown = true; body.classList.remove("linked");
+        linked = false; shown = true; cls(bar, "linked", false);
         setHide(H, false); requestAnimationFrame(() => requestAnimationFrame(() => setHide(0, true)));
         eff = 0;
       }
@@ -1267,14 +1274,18 @@ function jumpTo(top){ window.__noRevealUntil = Date.now() + 1200; window.scrollT
       if (y < H) shown = true; else if (downABit) shown = false; else if (upALot) shown = true;
       setHide(shown ? 0 : H, true); eff = hide;
     }
-    body.classList.toggle("linked", linked);
+    cls(bar, "linked", linked);
     lastY = y;
-    body.style.setProperty("--barvis", (bar.offsetHeight - eff) + "px");
+    window.__barvis = B - eff;
     updateStickyHeads();
-    body.classList.toggle("scrolled", y > 2);
-    ctl.classList.toggle("stuck", eff >= H - 1);           // mini logo while the title is tucked away
+    cls(bar, "scrolled", y > 2);
+    cls(ctl, "stuck", eff >= H - 1);           // mini logo while the title is tucked away
   };
-  const measure = () => document.body.style.setProperty("--tbh", bar.offsetHeight + "px");
+  const measure = () => {
+    H = hdr.offsetHeight; B = bar.offsetHeight;
+    put(bar, "--hh", H + "px");
+    put($("topspace"), "--tbh", B + "px");
+  };
   addEventListener("scroll", () => { if (!ticking) { ticking = true; requestAnimationFrame(update); } }, {passive: true});
   new ResizeObserver(() => { measure(); update(); }).observe(bar);
   measure(); update();
