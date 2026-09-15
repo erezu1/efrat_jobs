@@ -583,7 +583,7 @@ details.srcs{background:var(--panel);border-radius:16px;box-shadow:var(--e1);pad
 @media (max-width:760px){
   html.mapmode,html.mapmode body{overflow:hidden;height:100%;overscroll-behavior:none}
   html.mapmode main{padding-bottom:0}
-  html.mapmode #topbar{animation:none!important;transform:none!important}   /* full top bar in map mode */
+  html.mapmode #topbar{animation:none!important}   /* full top bar in map mode (slid in by JS) */
   html.mapmode #map{height:calc(100dvh - var(--tbh,0px) - 12px - env(safe-area-inset-bottom));margin-top:0}
   html.mapmode .srcs{display:none}
   html.mapmode .nomap{position:fixed;left:14px;right:14px;bottom:calc(18px + env(safe-area-inset-bottom));z-index:5;
@@ -966,8 +966,16 @@ function draw(){
   $("qClosing").classList.toggle("on", onlyClosing); $("qClosing").setAttribute("aria-pressed", onlyClosing);
   $("map").hidden = !mapMode; $("list").hidden = mapMode; $("nomap").hidden = !mapMode;
   const phoneMap = mapMode && matchMedia("(max-width: 760px)").matches;
-  if (phoneMap && !document.documentElement.classList.contains("mapmode")) window.scrollTo(0, 0);
+  const entering = phoneMap && !document.documentElement.classList.contains("mapmode");
+  const bar = $("topbar"), fromY = entering ? bar.getBoundingClientRect().top : 0;   // where the bar is right now
+  if (entering) window.scrollTo(0, 0);
   document.documentElement.classList.toggle("mapmode", phoneMap);
+  if (entering && fromY < -1) {                       // bar was minimized: slide it open instead of jumping
+    bar.style.transition = "none"; bar.style.transform = `translateY(${fromY}px)`;
+    void bar.offsetHeight;
+    bar.style.transition = "transform .36s cubic-bezier(.25,.8,.3,1)"; bar.style.transform = "translateY(0)";
+    setTimeout(() => { bar.style.transition = ""; bar.style.transform = ""; }, 380);
+  }
   window.__barUpdate?.();
   if (mapMode) return drawMap(rows);
   // FLIP: remember where cards were, so after re-rendering they glide to their new places
