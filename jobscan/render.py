@@ -374,13 +374,13 @@ input[type=search]:focus,select:focus{outline:2px solid var(--accent);outline-of
 .card[data-dir="no"]::after{background:linear-gradient(to left,color-mix(in srgb,var(--danger) 22%,var(--panel)) 0%,color-mix(in srgb,var(--panel) 60%,transparent) 70%)}
 .card::after{z-index:2}
 .card .sh{isolation:isolate}
-.card.expanded .actions::before,.card .sh::before{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;z-index:-1;
+.card.reader .actions::before,.card .sh::before{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;z-index:-1;
   opacity:calc(var(--p,0) * .92)}
 /* fade the strips' tint exactly like their background, so it doesn't stack with the card's tint in the fade zone */
 .card .sh::before{-webkit-mask-image:linear-gradient(to bottom,#000 72%,transparent);mask-image:linear-gradient(to bottom,#000 72%,transparent)}
-.card.expanded .actions::before{-webkit-mask-image:linear-gradient(to top,#000 72%,transparent);mask-image:linear-gradient(to top,#000 72%,transparent)}
-.card[data-dir="yes"] .sh::before,.card.expanded[data-dir="yes"] .actions::before{background:linear-gradient(to right,color-mix(in srgb,var(--accent) 26%,var(--panel)) 0%,color-mix(in srgb,var(--panel) 60%,transparent) 70%)}
-.card[data-dir="no"] .sh::before,.card.expanded[data-dir="no"] .actions::before{background:linear-gradient(to left,color-mix(in srgb,var(--danger) 22%,var(--panel)) 0%,color-mix(in srgb,var(--panel) 60%,transparent) 70%)}
+.card.reader .actions::before{-webkit-mask-image:linear-gradient(to top,#000 72%,transparent);mask-image:linear-gradient(to top,#000 72%,transparent)}
+.card[data-dir="yes"] .sh::before,.card.reader[data-dir="yes"] .actions::before{background:linear-gradient(to right,color-mix(in srgb,var(--accent) 26%,var(--panel)) 0%,color-mix(in srgb,var(--panel) 60%,transparent) 70%)}
+.card[data-dir="no"] .sh::before,.card.reader[data-dir="no"] .actions::before{background:linear-gradient(to left,color-mix(in srgb,var(--danger) 22%,var(--panel)) 0%,color-mix(in srgb,var(--panel) 60%,transparent) 70%)}
 .card .actions{position:relative;z-index:3}
 .toast{position:fixed;left:50%;bottom:max(20px,env(safe-area-inset-bottom));z-index:50;display:flex;align-items:center;gap:10px;
   background:#2a2030;color:#fff;border-radius:14px;padding:10px 10px 10px 16px;box-shadow:0 8px 28px rgba(20,10,25,.35);
@@ -580,28 +580,26 @@ details.srcs{background:var(--panel);border-radius:16px;box-shadow:var(--e1);pad
 #dlpop .mi{font-size:24px;color:var(--accent)}
 #dlpop small{display:block;color:var(--muted);margin-top:2px}
 
-/* "More": full ad text expands in place */
-.fullwrap{display:grid;grid-template-rows:0fr;transition:grid-template-rows .7s cubic-bezier(.33,0,.15,1)}
-.fullwrap.open{grid-template-rows:1fr}
-.fulltext{min-height:0;overflow:hidden;opacity:0;transition:opacity .5s ease;cursor:auto}
-.fullwrap.open .fulltext{opacity:1}
+/* "More": the card becomes a reader of its own (see openReader); the full text lives only there */
+.fullwrap{display:none}
+.card.reader .fullwrap{display:block}
+.fulltext{cursor:auto;animation:fullIn .45s ease both}
+.card.leaving .fulltext{opacity:0;transition:opacity .18s ease}
+.card.quiet .fulltext{animation:none}
+@keyframes fullIn{from{opacity:0;transform:translateY(6px)}}
 .fulltext p{margin:8px 0;font-size:14px;line-height:1.55;color:var(--ink);white-space:pre-line;overflow-wrap:anywhere}
 .fulltext .fullnote{color:var(--muted);font-size:13px;display:flex;align-items:center;gap:6px}
 .fulltext .fullnote .mi{font-size:17px;color:var(--accent)}
 .morebtn{border:0;background:transparent;color:var(--accent);font:600 13px/1 inherit;padding:6px 8px 6px 2px;margin:2px 0 0;
-  display:inline-flex;align-items:center;gap:2px;border-radius:8px;cursor:pointer;
-  max-height:44px;overflow:hidden;
-  transition:max-height .7s cubic-bezier(.33,0,.15,1),margin-top .7s cubic-bezier(.33,0,.15,1),
-             padding-top .7s cubic-bezier(.33,0,.15,1),padding-bottom .7s cubic-bezier(.33,0,.15,1),opacity .3s ease}
-.fullwrap.open + .morebtn{max-height:0;margin-top:0;padding-top:0;padding-bottom:0;opacity:0;pointer-events:none}
-.morebtn .mi{font-size:20px;transition:transform .3s ease}
-.morebtn.open .mi{transform:rotate(180deg)}
+  display:inline-flex;align-items:center;gap:2px;border-radius:8px;cursor:pointer}
+.card.reader .morebtn{display:none}
+.morebtn .mi{font-size:20px}
 .morebtn:hover{background:var(--accent-soft)}
 .morebtn.busy{opacity:.5}   /* fetching the full text; the card opens once it's here */
 
-/* expanded card: action row sticks to the screen bottom, mini header sticks under the top bar */
+/* reader: the action row sticks to its bottom, the mini header to its top */
 .actions .lessbtn{display:none}
-.card.expanded .actions .lessbtn{display:inline-flex;border:0;border-radius:999px;background:var(--chip);color:var(--accent);
+.card.reader .actions .lessbtn{display:inline-flex;border:0;border-radius:999px;background:var(--chip);color:var(--accent);
   font:600 13px/1 inherit;padding:10px 14px 10px 10px;align-items:center;gap:2px;cursor:pointer}
 /* ✓/✕ sit in the middle of the card in every state: the row spans the card's whole width and
    its two outer columns are always equal, so Less on the left and Applied on the right can
@@ -618,11 +616,10 @@ details.srcs{background:var(--panel);border-radius:16px;box-shadow:var(--e1);pad
 @media (max-width:760px){   /* the pill is a little smaller here, so it always fits its half of the row */
   .card .actions .applybox{font-size:12.5px;padding:0 11px 0 8px;gap:3px}
   .card .actions .applybox .mi{font-size:18px}
-  .card.expanded .actions .lessbtn{font-size:12px;padding:9px 11px 9px 7px}
+  .card.reader .actions .lessbtn{font-size:12px;padding:9px 11px 9px 7px}
   .card .actions .vote.no{margin-right:4px}
   .card .actions .vote.yes{margin-left:4px}
 }
-.card.opening .actions .lessbtn{animation:lessIn .4s cubic-bezier(.25,.8,.3,1)}   /* only as she opens it */
 /* ✓/✕ own the middle of the row; a button beside them drops its label when its side is too narrow
    for it (✓/✕ take 104px, and each side keeps 10px of air) */
 .card .actions{container-type:inline-size}
@@ -632,32 +629,31 @@ details.srcs{background:var(--panel);border-radius:16px;box-shadow:var(--e1);pad
 }
 @container (max-width:256px){          /* 104 + 2 × (Less 66 + 10) */
   .card .actions .lessbtn .lesslab{display:none}
-  .card.expanded .actions .lessbtn{padding:9px}
+  .card.reader .actions .lessbtn{padding:9px}
 }
 @keyframes lessIn{from{opacity:0;transform:scale(.8)}to{opacity:1;transform:none}}
-.card.expanded .lessbtn .mi{font-size:20px}
+.card.reader .lessbtn .mi{font-size:20px}
 /* card geometry, so sticky strips can span the whole card: score column + gap + padding */
 .card{--scol:52px;--sgap:14px;--padx:18px;--pady:16px}
 @media (max-width:760px){.card{--scol:40px;--sgap:10px;--padx:14px;--pady:14px}}
-/* the row is pinned to the screen while the ad is open, and stays pinned while it closes */
-.card.expanded .actions,.card.closing .actions{position:sticky;bottom:0;z-index:3}
-.card.expanded .actions::after,.card.closing .actions::after{content:"";position:absolute;inset:0 4px 0;z-index:-2;
+.card.reader .actions{position:sticky;bottom:0;z-index:3}
+.card.reader .actions::after{content:"";position:absolute;inset:0 4px 0;z-index:-2;
   border-radius:0 0 16px 16px;pointer-events:none;
   background:linear-gradient(to top,var(--panel) 72%,color-mix(in srgb,var(--panel) 0%,transparent))}
-.card.expanded .actions{
+.card.reader .actions{
   margin:14px calc(-1 * var(--padx)) calc(-1 * var(--pady)) calc(-1 * (var(--scol) + var(--sgap) + var(--padx)));
   padding:30px var(--padx) calc(var(--pady) + 8px + env(safe-area-inset-bottom));
   border-radius:0 0 16px 16px}
 
-/* tucks under the bar's bottom fade so no text shows between the search bar and this strip */
-.stickyhead{position:sticky;top:calc(var(--sht,0px) - 26px);height:0;z-index:4}
+/* the reader's top sits under the search bar's soft edge; the strip's padding clears it */
+.stickyhead{position:sticky;top:0;height:0;z-index:4}
 .sh{position:absolute;left:calc(-1 * (var(--scol) + var(--sgap) + var(--padx)));right:calc(-1 * var(--padx));top:0;display:flex;align-items:center;gap:8px;border:0;border-radius:0;
   background:none;box-shadow:none;
   padding:27px var(--padx) 20px;cursor:pointer;color:var(--ink);text-align:left;
   opacity:0;transform:translateY(-8px);pointer-events:none;transition:opacity .28s ease,transform .28s ease}
 .card .sh::after{content:"";position:absolute;inset:0 4px;z-index:-2;pointer-events:none;
   background:linear-gradient(to bottom,var(--panel) 72%,color-mix(in srgb,var(--panel) 0%,transparent))}
-.card.expanded.headout .sh{opacity:1;transform:none;pointer-events:auto}
+.card.reader.headout .sh{opacity:1;transform:none;pointer-events:auto}
 .shscore{flex:none;width:26px;height:26px;border-radius:8px;color:#fff;font:700 13px/26px inherit;text-align:center}
 .shtitle{flex:1;min-width:0;font-weight:650;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .sh .mi{font-size:20px;color:var(--accent)}
@@ -670,6 +666,23 @@ details.srcs{background:var(--panel);border-radius:16px;box-shadow:var(--e1);pad
 .share .mi{font-size:19px;color:inherit}
 .cardshare{float:right;margin:-4px -6px 2px 8px}
 .sh .shshare{margin:-6px -6px -6px 0}   /* the same spot as the card's own share button */
+/* the reader: the open card, pinned under the search bar with its own scrolling; the list waits behind */
+html{scrollbar-gutter:stable}                        /* locking the page doesn't shift it sideways */
+html.reading{overflow:hidden;overscroll-behavior:none}
+.cardslot{pointer-events:none}                       /* keeps the card's place in the list */
+.card.reader{position:fixed;z-index:5;margin:0;overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;
+  box-shadow:var(--e3);cursor:auto}
+.card.reader.liked{box-shadow:var(--e3),inset 4px 0 0 var(--accent)}
+.card.reader.disliked{box-shadow:var(--e3),inset -4px 0 0 var(--danger)}
+.card.reader:active{transform:none}
+.card.reader{border-radius:16px 16px 0 0}                /* it reaches the screen's end, like a sheet */
+.card.reader .actions,.card.reader .actions::after,.card.reader .actions::before{border-radius:0}
+/* sticky strips stick to the scroll area's padding edge: cancel the card's padding so they sit flush */
+.card.reader{padding-bottom:0}
+.card.reader .actions{margin-bottom:0}
+.card.reader .stickyhead{top:calc(-1 * var(--pady))}
+.card.reader.willclose .actions .lessbtn{background:var(--accent);color:var(--on-accent)}   /* let go to close */
+.card.opening .actions .lessbtn{animation:lessIn .4s cubic-bezier(.25,.8,.3,1)}
 /* a card opened from a link glows once, so the eye finds it */
 .card.linked::before{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;z-index:4;
   animation:linkedGlow 1.8s cubic-bezier(.3,.6,.4,1) both}
@@ -1093,7 +1106,7 @@ function card(r){
   tags.push(`<span class="tag"><span class="mi">link</span><span>via ${esc(r.source)}${r.also.map(a=>`, <a href="${esc(a.url)}" target="_blank" rel="noopener">${esc(a.source)}</a>`).join("")}</span></span>`);
   if (!r.pre) tags.push(`<span class="tag">filtered: ${esc(r.pre_reason)}</span>`);
   const m = marks[r.key];
-  return `<article class="card  ${m==="interested"?"liked":""} ${m==="hidden"?"disliked":""} ${justLiked===r.key?"stripe-in":""} ${expanded.has(r.key)?"expanded":""} ${expanded.has(r.key)&&headouts.has(r.key)?"headout":""}" data-k="${esc(r.key)}" data-url="${esc(r.url)}">
+  return `<article class="card  ${m==="interested"?"liked":""} ${m==="hidden"?"disliked":""} ${justLiked===r.key?"stripe-in":""}" data-k="${esc(r.key)}" data-url="${esc(r.url)}">
     <div class="score ${sc==null?"na":""}" style="${col?`background:${col}`:""}" title="Fit score (0-10)">${sc==null?"–":sc}</div>
     <div>
       ${r.more ? `<div class="stickyhead"><div class="sh" role="button" tabindex="0" data-k="${esc(r.key)}" title="Back to the top of this job"><span class="shscore" style="${col?`background:${col}`:""}">${sc==null?"–":sc}</span><span class="shtitle">${esc(title)}</span><span class="mi">vertical_align_top</span><button class="share shshare" data-k="${esc(r.key)}" aria-label="Share this job" title="Share this job"><span class="mi">ios_share</span></button></div></div>` : ""}
@@ -1102,8 +1115,8 @@ function card(r){
       <div class="meta"><span><span class="mi">apartment</span>${esc(r.org)}</span>${r.loc?`<a class="placelink" href="#" data-place="${esc(placeKey(r))}" data-label="${esc(r.loc)}" title="Show only jobs in ${esc(r.loc)}"><span class="mi">location_on</span>${esc(r.loc)}</a>`:""}<span><span class="mi">visibility</span>first seen ${esc(r.first_seen)}</span></div>
       <div class="tags">${tags.join("")}</div>
       ${summary?`<p class="summary">${esc(summary)}</p>`:""}
-      ${r.more ? `<div class="fullwrap ${expanded.has(r.key)?"open":""}"><div class="fulltext">${expanded.has(r.key) && details.has(r.key) ? fullHtml(r) : ""}</div></div>
-      <button class="morebtn ${expanded.has(r.key)?"open":""}" data-k="${esc(r.key)}"><span class="mi">expand_more</span><span>${expanded.has(r.key)?"Less":"More"}</span></button>` : ""}
+      ${r.more ? `<div class="fullwrap"><div class="fulltext"></div></div>
+      <button class="morebtn" data-k="${esc(r.key)}"><span class="mi">expand_more</span><span>More</span></button>` : ""}
       ${r.why?`<p class="why">${esc(r.why)}</p>`:""}
       ${r.blockers?.length?`<p class="blockers"><span class="mi">warning</span> ${r.blockers.map(esc).join(" · ")}</p>`:""}
       <div class="actions">
@@ -1142,6 +1155,11 @@ function draw(){
   $("count").textContent = `${rows.length} job${rows.length===1?"":"s"}`;
   $("qNew").classList.toggle("on", onlyNew); $("qNew").setAttribute("aria-pressed", onlyNew);
   $("qClosing").classList.toggle("on", onlyClosing); $("qClosing").setAttribute("aria-pressed", onlyClosing);
+  // The open card is redrawn with everything else: remember where she was in it, close it quietly,
+  // and lift the new card back in once the list is drawn (unless it has left this list).
+  const keep = reading && !mapMode ? {key: reading.key, headout: reading.el.classList.contains("headout"),
+    frac: reading.el.scrollTop / Math.max(1, reading.el.scrollHeight - reading.el.clientHeight)} : null;
+  if (reading) closeReader({instant: true, rebuild: !!keep});
   // List <-> map (see the bar's controller for the three calls)
   const wasMap = !$("map").hidden;
   if (mapMode && !wasMap) window.__barLeaveList?.();
@@ -1155,7 +1173,7 @@ function draw(){
   if (mapMode) return drawMap(rows);
   // FLIP: remember where cards were, so after re-rendering they glide to their new places
   const before = new Map();
-  if (flipNext) $("list").querySelectorAll(".card").forEach(c => before.set(c.dataset.k, c.getBoundingClientRect().top));
+  if (flipNext) $("list").querySelectorAll(".card").forEach(c => { if (c.dataset.k !== keep?.key) before.set(c.dataset.k, c.getBoundingClientRect().top); });
   const doFlip = flipNext; flipNext = false;
   let skipFlip = false;
   $("list").innerHTML = rows.length ? rows.map(card).join("") : `<div class="empty">Nothing here right now.</div>`;
@@ -1187,6 +1205,7 @@ function draw(){
   if (doFlip && !skipFlip) {
     const moved = [];
     $("list").querySelectorAll(".card").forEach(c => {
+      if (c.dataset.k === keep?.key) return;
       const prev = before.get(c.dataset.k), now = c.getBoundingClientRect().top;
       if (prev == null) {                       // newly shown (e.g. undo): fade in
         c.style.opacity = "0"; c.style.transform = "scale(.97)"; moved.push(c);
@@ -1203,18 +1222,14 @@ function draw(){
       });
     }
   }
-  $("list").querySelectorAll(".morebtn,.lessbtn").forEach(b => b.onclick = e => { e.stopPropagation(); toggleMore(b); });
+  $("list").querySelectorAll(".morebtn").forEach(b => b.onclick = e => { e.stopPropagation(); openReader(b.dataset.k); });
+  $("list").querySelectorAll(".lessbtn").forEach(b => b.onclick = e => { e.stopPropagation(); closeReader(); });
   $("list").querySelectorAll(".sh").forEach(b => {
-    const toTop = e => {
-      e.stopPropagation();
-      const c = b.closest(".card"), barvis = window.__barvis || 0;
-      jumpTo(scrollY + c.getBoundingClientRect().top - barvis - 10);
-    };
+    const toTop = e => { e.stopPropagation(); b.closest(".card").scrollTo({top: 0, behavior: "smooth"}); };
     b.onclick = toTop;
     b.onkeydown = e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); toTop(e); } };
   });
   $("list").querySelectorAll(".share").forEach(b => b.onclick = e => { e.stopPropagation(); shareJob(b.dataset.k); });
-  updateStickyHeads();
   $("list").querySelectorAll(".dltag").forEach(b => b.onclick = e => { e.stopPropagation(); showDeadline(b); });
   $("list").querySelectorAll(".cattag").forEach(a => a.onclick = e => { e.preventDefault(); setCat(a.dataset.c); });
   $("list").querySelectorAll(".placelink").forEach(a => a.onclick = e => { e.preventDefault(); setPlace(a.dataset.place, a.dataset.label); });
@@ -1252,13 +1267,19 @@ function draw(){
       window.open(c.dataset.url, "_blank", "noopener");
     });
   });
-  // fresh cards know nothing about where the bar is: place their sticky strips before this paints
-  updateStickyHeads();
+  if (keep) {
+    const el = $("list").querySelector(`.card[data-k="${CSS.escape(keep.key)}"]`), r = DATA.rows.find(x => x.key === keep.key);
+    if (el && r?.more && details.has(keep.key)) {
+      fillReader(el, r);
+      lift(el, {animate: false, headout: keep.headout, quiet: true});
+      el.scrollTop = keep.frac * Math.max(0, el.scrollHeight - el.clientHeight);   // same place in the text
+    } else { clearJobHash(keep.key); if (linked === keep.key) linked = null; }
+  }
   if (wasMap) window.__barBackToList?.();       // the list has its real height again: back to her place
 }
 
 // ---- "More": full ad text, loaded on demand from docs/details/<shard>.json ----
-const expanded = new Set(), headouts = new Set(), details = new Map(), shardLoads = new Map();
+const details = new Map(), shardLoads = new Map();
 window.__biojobsDetails = (i, d) => { for (const [kk, v] of Object.entries(d)) details.set(kk, v); };
 const adText = k => {   // [dutch, english?] — a shard left over in the browser cache is still a plain string
   const d = details.get(k);
@@ -1289,115 +1310,153 @@ function fullHtml(r){
   }
   return text.split(/\n+/).filter(Boolean).map(p => `<p>${esc(p)}</p>`).join("");
 }
-// How much room the More button takes, remembered from a card that still shows one (it is hidden
-// while the ad is open, so it can't be measured there).
-// A fixed duration made a long ad race open and a short one crawl; the time grows with the text.
-const growMs = px => Math.min(1200, Math.max(560, Math.round(430 + px * .25)));
 // the card keeps gliding after she lets go, so the bar stays frosted until it has landed
 function dropFrost(){
   clearTimeout(window.__overcardT);
   window.__overcardT = setTimeout(() => $("topbar").classList.remove("overcard"), 420);
 }
-function flipActions(c, change, ms = 450){   // the action row changes layout: let its buttons slide there instead of jumping
-  const items = [...c.querySelectorAll(".actions > *")];
-  const before = items.map(el => el.getBoundingClientRect());
-  change();
-  items.forEach((el, i) => {
-    if (!before[i].width) return;                       // wasn't on screen before (the Less button): it fades in
-    const now = el.getBoundingClientRect();
-    const dx = before[i].left - now.left, dy = before[i].top - now.top;
-    if (!dx && !dy) return;
-    el.animate([{transform: `translate(${dx}px,${dy}px)`}, {transform: "none"}],
-               {duration: ms, easing: "cubic-bezier(.25,.8,.3,1)"});
-  });
+// ---- The reader: the open card, pinned under the search bar with scrolling of its own ----
+// Only one card is open at a time. It lifts out of the list (a placeholder keeps its place, and the
+// page behind is locked), fills the screen under the bar, and goes back to its place when closed:
+// with Less, Escape, or by pulling past its top or its end. A pull has to start at that end, so a
+// fling that merely arrives there doesn't close anything.
+let reading = null;   // {key, el, slot}
+const isPhone = () => matchMedia("(max-width: 760px)").matches;
+const READER_EASE = "cubic-bezier(.25,.8,.3,1)";
+function readerFrame(){   // under the search bar's solid part (its soft edge overlaps), down to the screen's end like a sheet
+  const top = Math.round((window.__barvis || 0) - (isPhone() ? 14 : 20));
+  const list = $("list").getBoundingClientRect();
+  return {top, left: list.left, width: list.width, height: Math.max(200, innerHeight - top)};
 }
-async function toggleMore(btn, opts = {}){
-  const c = btn.closest(".card"), k = btn.dataset.k, wrap = c.querySelector(".fullwrap"), box = c.querySelector(".fulltext");
+function placeReader(el, f, ms){
+  el.style.transition = ms ? ["top", "left", "width", "height", "transform"].map(p => `${p} ${ms}ms ${READER_EASE}`).join(",") : "none";
+  el.style.top = f.top + "px"; el.style.left = f.left + "px"; el.style.width = f.width + "px"; el.style.height = f.height + "px";
+}
+function fillReader(el, r){
+  const box = el.querySelector(".fulltext");
+  if (box) box.innerHTML = details.has(r.key) ? fullHtml(r) : '<p class="fullnote">Couldn\'t load the full text.</p>';
+}
+function lift(el, {animate = true, headout = false, quiet = false} = {}){
+  const r = el.getBoundingClientRect(), slot = document.createElement("div");
+  slot.className = "cardslot";
+  slot.style.height = r.height + "px"; slot.style.margin = getComputedStyle(el).margin;
+  el.before(slot);
+  placeReader(el, {top: r.top, left: r.left, width: r.width, height: r.height}, 0);   // lifted, not moved yet
+  el.classList.toggle("quiet", quiet);                 // a rebuild: nothing fades in again
+  el.classList.add("reader");
+  el.classList.toggle("headout", headout);
+  document.documentElement.classList.add("reading");
+  reading = {key: el.dataset.k, el, slot};
+  wireReader(el);
+  if (!animate) return placeReader(el, readerFrame(), 0);
+  el.classList.add("opening"); setTimeout(() => el.classList.remove("opening"), 450);
+  void el.offsetHeight;
+  placeReader(el, readerFrame(), 420);
+}
+async function openReader(k, {glow = false} = {}){
+  if (reading?.key === k) return;
+  if (reading) closeReader({instant: true});
   const r = DATA.rows.find(x => x.key === k);
-  const more = c.querySelector(".morebtn");
-  if (expanded.has(k)) {
-    expanded.delete(k);
-    clearJobHash(k);
-    if (linked === k) linked = null;
-    const dur = growMs(box.scrollHeight);          // closing takes as long as opening did
-    wrap.style.transitionDuration = dur + "ms";
-    box.style.transitionDuration = Math.round(dur * .8) + "ms";
-    // The row stays pinned to the screen while the text shrinks under it. Dropping "expanded" now
-    // would send it straight to the card's end — still thousands of pixels down — and it would fly
-    // off the screen and back. So the card gives that class up only once it has finished closing.
-    more.style.transitionDuration = dur + "ms";      // the button grows back in step with the text
-    wrap.classList.remove("open");
-    c.classList.add("closing");                      // keeps the row on screen…
-    c.classList.remove("expanded", "headout");       // …while its open shape eases away with the text
-    more.classList.remove("open"); more.lastElementChild.textContent = "More";
-    clearTimeout(c.__closing);
-    c.__closing = setTimeout(() => {
-      if (expanded.has(k)) return;                 // reopened while it was closing
-      // the row has just ridden up with the card; the open and closed paddings differ by a few
-      // pixels, so settle that quickly rather than easing back down against the motion
-      c.classList.remove("closing");                 // by now the row is already sitting where it belongs
-    }, dur + 40);
-    // if we were deep inside the ad, bring the card's top back into view
-    const top = c.getBoundingClientRect().top, barvis = window.__barvis || 0;
-    if (top < barvis) jumpTo(scrollY + top - barvis - 10);
-    return;
+  let el = $("list").querySelector(`.card[data-k="${CSS.escape(k)}"]`);
+  if (!r || !el || !r.more) return;
+  if (!details.has(k)) {
+    const more = el.querySelector(".morebtn");
+    more?.classList.add("busy"); await loadDetail(k); more?.classList.remove("busy");
+    el = $("list").querySelector(`.card[data-k="${CSS.escape(k)}"]`);   // the list may have been redrawn meanwhile
+    if (!el || reading) return;
   }
-  expanded.add(k);
+  fillReader(el, r);
+  const glide = document.visibilityState === "visible";
+  if (isPhone()) window.__barCollapse?.(glide);        // on a phone the ad gets the room
+  lift(el, {animate: glide});
   setJobHash(k);
-  // load the text BEFORE opening: growing into a "Loading…" box and then swapping in the real text
-  // skipped the animation entirely, which is why it used to snap open
-  if (!details.has(k)) { more.classList.add("busy"); await loadDetail(k); more.classList.remove("busy"); }
-  if (!expanded.has(k)) return;                          // she closed it again while the text was loading
-  box.innerHTML = details.has(k) ? fullHtml(r) : '<p class="fullnote">Couldn\'t load the full text.</p>';
-  more.classList.add("open"); more.lastElementChild.textContent = "Less";
-  const dur = growMs(box.scrollHeight);
-  wrap.style.transitionDuration = dur + "ms";
-  box.style.transitionDuration = Math.round(dur * .8) + "ms";
-  more.style.transitionDuration = dur + "ms";           // the button folds away in step with the text
-  if (!opts.placed) bringToTop(c, true, dur + 80);      // reading it: up under the (tucked-away) search bar
-  clearTimeout(c.__closing); c.classList.remove("closing");
-  c.classList.add("opening"); setTimeout(() => c.classList.remove("opening"), 450);
-  flipActions(c, () => c.classList.add("expanded"));
-  requestAnimationFrame(() => wrap.classList.add("open"));
-  setTimeout(updateStickyHeads, dur + 60);   // once it has finished growing, the card knows where its footer sits
+  if (glow) { el.classList.add("linked"); setTimeout(() => el.classList.remove("linked"), 1900); }
 }
-function updateStickyHeads(){   // show a card's mini header once its real title is under the top bar
-  const barvis = window.__barvis || 0, list = document.querySelectorAll(".card.expanded");
-  if (!list.length) return;                 // nothing expanded: no layout reads at all
-  list.forEach(c => {
-    const sh = c.querySelector(".stickyhead");
-    if (sh && sh.__top !== barvis) { sh.__top = barvis; sh.style.setProperty("--sht", barvis + "px"); }
-    const t = c.querySelector(".title").getBoundingClientRect(), r = c.getBoundingClientRect();
-    const out = t.bottom < barvis + 4 && r.bottom > barvis + 140;
-    c.classList.toggle("headout", out);
-    if (out) headouts.add(c.dataset.k); else headouts.delete(c.dataset.k);   // survives a re-render
-  });
-}
-// Bring a card up to be read: on a phone the search bar tucks its title away, and the card slides up
-// under the bar. Glides when the page is showing, jumps otherwise (a hidden page runs no glide).
-// A card near the end of the list can't get there until its text has grown, so it is checked again.
-function readingSpot(card){   // where a card's top sits when it is brought up to be read
-  const bar = window.__barvis || 0, prev = card.previousElementSibling;
-  if (!prev || !prev.classList.contains("card")) return bar + 10;
-  // high enough that the card above ends behind the solid part of the bar, not in its soft bottom edge
-  const gap = card.getBoundingClientRect().top - prev.getBoundingClientRect().bottom;
-  const fade = matchMedia("(max-width: 760px)").matches ? 14 : 20;
-  return bar - fade + gap;
-}
-function bringToTop(card, glide, settleAfter = 0){
-  glide = glide && document.visibilityState === "visible";
-  freezeBar(glide ? 900 : 300);
-  if (matchMedia("(max-width: 760px)").matches) window.__barCollapse?.(glide);
-  const key = card.dataset.k;
-  const move = smooth => {
-    const el = $("list").querySelector(`.card[data-k="${CSS.escape(key)}"]`);
-    if (!el) return;
-    const d = el.getBoundingClientRect().top - readingSpot(el);
-    if (Math.abs(d) > 2) window.scrollTo(smooth ? {top: scrollY + d, behavior: "smooth"} : {top: scrollY + d});
+function closeReader({instant = false, rebuild = false} = {}){
+  if (!reading) return;
+  const {key, el, slot} = reading;
+  reading = null;
+  if (!rebuild) { clearJobHash(key); if (linked === key) linked = null; }
+  const done = () => {
+    el.classList.remove("reader", "headout", "opening", "willclose", "leaving", "quiet");
+    ["top", "left", "width", "height", "transition", "transform"].forEach(p => el.style[p] = "");
+    const box = el.querySelector(".fulltext"); if (box) box.innerHTML = "";
+    slot.remove();
+    if (reading) return;
+    document.documentElement.classList.remove("reading");
+    if (!rebuild) { window.__barSlide?.(); window.__barUnfreeze?.(); }   // the bar follows the page again
   };
-  move(glide);
-  if (settleAfter) setTimeout(() => { freezeBar(700); move(document.visibilityState === "visible"); }, settleAfter);
+  if (instant || !el.isConnected || document.visibilityState !== "visible") return done();
+  const s = slot.getBoundingClientRect();
+  el.classList.add("leaving"); el.classList.remove("headout", "willclose");
+  el.scrollTo({top: 0, behavior: "smooth"});
+  placeReader(el, {top: s.top, left: s.left, width: s.width, height: s.height}, 380);
+  el.style.transform = "";
+  setTimeout(done, 400);
 }
+function wireReader(el){
+  if (el.__reader) return;
+  el.__reader = true;
+  const on = () => el.classList.contains("reader");
+  const atTop = () => el.scrollTop <= 0, atEnd = () => el.scrollTop + el.clientHeight >= el.scrollHeight - 1;
+  const resist = d => Math.sign(d) * 120 * (1 - Math.exp(-Math.abs(d) / 170));
+  const LIMIT = 70;                                      // how far it has to stretch before letting go closes it
+  const stretch = d => {
+    const y = resist(d);
+    el.style.transition = "none"; el.style.transform = `translateY(${y}px)`;
+    el.classList.toggle("willclose", Math.abs(y) > LIMIT);
+    return y;
+  };
+  const springBack = () => {
+    el.classList.remove("willclose");
+    el.style.transition = "transform .34s cubic-bezier(.2,1.25,.4,1)"; el.style.transform = "";
+  };
+  // the mini header shows once the title has scrolled under it
+  el.addEventListener("scroll", () => {
+    if (!on()) return;
+    const t = el.querySelector(".title"), sh = el.querySelector(".sh");
+    if (t && sh) el.classList.toggle("headout", t.offsetTop + t.offsetHeight < el.scrollTop + sh.offsetHeight - 6);
+  }, {passive: true});
+  // touch: pull past either end
+  let touch = null;
+  el.addEventListener("touchstart", e => {
+    touch = on() && e.touches.length === 1
+      ? {x: e.touches[0].clientX, y: e.touches[0].clientY, top: atTop(), end: atEnd(), d: 0, pulling: false} : null;
+  }, {passive: true});
+  el.addEventListener("touchmove", e => {
+    if (!touch || !on()) return;
+    const dx = e.touches[0].clientX - touch.x, dy = e.touches[0].clientY - touch.y;
+    if (!touch.pulling && Math.abs(dx) > Math.abs(dy)) return;        // sideways: a swipe to mark it
+    const out = (touch.top && dy > 0 && atTop()) || (touch.end && dy < 0 && atEnd());
+    if (!out) { if (touch.pulling) { touch.pulling = false; springBack(); } return; }
+    e.preventDefault();
+    touch.pulling = true; touch.d = dy; stretch(dy);
+  }, {passive: false});
+  const release = () => {
+    const t = touch; touch = null;
+    if (!t || !t.pulling) return;
+    if (Math.abs(resist(t.d)) > LIMIT) closeReader(); else springBack();
+  };
+  el.addEventListener("touchend", release);
+  el.addEventListener("touchcancel", release);
+  // wheel / trackpad: keep pushing past an end until it gives; a push has to start there
+  const w = {last: 0, armed: false, d: 0, timer: 0};
+  el.addEventListener("wheel", e => {
+    if (!on()) return;
+    const dy = e.deltaMode === 1 ? e.deltaY * 16 : e.deltaY, now = performance.now(), fresh = now - w.last > 140;
+    w.last = now;
+    if (!((dy < 0 && atTop()) || (dy > 0 && atEnd()))) { w.armed = false; if (w.d) { w.d = 0; springBack(); } return; }
+    e.preventDefault();
+    if (fresh) w.armed = true;                            // momentum that ran into the end doesn't count
+    if (!w.armed) return;
+    w.d -= dy * .6;
+    clearTimeout(w.timer);
+    if (Math.abs(stretch(w.d)) > LIMIT + 14) { w.d = 0; w.armed = false; closeReader(); return; }
+    w.timer = setTimeout(() => { if (w.d) { w.d = 0; springBack(); } }, 180);
+  }, {passive: false});
+}
+document.addEventListener("keydown", e => { if (e.key === "Escape" && reading) closeReader(); });
+addEventListener("resize", () => { if (reading) placeReader(reading.el, readerFrame(), 0); });
 function settleOn(key, tries = 0){   // after the glide, make sure the card sits exactly under the bar (bar height can change meanwhile)
   setTimeout(() => {
     const el = $("list").querySelector(`.card[data-k="${CSS.escape(key)}"]`);
@@ -1411,11 +1470,12 @@ function settleOn(key, tries = 0){   // after the glide, make sure the card sits
   }, tries ? 450 : 750);
 }
 function rememberNextCard(el){   // a card whose top is hidden under the bar leaves: continue at the next card's top
-  if (el.getBoundingClientRect().top >= (window.__barvis || 0) - 2) return;   // fully visible: cards just glide up into its place
+  const box = reading?.el === el ? reading.slot : el;     // an open card's place is its placeholder in the list
+  if (box.getBoundingClientRect().top >= (window.__barvis || 0) - 2) return;   // fully visible: cards just glide up into its place
   const next = el.nextElementSibling;
   window.__scrollToKey = next && next.classList.contains("card") ? next.dataset.k : null;
   // where the next card was on screen (just below the screen if it was further down): the glide starts there
-  const r = el.getBoundingClientRect();
+  const r = box.getBoundingClientRect();
   window.__removedH = r.height;                       // its space is kept as a placeholder, then shrunk away
   window.__scrollToFallbackTop = scrollY + r.top;
 }
@@ -1622,7 +1682,7 @@ function freezeBar(ms){
 function keepPlace(){   // remember the card at the top of the screen, put it back there after a re-render
   freezeBar(700);        // the page shifting under a re-render is not a scroll: the bar stays as it is
   const bar = window.__barvis || 0;
-  const el = [...$("list").querySelectorAll(".card")].find(c => c.getBoundingClientRect().bottom > bar + 8);
+  const el = [...$("list").querySelectorAll(".card:not(.reader)")].find(c => c.getBoundingClientRect().bottom > bar + 8);
   if (!el) return () => {};
   const k = el.dataset.k, was = el.getBoundingClientRect().top;
   return () => {
@@ -1667,10 +1727,14 @@ function openJob(k, smooth){
   draw();
   const card = $("list").querySelector(`.card[data-k="${CSS.escape(k)}"]`);
   if (!card) return;
-  bringToTop(card, smooth, r.more ? 1400 : 0);   // glide there in the open app; jump when arriving fresh
-  card.classList.add("linked");            // …and a glow, so the eye finds it
-  setTimeout(() => card.classList.remove("linked"), 1900);
-  if (r.more && !expanded.has(k)) toggleMore(card.querySelector(".morebtn"), {placed: true});
+  if (!smooth || !r.more) {
+    // arriving fresh (or a short ad with nothing to open): put its place in the list under the bar first
+    if (isPhone()) window.__barCollapse?.(false);
+    freezeBar(300);
+    window.scrollTo(0, Math.max(0, scrollY + card.getBoundingClientRect().top - (window.__barvis || 0) - 10));
+  }
+  if (r.more) openReader(k, {glow: true});       // in the open app it rises from wherever the card is
+  else { card.classList.add("linked"); setTimeout(() => card.classList.remove("linked"), 1900); }
 }
 function jobFromHash(){ const m = location.hash.match(/^#job=(.+)$/); return m ? decodeURIComponent(m[1]) : null; }
 if ("launchQueue" in window) {             // installed app already open: the link arrives here, no reload
@@ -1679,7 +1743,7 @@ if ("launchQueue" in window) {             // installed app already open: the li
     const m = new URL(params.targetURL).hash.match(/^#job=(.+)$/);
     if (!m) return;
     const k = decodeURIComponent(m[1]);
-    if (k === jobFromHash() && expanded.has(k)) return;   // the launch that loaded this page: already handled
+    if (k === jobFromHash() && reading?.key === k) return;   // the launch that loaded this page: already handled
     openJob(k, true);
   });
 }
@@ -1695,31 +1759,18 @@ function jumpTo(top){ freezeBar(900); window.scrollTo({top, behavior: "smooth"})
     window.__barEff = hide;
     window.__barvis = B - hide;
     ctl.classList.toggle("stuck", hide > H - 4);        // mini logo once the title is tucked away
-    updateStickyHeads();
   };
   let away = null, slideT = 0;   // while the map is showing: {hide, y} of the list she left
   const update = () => {
     ticking = false;
     if (away) return;                                    // the map doesn't scroll; the bar is shown whole
     const y = Math.max(0, scrollY);
-    if (Date.now() < (window.__frozenUntil || 0)) { lastY = y; updateStickyHeads(); return; }   // automatic scroll: bar held, strips keep up
+    if (Date.now() < (window.__frozenUntil || 0)) { lastY = y; return; }   // automatic scroll: the bar holds still
     hide = Math.min(H, Math.max(0, hide + (y - lastY)));
     if (y < H) hide = Math.min(hide, y);                 // near the top the title belongs on screen
-    const g = actionRowTop();                            // an open card's buttons must stay tappable:
-    if (g < Infinity) hide = Math.max(hide, Math.min(H, B - g));   // the bar gives way instead of covering them
     lastY = y;
     apply();
     bar.classList.toggle("scrolled", y > 2);
-  };
-  // Where the highest action row of an open card is. Scrolling up opens the bar by exactly the
-  // distance the page moves, so without this the bar follows that row up and keeps it covered.
-  const actionRowTop = () => {
-    let g = Infinity;
-    for (const a of document.querySelectorAll(".card.expanded .actions")) {
-      const t = a.getBoundingClientRect().top;
-      if (t > -80 && t < g) g = t;
-    }
-    return g;
   };
   const measure = () => {
     H = hdr.offsetHeight; B = bar.offsetHeight;
@@ -1727,7 +1778,7 @@ function jumpTo(top){ freezeBar(900); window.scrollTo({top, behavior: "smooth"})
     apply();
   };
   addEventListener("scroll", () => { if (!ticking) { ticking = true; requestAnimationFrame(update); } }, {passive: true});
-  new ResizeObserver(() => { measure(); update(); }).observe(bar);
+  new ResizeObserver(() => { measure(); update(); if (reading) placeReader(reading.el, readerFrame(), 0); }).observe(bar);
   measure(); update();
   window.__barUpdate = () => { measure(); update(); };
   window.__barUnfreeze = () => { lastY = Math.max(0, scrollY); update(); };
