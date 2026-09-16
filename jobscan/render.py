@@ -415,8 +415,9 @@ input[type=search]:focus,select:focus{outline:2px solid var(--accent);outline-of
 .seg{border:0;border-radius:999px;box-shadow:var(--e1);background:var(--panel);padding:3px}
 .seg button{border-radius:999px;display:inline-flex;align-items:center;gap:6px;padding:6px 14px;background:transparent}
 .seg{position:relative}
-.seg button{position:relative;z-index:1;transition:color .25s}
-.seg button.on{background:transparent;color:#fff;box-shadow:none}
+.seg button{position:relative;z-index:1;transition:color .25s;color:var(--muted);font-size:13px;font-weight:600}
+.seg button .mi{font-size:18px}
+.seg button.on{background:transparent;color:var(--on-accent);box-shadow:none}   /* same as a selected chip */
 .segpill{position:absolute;top:3px;bottom:3px;left:0;width:0;border-radius:999px;z-index:0;
   background:var(--accent);box-shadow:var(--e1);transition:transform .35s cubic-bezier(.3,1.25,.5,1),width .35s cubic-bezier(.3,1.25,.5,1)}
 /* no grey Android tap rectangle */
@@ -1079,17 +1080,15 @@ function draw(){
   $("count").textContent = `${rows.length} job${rows.length===1?"":"s"}`;
   $("qNew").classList.toggle("on", onlyNew); $("qNew").setAttribute("aria-pressed", onlyNew);
   $("qClosing").classList.toggle("on", onlyClosing); $("qClosing").setAttribute("aria-pressed", onlyClosing);
-  // Switching between the list and the map: the list's scroll position and the bar's state are set
-  // aside BEFORE the list is hidden (hiding it shrinks the page, and the browser would already have
-  // clamped the position), and handed back once it is showing again.
+  // List <-> map (see the bar's controller for the three calls)
   const wasMap = !$("map").hidden;
-  if (mapMode && !wasMap) window.__barMap?.(true);
+  if (mapMode && !wasMap) window.__barLeaveList?.();
+  if (!mapMode && wasMap) window.__barSlide?.();
   $("map").hidden = !mapMode; $("list").hidden = mapMode; $("nomap").hidden = !mapMode;
   const phoneMap = mapMode && matchMedia("(max-width: 760px)").matches;
   const toPhoneMap = phoneMap && !document.documentElement.classList.contains("mapmode");
   document.documentElement.classList.toggle("mapmode", phoneMap);
   if (toPhoneMap) window.scrollTo(0, 0);
-  if (!mapMode && wasMap) window.__barMap?.(false);
   window.__barUpdate?.();
   if (mapMode) return drawMap(rows);
   // FLIP: remember where cards were, so after re-rendering they glide to their new places
@@ -1188,6 +1187,7 @@ function draw(){
   });
   // fresh cards know nothing about where the bar is: place their sticky strips before this paints
   updateStickyHeads();
+  if (wasMap) window.__barBackToList?.();       // the list has its real height again: back to her place
 }
 
 // ---- "More": full ad text, loaded on demand from docs/details/<shard>.json ----
@@ -1549,7 +1549,7 @@ function jumpTo(top){ freezeBar(900); window.scrollTo({top, behavior: "smooth"})
     ctl.classList.toggle("stuck", hide > H - 4);        // mini logo once the title is tucked away
     updateStickyHeads();
   };
-  let away = null, slideT = 0;   // set while the phone map is showing: {hide, y} of the list she left
+  let away = null, slideT = 0;   // while the map is showing: {hide, y} of the list she left
   const update = () => {
     ticking = false;
     if (away) return;                                    // the map doesn't scroll; the bar is shown whole
@@ -1583,24 +1583,29 @@ function jumpTo(top){ freezeBar(900); window.scrollTo({top, behavior: "smooth"})
   measure(); update();
   window.__barUpdate = () => { measure(); update(); };
   window.__barUnfreeze = () => { lastY = Math.max(0, scrollY); update(); };
-  // The phone map needs the whole bar and can't scroll. Going there sets the list's scroll position
-  // and the bar's state aside; coming back restores both exactly. Either way the bar slides.
+  // The map is a screen of its own: on a phone it shows the whole bar and doesn't scroll. The list's
+  // scroll position and the bar's state wait while it is up and come back exactly. The page calls:
+  //   __barLeaveList()   before the list is hidden  (its position is still real)
+  //   __barSlide()       before the map's whole bar is taken away (so the bar slides, not snaps)
+  //   __barBackToList()  once the list is rendered again (its height is real again)
   const slide = () => {
     bar.classList.add("anim");
-    clearTimeout(slideT); slideT = setTimeout(() => bar.classList.remove("anim"), 400);
+    clearTimeout(slideT); slideT = setTimeout(() => bar.classList.remove("anim"), 420);
   };
-  window.__barMap = on => {
-    if (on && !away) {
-      away = {hide, y: Math.max(0, scrollY)};
-      slide();                                           // CSS shows the bar whole in map mode
-    } else if (!on && away) {
-      const back = away; away = null;
-      window.scrollTo(0, back.y);
-      lastY = Math.max(0, scrollY);
-      hide = back.hide;
-      slide(); apply();
-      bar.classList.toggle("scrolled", lastY > 2);
-    }
+  window.__barSlide = slide;
+  window.__barLeaveList = () => {
+    if (away) return;
+    away = {hide, y: Math.max(0, scrollY)};
+    slide();
+  };
+  window.__barBackToList = () => {
+    if (!away) return;
+    const back = away; away = null;
+    window.scrollTo(0, back.y);
+    lastY = Math.max(0, scrollY);
+    hide = back.hide;
+    apply();
+    bar.classList.toggle("scrolled", lastY > 2);
   };
 })();
 $("minilogo").onclick = e => { e.preventDefault(); window.scrollTo({top: 0, behavior: "smooth"}); };
