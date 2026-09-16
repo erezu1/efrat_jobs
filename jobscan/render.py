@@ -602,6 +602,17 @@ details.srcs{background:var(--panel);border-radius:16px;box-shadow:var(--e1);pad
   .card .actions .vote.yes{margin-left:4px}
 }
 .card.opening .actions .lessbtn{animation:lessIn .4s cubic-bezier(.25,.8,.3,1)}   /* only as she opens it */
+/* ✓/✕ own the middle of the row; a button beside them drops its label when its side is too narrow
+   for it (✓/✕ take 104px, and each side keeps 10px of air) */
+.card .actions{container-type:inline-size}
+@container (max-width:312px){          /* 104 + 2 × (Applied? 94 + 10) */
+  .card .actions .applybox .txt{display:none}
+  .card .actions .applybox{width:48px;min-width:48px;padding:0;justify-content:center}
+}
+@container (max-width:256px){          /* 104 + 2 × (Less 66 + 10) */
+  .card .actions .lessbtn .lesslab{display:none}
+  .card.expanded .actions .lessbtn{padding:9px}
+}
 @keyframes lessIn{from{opacity:0;transform:scale(.8)}to{opacity:1;transform:none}}
 .card.expanded .lessbtn .mi{font-size:20px}
 /* card geometry, so sticky strips can span the whole card: score column + gap + padding */
@@ -1045,7 +1056,7 @@ function card(r){
       ${r.why?`<p class="why">${esc(r.why)}</p>`:""}
       ${r.blockers?.length?`<p class="blockers"><span class="mi">warning</span> ${r.blockers.map(esc).join(" · ")}</p>`:""}
       <div class="actions">
-        ${r.more ? `<button class="lessbtn" data-k="${esc(r.key)}"><span class="mi">expand_less</span>Less</button>` : ""}
+        ${r.more ? `<button class="lessbtn" data-k="${esc(r.key)}" aria-label="Less"><span class="mi">expand_less</span><span class="lesslab">Less</span></button>` : ""}
         <button class="vote yes ${m==="interested"?"on":""}" data-k="${esc(r.key)}" data-m="interested" title="Interested (or swipe right)" aria-label="Interested"><span class="fill"></span><span class="mi">check</span></button>
         <button class="vote no ${m==="hidden"?"on":""}" data-k="${esc(r.key)}" data-m="hidden" title="Not interested (or swipe left)" aria-label="Not interested"><span class="fill"></span><span class="mi">close</span></button>
         ${m==="interested" ? `<label class="applybox ${applied[r.key]?"on":""} ${justLiked===r.key?"appear":""}" title="${applied[r.key]?"Marked as applied — tap to undo":"Did you apply? Tap to mark"}"><input type="checkbox" data-k="${esc(r.key)}" ${applied[r.key]?"checked":""}><span class="mi">${applied[r.key]?"task_alt":"send"}</span><span class="txt">${applied[r.key]?"Applied":"Applied?"}</span></label>` : ""}
