@@ -1374,13 +1374,27 @@ function updateStickyHeads(){   // show a card's mini header once its real title
 // Bring a card up to be read: on a phone the search bar tucks its title away, and the card slides up
 // under the bar. Glides when the page is showing, jumps otherwise (a hidden page runs no glide).
 // A card near the end of the list can't get there until its text has grown, so it is checked again.
+function readingSpot(card){   // where a card's top sits when it is brought up to be read
+  const bar = window.__barvis || 0, prev = card.previousElementSibling;
+  if (!prev || !prev.classList.contains("card")) return bar + 10;
+  // high enough that the card above ends behind the solid part of the bar, not in its soft bottom edge
+  const gap = card.getBoundingClientRect().top - prev.getBoundingClientRect().bottom;
+  const fade = matchMedia("(max-width: 760px)").matches ? 14 : 20;
+  return bar - fade + gap;
+}
 function bringToTop(card, glide, settleAfter = 0){
   glide = glide && document.visibilityState === "visible";
   freezeBar(glide ? 900 : 300);
   if (matchMedia("(max-width: 760px)").matches) window.__barCollapse?.(glide);
-  const top = Math.max(0, scrollY + card.getBoundingClientRect().top - (window.__barvis || 0) - 10);
-  if (Math.abs(top - scrollY) > 2) window.scrollTo(glide ? {top, behavior: "smooth"} : {top});
-  if (settleAfter) setTimeout(() => settleOn(card.dataset.k), settleAfter);
+  const key = card.dataset.k;
+  const move = smooth => {
+    const el = $("list").querySelector(`.card[data-k="${CSS.escape(key)}"]`);
+    if (!el) return;
+    const d = el.getBoundingClientRect().top - readingSpot(el);
+    if (Math.abs(d) > 2) window.scrollTo(smooth ? {top: scrollY + d, behavior: "smooth"} : {top: scrollY + d});
+  };
+  move(glide);
+  if (settleAfter) setTimeout(() => { freezeBar(700); move(document.visibilityState === "visible"); }, settleAfter);
 }
 function settleOn(key, tries = 0){   // after the glide, make sure the card sits exactly under the bar (bar height can change meanwhile)
   setTimeout(() => {
