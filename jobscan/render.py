@@ -1461,10 +1461,22 @@ function jumpTo(top){ freezeBar(900); window.scrollTo({top, behavior: "smooth"})
     if (Date.now() < (window.__frozenUntil || 0)) { lastY = y; updateStickyHeads(); return; }   // automatic scroll: bar held, strips keep up
     hide = Math.min(H, Math.max(0, hide + (y - lastY)));
     if (y < H) hide = Math.min(hide, y);                 // near the top the title belongs on screen
+    const g = actionRowTop();                            // an open card's buttons must stay tappable:
+    if (g < Infinity) hide = Math.max(hide, Math.min(H, B - g));   // the bar gives way instead of covering them
     lastY = y;
     bar.classList.remove("anim");
     apply();
     bar.classList.toggle("scrolled", y > 2);
+  };
+  // Where the highest action row of an open card is. Scrolling up opens the bar by exactly the
+  // distance the page moves, so without this the bar follows that row up and keeps it covered.
+  const actionRowTop = () => {
+    let g = Infinity;
+    for (const a of document.querySelectorAll(".card.expanded .actions")) {
+      const t = a.getBoundingClientRect().top;
+      if (t > -80 && t < g) g = t;
+    }
+    return g;
   };
   const measure = () => {
     H = hdr.offsetHeight; B = bar.offsetHeight;
