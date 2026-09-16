@@ -214,7 +214,7 @@ label.tog{font-size:13px;color:var(--muted);display:flex;gap:5px;align-items:cen
 .score{width:52px;height:52px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:20px;color:#fff}
 .score.na{background:var(--chip);color:var(--muted);font-size:14px}
 .title{font-weight:600;font-size:16px;color:var(--ink);text-decoration:none}
-.title:hover{color:var(--accent);text-decoration:underline}
+@media (hover:hover){.title:hover{color:var(--accent);text-decoration:underline}}
 .meta{color:var(--muted);font-size:13px;margin-top:2px;display:flex;gap:10px;flex-wrap:wrap}
 .tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
 .tag{font-size:12px;padding:2px 8px;border-radius:6px;background:var(--chip);color:var(--muted)}
@@ -269,7 +269,7 @@ h1 .name{background:linear-gradient(135deg,#7b2d8e,#d6409f);-webkit-background-c
 h1 .logo{width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg,#7b2d8e,#d6409f);color:#fff;display:flex;align-items:center;justify-content:center;box-shadow:var(--e2)}
 .helix{width:100%;height:100%;display:block}
 .stat{border:0;border-radius:16px;padding:12px 16px;box-shadow:var(--e1);transition:box-shadow .2s,transform .2s}
-.stat:hover{box-shadow:var(--e3);transform:translateY(-1px)}
+@media (hover:hover){.stat:hover{box-shadow:var(--e3);transform:translateY(-1px)}}
 .stat.on{background:var(--accent);color:var(--on-accent);box-shadow:var(--e2)}
 .stat.on span{color:var(--on-accent);opacity:.85}
 :root{--on-accent:#fff}
@@ -309,10 +309,10 @@ html[data-lang="en"] #langlabel .lnl{transform:translateY(100%);opacity:0}
 html[data-lang="nl"] #langlabel .len{transform:translateY(-100%);opacity:0}
 input[type=search]:focus,select:focus{outline:2px solid var(--accent);outline-offset:0}
 .chip{border:0;box-shadow:var(--e1);background:var(--panel);padding:6px 12px;transition:box-shadow .15s}
-.chip:hover{box-shadow:var(--e2)}
+@media (hover:hover){.chip:hover{box-shadow:var(--e2)}}
 .chip.on{background:var(--accent-soft);color:var(--accent);box-shadow:inset 0 0 0 1px var(--accent)}
 .card{border:0;border-radius:16px;box-shadow:var(--e1);transition:box-shadow .2s;padding:16px 18px}
-.card:hover{box-shadow:var(--e3)}
+@media (hover:hover){.card:hover{box-shadow:var(--e3)}}
 .score{border-radius:14px;box-shadow:var(--e1)}
 .tag{border-radius:8px;display:inline-flex;align-items:center;gap:3px}
 .tag .mi{font-size:15px}
@@ -331,7 +331,7 @@ input[type=search]:focus,select:focus{outline:2px solid var(--accent);outline-of
   box-shadow:var(--e1),inset 0 0 0 1.5px color-mix(in srgb,#2f7dd1 45%,transparent);
   transition:transform .15s,box-shadow .2s,background .25s,color .25s,
     font-size .45s cubic-bezier(.25,.8,.3,1),padding .45s cubic-bezier(.25,.8,.3,1),gap .45s cubic-bezier(.25,.8,.3,1)}
-.applybox:hover{transform:translateY(-1px);box-shadow:var(--e2),inset 0 0 0 1.5px color-mix(in srgb,#2f7dd1 60%,transparent)}
+@media (hover:hover){.applybox:hover{transform:translateY(-1px);box-shadow:var(--e2),inset 0 0 0 1.5px color-mix(in srgb,#2f7dd1 60%,transparent)}}
 .applybox:active{transform:scale(.96)}
 .applybox input{display:none}
 .applybox .mi{font-size:22px;transition:font-size .45s cubic-bezier(.25,.8,.3,1);font-variation-settings:"FILL" 0,"wght" 600,"GRAD" 0,"opsz" 24;transform:rotate(-20deg)}
@@ -389,7 +389,7 @@ input[type=search]:focus,select:focus{outline:2px solid var(--accent);outline-of
 .toast .mi{font-size:20px;color:#f08cc0}
 .toast .msg{white-space:nowrap}
 .toast button{border:0;border-radius:10px;background:transparent;color:#f08cc0;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:8px 12px;font-size:13px}
-.toast button:hover{background:rgba(255,255,255,.08)}
+@media (hover:hover){.toast button:hover{background:rgba(255,255,255,.08)}}
 .toast.note{padding-right:18px}
 @media (prefers-color-scheme: dark){.toast{background:#ece6ee;color:#241a28}.toast .mi,.toast button{color:#7b2d8e}}
 .toph{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
@@ -430,7 +430,7 @@ input[type=search]:focus,select:focus{outline:2px solid var(--accent);outline-of
 .vote .mi{position:relative}
 .vote.on .fill{opacity:1}
 .vote.on .mi{color:#fff}
-.actions button:hover{box-shadow:var(--e1)}
+@media (hover:hover){.actions button:hover{box-shadow:var(--e1)}}
 .actions button .mi{font-size:18px}
 
 .seg{border:0;border-radius:999px;box-shadow:var(--e1);background:var(--panel);padding:3px}
@@ -448,8 +448,8 @@ input[type=search]:focus,select:focus{outline:2px solid var(--accent);outline-of
 details.srcs{background:var(--panel);border-radius:16px;box-shadow:var(--e1);padding:12px 16px}
 .placelink{color:inherit;text-decoration:none;border-radius:6px;padding:0 3px;margin:0 -3px}
 .cattag{text-decoration:none;cursor:pointer}
-.cattag:hover{background:var(--accent-soft);color:var(--accent)}
-.placelink:hover{color:var(--accent);background:var(--accent-soft)}
+@media (hover:hover){.cattag:hover{background:var(--accent-soft);color:var(--accent)}}
+@media (hover:hover){.placelink:hover{color:var(--accent);background:var(--accent-soft)}}
 .placechip{display:inline-flex;align-items:center;gap:4px}
 .placechip .mi{font-size:16px}
 .onlyhere{margin:2px 0 6px;border:0;border-radius:999px;background:var(--accent);color:#fff;padding:4px 10px 4px 7px;font-size:12px;display:inline-flex;align-items:center;gap:3px;cursor:pointer}
@@ -527,7 +527,7 @@ details.srcs{background:var(--panel);border-radius:16px;box-shadow:var(--e1);pad
   background:color-mix(in srgb,var(--hue) 14%,var(--panel));color:var(--hue);box-shadow:var(--e1);
   transition:transform .25s cubic-bezier(.2,1.4,.4,1),background .2s,color .2s,box-shadow .2s,border-radius .25s}
 .tabicon .mi{font-size:26px;font-variation-settings:"FILL" 0,"wght" 500,"GRAD" 0,"opsz" 24;transition:font-variation-settings .2s}
-.tab:hover .tabicon{transform:translateY(-2px);box-shadow:var(--e2)}
+@media (hover:hover){.tab:hover .tabicon{transform:translateY(-2px);box-shadow:var(--e2)}}
 .tab.on .tabicon{background:linear-gradient(135deg,var(--hue),color-mix(in srgb,var(--hue) 55%,#ff6fb5));color:#fff;
   box-shadow:0 6px 14px -4px color-mix(in srgb,var(--hue) 60%,transparent);border-radius:50%;transform:scale(1.06)}
 .tab.on .tabicon .mi{font-variation-settings:"FILL" 1,"wght" 500,"GRAD" 0,"opsz" 24}
@@ -588,28 +588,27 @@ details.srcs{background:var(--panel);border-radius:16px;box-shadow:var(--e1);pad
 .fulltext p{margin:8px 0;font-size:14px;line-height:1.55;color:var(--ink);white-space:pre-line;overflow-wrap:anywhere}
 .fulltext .fullnote{color:var(--muted);font-size:13px;display:flex;align-items:center;gap:6px}
 .fulltext .fullnote .mi{font-size:17px;color:var(--accent)}
-.morebtn{border:0;background:transparent;color:var(--accent);font:600 13px/1 inherit;padding:6px 8px 6px 2px;margin:2px 0 0;
-  display:inline-flex;align-items:center;gap:2px;border-radius:8px;cursor:pointer;max-height:44px;overflow:hidden;
-  transition:max-height .42s cubic-bezier(.25,.8,.3,1),padding .42s cubic-bezier(.25,.8,.3,1),margin .42s cubic-bezier(.25,.8,.3,1),opacity .25s ease}
-.card.reader .morebtn{max-height:0;padding-top:0;padding-bottom:0;margin-top:0;opacity:0;pointer-events:none}
-.morebtn .mi{font-size:20px}
-.morebtn:hover{background:var(--accent-soft)}
-.morebtn.busy{opacity:.5}   /* fetching the full text; the card opens once it's here */
-
-/* Less is always in the row (unseen while the card is closed), so it can fade in and out with it */
-.card .actions .lessbtn{display:inline-flex;border:0;border-radius:999px;background:var(--chip);color:var(--accent);
+/* More / Less: one button in the row's left corner. Opening turns its arrow and rolls the word over,
+   like the EN/NL label; closing does the reverse. */
+.card .actions .toggle{display:inline-flex;border:0;border-radius:999px;background:var(--chip);color:var(--accent);
   font:600 13px/1 inherit;padding:10px 14px 10px 10px;align-items:center;gap:2px;cursor:pointer;
-  visibility:hidden;opacity:0;transform:scale(.85);pointer-events:none;
-  transition:opacity .2s ease,transform .2s ease,visibility 0s linear .2s,background .2s,color .2s}
-.card.reader .actions .lessbtn{visibility:visible;opacity:1;transform:none;pointer-events:auto;
-  transition:opacity .3s ease .1s,transform .3s ease .1s,visibility 0s,background .2s,color .2s}
+  transition:background .2s,color .2s,opacity .2s}
+@media (hover:hover){.card .actions .toggle:hover{background:var(--accent-soft)}}
+.card .actions .toggle.busy{opacity:.5}      /* fetching the full text; the card opens once it's here */
+.toggle .mi{transition:transform .42s cubic-bezier(.25,.8,.3,1)}
+.card.reader .toggle .mi{transform:rotate(180deg)}
+.toggle .lab{display:inline-grid;overflow:hidden}
+.toggle .lab b{grid-area:1/1;font-weight:inherit;transition:transform .42s cubic-bezier(.25,.8,.3,1),opacity .42s cubic-bezier(.25,.8,.3,1)}
+.toggle .lab .less{transform:translateY(100%);opacity:0}
+.card.reader .toggle .lab .more{transform:translateY(-100%);opacity:0}
+.card.reader .toggle .lab .less{transform:none;opacity:1}
 /* ✓/✕ sit in the middle of the card in every state: the row spans the card's whole width and
    its two outer columns are always equal, so Less on the left and Applied on the right can
    never push them or reach them — open or closed, in any tab */
 .card .actions{display:grid;grid-template-columns:1fr auto auto 1fr;align-items:center;column-gap:0;
   margin-left:calc(-1 * (var(--scol) + var(--sgap)));
   transition:padding .4s cubic-bezier(.25,.8,.3,1),margin .4s cubic-bezier(.25,.8,.3,1)}
-.card .actions .lessbtn{grid-column:1;justify-self:start}
+.card .actions .toggle{grid-column:1;justify-self:start}
 .card .actions .vote.no{grid-column:2}
 .card .actions .vote.yes{grid-column:3}
 .card .actions .applybox{grid-column:4;justify-self:end}
@@ -618,7 +617,7 @@ details.srcs{background:var(--panel);border-radius:16px;box-shadow:var(--e1);pad
 @media (max-width:760px){   /* the pill is a little smaller here, so it always fits its half of the row */
   .card .actions .applybox{font-size:12.5px;padding:0 11px 0 8px;gap:3px}
   .card .actions .applybox .mi{font-size:18px}
-  .card .actions .lessbtn{font-size:12px;padding:9px 11px 9px 7px}
+  .card .actions .toggle{font-size:12px;padding:9px 11px 9px 7px}
   .card .actions .vote.no{margin-right:4px}
   .card .actions .vote.yes{margin-left:4px}
 }
@@ -629,11 +628,11 @@ details.srcs{background:var(--panel);border-radius:16px;box-shadow:var(--e1);pad
   .card .actions .applybox .txt{display:none}
   .card .actions .applybox{width:48px;min-width:48px;padding:0;justify-content:center}
 }
-@container (max-width:256px){          /* 104 + 2 × (Less 66 + 10) */
-  .card .actions .lessbtn .lesslab{display:none}
-  .card .actions .lessbtn{padding:9px}
+@container (max-width:256px){          /* 104 + 2 × (More/Less 66 + 10) */
+  .card .actions .toggle .lab{display:none}
+  .card .actions .toggle{padding:9px}
 }
-.card .actions .lessbtn .mi{font-size:20px}
+.card .actions .toggle .mi{font-size:20px}
 /* card geometry, so sticky strips can span the whole card: score column + gap + padding */
 .card{--scol:52px;--sgap:14px;--padx:18px;--pady:16px}
 @media (max-width:760px){.card{--scol:40px;--sgap:10px;--padx:14px;--pady:14px}}
@@ -664,7 +663,7 @@ details.srcs{background:var(--panel);border-radius:16px;box-shadow:var(--e1);pad
 /* share: a quiet icon in the card's top corner (the title wraps around it), and in the sticky header */
 .share{border:0;background:transparent;color:var(--muted);padding:0;width:32px;height:32px;border-radius:10px;flex:none;
   display:inline-flex;align-items:center;justify-content:center;cursor:pointer;transition:background .2s,color .2s,transform .15s}
-.share:hover{background:var(--chip);color:var(--accent)}
+@media (hover:hover){.share:hover{background:var(--chip);color:var(--accent)}}
 .share:active{transform:scale(.9)}
 .share .mi{font-size:19px;color:inherit}
 .cardshare{float:right;margin:-4px -6px 2px 8px}
@@ -685,7 +684,7 @@ html.reading.unveil #veil{opacity:0}
 .card.lifted.disliked{box-shadow:var(--e3),inset -4px 0 0 var(--danger)}
 .card.lifted:active{transform:none}
 .card.reader{padding-bottom:0}
-.card.reader.willclose .actions .lessbtn{background:var(--accent);color:var(--on-accent)}   /* let go to close */
+.card.reader.willclose .actions .toggle{background:var(--accent);color:var(--on-accent)}   /* let go to close */
 .card.quiet,.card.quiet *{transition:none!important}      /* rebuilt while open: nothing animates again */
 /* a card opened from a link glows once, so the eye finds it */
 .card.linked::before{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;z-index:4;
@@ -1120,12 +1119,11 @@ function card(r){
       <div class="meta"><span><span class="mi">apartment</span>${esc(r.org)}</span>${r.loc?`<a class="placelink" href="#" data-place="${esc(placeKey(r))}" data-label="${esc(r.loc)}" title="Show only jobs in ${esc(r.loc)}"><span class="mi">location_on</span>${esc(r.loc)}</a>`:""}<span><span class="mi">visibility</span>first seen ${esc(r.first_seen)}</span></div>
       <div class="tags">${tags.join("")}</div>
       ${summary?`<p class="summary">${esc(summary)}</p>`:""}
-      ${r.more ? `<div class="fullwrap"><div class="fulltext"></div></div>
-      <button class="morebtn" data-k="${esc(r.key)}"><span class="mi">expand_more</span><span>More</span></button>` : ""}
+      ${r.more ? `<div class="fullwrap"><div class="fulltext"></div></div>` : ""}
       ${r.why?`<p class="why">${esc(r.why)}</p>`:""}
       ${r.blockers?.length?`<p class="blockers"><span class="mi">warning</span> ${r.blockers.map(esc).join(" · ")}</p>`:""}
       <div class="actions">
-        ${r.more ? `<button class="lessbtn" data-k="${esc(r.key)}" aria-label="Less"><span class="mi">expand_less</span><span class="lesslab">Less</span></button>` : ""}
+        ${r.more ? `<button class="toggle" data-k="${esc(r.key)}" aria-label="More / Less"><span class="mi">expand_more</span><span class="lab"><b class="more">More</b><b class="less">Less</b></span></button>` : ""}
         <button class="vote yes ${m==="interested"?"on":""}" data-k="${esc(r.key)}" data-m="interested" title="Interested (or swipe right)" aria-label="Interested"><span class="fill"></span><span class="mi">check</span></button>
         <button class="vote no ${m==="hidden"?"on":""}" data-k="${esc(r.key)}" data-m="hidden" title="Not interested (or swipe left)" aria-label="Not interested"><span class="fill"></span><span class="mi">close</span></button>
         ${m==="interested" ? `<label class="applybox ${applied[r.key]?"on":""} ${justLiked===r.key?"appear":""}" title="${applied[r.key]?"Marked as applied — tap to undo":"Did you apply? Tap to mark"}"><input type="checkbox" data-k="${esc(r.key)}" ${applied[r.key]?"checked":""}><span class="mi">${applied[r.key]?"task_alt":"send"}</span><span class="txt">${applied[r.key]?"Applied":"Applied?"}</span></label>` : ""}
@@ -1227,8 +1225,18 @@ function draw(){
       });
     }
   }
-  $("list").querySelectorAll(".morebtn").forEach(b => b.onclick = e => { e.stopPropagation(); openReader(b.dataset.k); });
-  $("list").querySelectorAll(".lessbtn").forEach(b => b.onclick = e => { e.stopPropagation(); closeReader(); });
+  $("list").querySelectorAll(".toggle").forEach(b => b.onclick = e => {
+    e.stopPropagation();
+    if (reading?.key === b.dataset.k) closeReader(); else openReader(b.dataset.k);
+  });
+  // a closed card's title opens it too (a card with nothing more to show keeps its title as the link to the ad;
+  // cmd/ctrl-click or a middle click still opens the ad in a new tab)
+  $("list").querySelectorAll(".card .title").forEach(a => a.onclick = e => {
+    const c = a.closest(".card");
+    if (!c.querySelector(".toggle") || c.classList.contains("lifted") || e.metaKey || e.ctrlKey || e.shiftKey || e.button) return;
+    e.preventDefault(); e.stopPropagation();
+    openReader(c.dataset.k);
+  });
   $("list").querySelectorAll(".sh").forEach(b => {
     const toTop = e => { e.stopPropagation(); b.closest(".card").scrollTo({top: 0, behavior: "smooth"}); };
     b.onclick = toTop;
@@ -1372,7 +1380,7 @@ async function openReader(k, {glow = false, fromHistory = false} = {}){
   let el = $("list").querySelector(`.card[data-k="${CSS.escape(k)}"]`);
   if (!r || !el || !r.more) return;
   if (!details.has(k)) {
-    const more = el.querySelector(".morebtn");
+    const more = el.querySelector(".toggle");
     more?.classList.add("busy"); await loadDetail(k); more?.classList.remove("busy");
     el = $("list").querySelector(`.card[data-k="${CSS.escape(k)}"]`);   // the list may have been redrawn meanwhile
     if (!el || reading) return;
