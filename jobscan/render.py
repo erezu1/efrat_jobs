@@ -322,23 +322,14 @@ input[type=search]:focus,select:focus{outline:2px solid var(--accent);outline-of
 @keyframes applyGlow{0%{box-shadow:var(--e1),0 0 0 0 rgba(47,125,209,.45)}100%{box-shadow:var(--e1),0 0 0 14px rgba(47,125,209,0)}}
 .card{position:relative;touch-action:pan-y;cursor:pointer}
 .card:active{transform:scale(.995)}
-/* The interested / rejected stripe is the card's own outline drawn in the accent colour, so it
-   keeps its thickness around the rounded corners (an inset shadow thinned away into a line
-   there) and fades out where it turns along the top and bottom edges. */
-.card.liked::before,.card.disliked::before{content:"";position:absolute;inset:0;z-index:2;pointer-events:none;
-  border:4px solid transparent;border-radius:inherit}
-.card.liked::before{border-right-width:0;border-color:var(--accent);
-  -webkit-mask-image:linear-gradient(to right,#000 0 17px,transparent 44px);
-          mask-image:linear-gradient(to right,#000 0 17px,transparent 44px)}
-.card.liked.stripe-in::before{animation:stripeIn .45s cubic-bezier(.25,.8,.3,1) both}
-.card.liked.stripe-out::before{animation:stripeIn .32s cubic-bezier(.25,.8,.3,1) reverse both}
-@keyframes stripeIn{from{opacity:0;transform:translateX(-7px)}to{opacity:1;transform:none}}
+.card.liked{box-shadow:var(--e1),inset 4px 0 0 var(--accent)}
+.card.liked.stripe-in{animation:stripeIn .45s cubic-bezier(.25,.8,.3,1) both}
+.card.liked.stripe-out{animation:stripeIn .32s cubic-bezier(.25,.8,.3,1) reverse both}
+@keyframes stripeIn{from{box-shadow:var(--e1),inset 0 0 0 var(--accent)}to{box-shadow:var(--e1),inset 4px 0 0 var(--accent)}}
 /* rejected: red stripe on the right, mirroring the purple one */
-.card.disliked::before{border-left-width:0;border-color:var(--danger);
-  -webkit-mask-image:linear-gradient(to left,#000 0 17px,transparent 44px);
-          mask-image:linear-gradient(to left,#000 0 17px,transparent 44px)}
-.card.disliked.stripe-out::before{animation:stripeInR .32s cubic-bezier(.25,.8,.3,1) reverse both}
-@keyframes stripeInR{from{opacity:0;transform:translateX(7px)}to{opacity:1;transform:none}}
+.card.disliked{box-shadow:var(--e1),inset -4px 0 0 var(--danger)}
+.card.disliked.stripe-out{animation:stripeInR .32s cubic-bezier(.25,.8,.3,1) reverse both}
+@keyframes stripeInR{from{box-shadow:var(--e1),inset 0 0 0 var(--danger)}to{box-shadow:var(--e1),inset -4px 0 0 var(--danger)}}
 .card.dragging,.card.moving{z-index:3}   /* above other cards, below the pinned search bar */
 .card.dragging{user-select:none;cursor:grabbing}
 @property --p{syntax:"<number>";inherits:true;initial-value:0}
@@ -349,7 +340,7 @@ input[type=search]:focus,select:focus{outline:2px solid var(--accent);outline-of
 .card[data-dir="no"]::after{background:linear-gradient(to left,color-mix(in srgb,var(--danger) 22%,var(--panel)) 0%,color-mix(in srgb,var(--panel) 60%,transparent) 70%)}
 .card::after{z-index:2}
 .card .sh{isolation:isolate}
-.card.expanded .actions::before,.card .sh::before{content:"";position:absolute;inset:0;border-radius:0;pointer-events:none;z-index:-1;
+.card.expanded .actions::before,.card .sh::before{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;z-index:-1;
   opacity:calc(var(--p,0) * .92)}
 /* fade the strips' tint exactly like their background, so it doesn't stack with the card's tint in the fade zone */
 .card .sh::before{-webkit-mask-image:linear-gradient(to bottom,#000 72%,transparent);mask-image:linear-gradient(to bottom,#000 72%,transparent)}
@@ -575,7 +566,7 @@ details.srcs{background:var(--panel);border-radius:16px;box-shadow:var(--e1);pad
 @media (max-width:760px){.card{--scol:40px;--sgap:10px;--padx:14px;--pady:14px}}
 .card.expanded .actions{position:sticky;bottom:0;z-index:3;
   margin:14px calc(-1 * var(--padx)) calc(-1 * var(--pady)) calc(-1 * (var(--scol) + var(--sgap) + var(--padx)));
-  padding:22px var(--padx) calc(var(--pady) + env(safe-area-inset-bottom));border-radius:0 0 16px 16px;
+  padding:22px var(--padx) calc(var(--pady) + env(safe-area-inset-bottom));border-radius:0;
   background:linear-gradient(to top,var(--panel) 72%,color-mix(in srgb,var(--panel) 0%,transparent))}
 
 /* tucks under the bar's bottom fade so no text shows between the search bar and this strip */
@@ -627,18 +618,11 @@ details.srcs{background:var(--panel);border-radius:16px;box-shadow:var(--e1);pad
 }
 
 /* keep the interested / rejected edge stripe visible on the sticky strips of an expanded card */
-.card.liked .sh::after,.card.liked.expanded .actions::after,
-.card.disliked .sh::after,.card.disliked.expanded .actions::after{content:"";position:absolute;inset:0;pointer-events:none;
-  border:0 solid transparent;border-radius:0}
-.card.liked .sh::after,.card.liked.expanded .actions::after{border-left-width:4px;border-color:var(--accent)}
-.card.disliked .sh::after,.card.disliked.expanded .actions::after{border-right-width:4px;border-color:var(--danger)}
-/* where the footer sits at the card's end, its stripe turns the corner with the card */
-.card.expanded.footend .actions::before{border-radius:inherit}
-.card.expanded.footend .actions::after{border-radius:inherit;border-bottom-width:4px}
-.card.liked.expanded.footend .actions::after{-webkit-mask-image:linear-gradient(to right,#000 0 17px,transparent 44px);
-          mask-image:linear-gradient(to right,#000 0 17px,transparent 44px)}
-.card.disliked.expanded.footend .actions::after{-webkit-mask-image:linear-gradient(to left,#000 0 17px,transparent 44px);
-          mask-image:linear-gradient(to left,#000 0 17px,transparent 44px)}
+.card.liked .sh,.card.liked.expanded .actions{box-shadow:inset 4px 0 0 var(--accent)}
+.card.disliked .sh,.card.disliked.expanded .actions{box-shadow:inset -4px 0 0 var(--danger)}
+/* the footer rounds off only where the card ends, so its stripe ends exactly like the card's;
+   while it floats over the text it stays square and runs into the card's stripe below */
+.card.expanded.footend .actions{border-radius:0 0 16px 16px}
 
 </style>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
