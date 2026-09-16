@@ -375,7 +375,12 @@ input[type=search]:focus,select:focus{outline:2px solid var(--accent);outline-of
 .toph h1{flex:none}
 .toph .stats{flex-basis:100%;order:3}                      /* its own line while the screen is narrow */
 @media (min-width:900px){                                  /* wide enough: title, tabs and sync share a line */
-  .toph{gap:24px;flex-wrap:nowrap}
+  .toph{gap:24px;flex-wrap:nowrap;align-items:flex-start}
+  /* the logo and the sync button match the tab icons, and sit on the same line as them */
+  h1{height:52px;margin-top:6px}
+  h1 .logo{width:52px;height:52px;border-radius:18px}
+  .toph .iconbtn.syncbtn{width:52px;height:52px;border-radius:18px;margin-top:6px}
+  .toph .iconbtn.syncbtn .mi{font-size:26px}
   .toph .stats{flex:1 1 auto;order:0;flex-basis:auto;justify-content:center;margin:0;padding:4px 0;
     -webkit-mask-image:none;mask-image:none;overflow:visible}
   header{padding-bottom:0}
@@ -1011,7 +1016,7 @@ function card(r){
   tags.push(`<span class="tag"><span class="mi">link</span>via ${esc(r.source)}${r.also.map(a=>`, <a href="${esc(a.url)}" target="_blank" rel="noopener">${esc(a.source)}</a>`).join("")}</span>`);
   if (!r.pre) tags.push(`<span class="tag">filtered: ${esc(r.pre_reason)}</span>`);
   const m = marks[r.key];
-  return `<article class="card  ${m==="interested"?"liked":""} ${m==="hidden"?"disliked":""} ${justLiked===r.key?"stripe-in":""} ${expanded.has(r.key)?"expanded":""}" data-k="${esc(r.key)}" data-url="${esc(r.url)}">
+  return `<article class="card  ${m==="interested"?"liked":""} ${m==="hidden"?"disliked":""} ${justLiked===r.key?"stripe-in":""} ${expanded.has(r.key)?"expanded":""} ${expanded.has(r.key)&&headouts.has(r.key)?"headout":""}" data-k="${esc(r.key)}" data-url="${esc(r.url)}">
     <div class="score ${sc==null?"na":""}" style="${col?`background:${col}`:""}" title="Fit score (0-10)">${sc==null?"–":sc}</div>
     <div>
       ${r.more ? `<div class="stickyhead"><button class="sh" data-k="${esc(r.key)}" title="Back to the top of this job"><span class="shscore" style="${col?`background:${col}`:""}">${sc==null?"–":sc}</span><span class="shtitle">${esc(title)}</span><span class="mi">vertical_align_top</span></button></div>` : ""}
@@ -1161,10 +1166,12 @@ function draw(){
       window.open(c.dataset.url, "_blank", "noopener");
     });
   });
+  // fresh cards know nothing about where the bar is: place their sticky strips before this paints
+  updateStickyHeads();
 }
 
 // ---- "More": full ad text, loaded on demand from docs/details/<shard>.json ----
-const expanded = new Set(), details = new Map(), shardLoads = new Map();
+const expanded = new Set(), headouts = new Set(), details = new Map(), shardLoads = new Map();
 window.__biojobsDetails = (i, d) => { for (const [kk, v] of Object.entries(d)) details.set(kk, v); };
 const adText = k => {   // [dutch, english?] — a shard left over in the browser cache is still a plain string
   const d = details.get(k);
@@ -1269,7 +1276,9 @@ function updateStickyHeads(){   // show a card's mini header once its real title
     const sh = c.querySelector(".stickyhead");
     if (sh && sh.__top !== barvis) { sh.__top = barvis; sh.style.setProperty("--sht", barvis + "px"); }
     const t = c.querySelector(".title").getBoundingClientRect(), r = c.getBoundingClientRect();
-    c.classList.toggle("headout", t.bottom < barvis + 4 && r.bottom > barvis + 140);
+    const out = t.bottom < barvis + 4 && r.bottom > barvis + 140;
+    c.classList.toggle("headout", out);
+    if (out) headouts.add(c.dataset.k); else headouts.delete(c.dataset.k);   // survives a re-render
   });
 }
 function settleOn(key, tries = 0){   // after the glide, make sure the card sits exactly under the bar (bar height can change meanwhile)
@@ -1494,6 +1503,7 @@ function freezeBar(ms){
   window.__unfreezeTimer = setTimeout(() => window.__barUnfreeze?.(), ms + 30);
 }
 function keepPlace(){   // remember the card at the top of the screen, put it back there after a re-render
+  freezeBar(700);        // the page shifting under a re-render is not a scroll: the bar stays as it is
   const bar = window.__barvis || 0;
   const el = [...$("list").querySelectorAll(".card")].find(c => c.getBoundingClientRect().bottom > bar + 8);
   if (!el) return () => {};
