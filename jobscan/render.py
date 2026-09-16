@@ -429,7 +429,7 @@ details.srcs{background:var(--panel);border-radius:16px;box-shadow:var(--e1);pad
 .ctlrow{align-items:flex-start}   /* List/Map stays on the first line when filter chips wrap */
 @media (max-width:760px){ .ctlrow .count{display:none}   /* the active tab's badge already shows the count */
   .qchip{padding:6px 11px 6px 8px} }
-.toprow{flex-basis:100%;display:flex;gap:8px;align-items:center}
+.toprow{flex-basis:100%;min-width:0;display:flex;gap:8px;align-items:center}
 .toprow input[type=search]{flex:1 1 auto;min-width:0}
 .filters{flex-basis:100%}
 .filters-inner{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
