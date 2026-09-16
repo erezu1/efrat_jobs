@@ -253,11 +253,11 @@ html,body{overflow-x:clip}
 #topbar.anim{transition:transform .32s cubic-bezier(.25,.8,.3,1)}
 #topbar::before{content:"";position:absolute;left:0;right:0;top:0;bottom:0;z-index:-1;background:var(--bg);transition:background .25s}
 /* the soft fade stays inside the bar's own bottom padding, so the page keeps its normal spacing */
-#topbar.scrolled::before{background:color-mix(in srgb,var(--bg) 72%,transparent);
+#topbar.scrolled::before,#topbar.overcard::before{background:color-mix(in srgb,var(--bg) 72%,transparent);
   -webkit-mask-image:linear-gradient(to bottom,#000 0,#000 calc(100% - 20px),transparent 100%);
   mask-image:linear-gradient(to bottom,#000 0,#000 calc(100% - 20px),transparent 100%)}
 @supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
-  #topbar.scrolled::before{-webkit-backdrop-filter:blur(12px) saturate(1.4);backdrop-filter:blur(12px) saturate(1.4)}
+  #topbar.scrolled::before,#topbar.overcard::before{-webkit-backdrop-filter:blur(12px) saturate(1.4);backdrop-filter:blur(12px) saturate(1.4)}
 }
 #topspace{height:var(--tbh,0px)}
 header{position:relative}
@@ -619,7 +619,7 @@ details.srcs{background:var(--panel);border-radius:16px;box-shadow:var(--e1);pad
 /* phone: tighter vertical rhythm in the top bar (both expanded and minimized) */
 @media (max-width:760px){
   .controls{padding:9px 0 16px;row-gap:6px}
-  #topbar.scrolled::before{-webkit-mask-image:linear-gradient(to bottom,#000 0,#000 calc(100% - 14px),transparent 100%);
+  #topbar.scrolled::before,#topbar.overcard::before{-webkit-mask-image:linear-gradient(to bottom,#000 0,#000 calc(100% - 14px),transparent 100%);
     mask-image:linear-gradient(to bottom,#000 0,#000 calc(100% - 14px),transparent 100%)}
   .ctlrow .left{padding:1px 0}
 }
@@ -1175,6 +1175,11 @@ function fullHtml(r){
 }
 // A fixed duration made a long ad race open and a short one crawl; the time grows with the text.
 const growMs = px => Math.min(1200, Math.max(560, Math.round(430 + px * .25)));
+// the card keeps gliding after she lets go, so the bar stays frosted until it has landed
+function dropFrost(){
+  clearTimeout(window.__overcardT);
+  window.__overcardT = setTimeout(() => $("topbar").classList.remove("overcard"), 420);
+}
 function flipActions(c, change, ms = 450){   // the action row changes layout: let its buttons slide there instead of jumping
   const items = [...c.querySelectorAll(".actions > *")];
   const before = items.map(el => el.getBoundingClientRect());
@@ -1384,6 +1389,8 @@ function wireSwipe(el){
       if (Math.abs(mx) < 10 && Math.abs(my) < 10) return;
       if (Math.abs(my) > Math.abs(mx)) { tracking = false; return; }   // vertical: let the page scroll
       dragging = true; try { el.setPointerCapture(e.pointerId); } catch (_) {} el.classList.add("dragging");
+      clearTimeout(window.__overcardT);        // frosted while a card moves under it, top of the page included
+      $("topbar").classList.add("overcard");
     }
     // already in that state (right on an interested card, left on a rejected one): rubber-band, no action
     const blocked = (mx > 0 && marks[k] === "interested") || (mx < 0 && marks[k] === "hidden");
@@ -1401,14 +1408,14 @@ function wireSwipe(el){
     if (!tracking) return;
     tracking = false;
     if (!dragging) return;
-    el.classList.remove("dragging");
+    el.classList.remove("dragging"); dropFrost();
     el.dataset.dragged = "1"; setTimeout(() => { delete el.dataset.dragged; }, 350);
     if (dx > 90) el.animateInterested(true);
     else if (dx < -90) el.animateReject(true);
     else reset();
   };
   el.addEventListener("pointerup", end);
-  el.addEventListener("pointercancel", () => { tracking = false; el.classList.remove("dragging"); reset(); });
+  el.addEventListener("pointercancel", () => { tracking = false; el.classList.remove("dragging"); dropFrost(); reset(); });
 }
 
 let mapMode = false, map = null, layer = null;
