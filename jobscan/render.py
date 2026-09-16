@@ -575,8 +575,10 @@ details.srcs{background:var(--panel);border-radius:16px;box-shadow:var(--e1);pad
 .card{--scol:52px;--sgap:14px;--padx:18px;--pady:16px}
 @media (max-width:760px){.card{--scol:40px;--sgap:10px;--padx:14px;--pady:14px}}
 /* the row is pinned to the screen while the ad is open, and stays pinned while it closes */
-.card.expanded .actions,.card.closing .actions{position:sticky;bottom:0;z-index:3;
-  background:linear-gradient(to top,var(--panel) 72%,color-mix(in srgb,var(--panel) 0%,transparent)) 4px 0/calc(100% - 8px) 100% no-repeat}
+.card.expanded .actions,.card.closing .actions{position:sticky;bottom:0;z-index:3}
+.card.expanded .actions::after,.card.closing .actions::after{content:"";position:absolute;inset:0 4px 4px;z-index:-2;
+  border-radius:0 0 12px 12px;pointer-events:none;
+  background:linear-gradient(to top,var(--panel) 72%,color-mix(in srgb,var(--panel) 0%,transparent))}
 .card.expanded .actions{
   margin:14px calc(-1 * var(--padx)) calc(-1 * var(--pady)) calc(-1 * (var(--scol) + var(--sgap) + var(--padx)));
   padding:22px var(--padx) calc(var(--pady) + 8px + env(safe-area-inset-bottom));
@@ -585,9 +587,11 @@ details.srcs{background:var(--panel);border-radius:16px;box-shadow:var(--e1);pad
 /* tucks under the bar's bottom fade so no text shows between the search bar and this strip */
 .stickyhead{position:sticky;top:calc(var(--sht,0px) - 26px);height:0;z-index:4}
 .sh{position:absolute;left:calc(-1 * (var(--scol) + var(--sgap) + var(--padx)));right:calc(-1 * var(--padx));top:0;display:flex;align-items:center;gap:8px;border:0;border-radius:0;
-  background:linear-gradient(to bottom,var(--panel) 72%,color-mix(in srgb,var(--panel) 0%,transparent)) 4px 0/calc(100% - 8px) 100% no-repeat;box-shadow:none;
+  background:none;box-shadow:none;
   padding:27px var(--padx) 20px;cursor:pointer;color:var(--ink);text-align:left;
   opacity:0;transform:translateY(-8px);pointer-events:none;transition:opacity .28s ease,transform .28s ease}
+.card .sh::after{content:"";position:absolute;inset:0 4px;z-index:-2;pointer-events:none;
+  background:linear-gradient(to bottom,var(--panel) 72%,color-mix(in srgb,var(--panel) 0%,transparent))}
 .card.expanded.headout .sh{opacity:1;transform:none;pointer-events:auto}
 .shscore{flex:none;width:26px;height:26px;border-radius:8px;color:#fff;font:700 13px/26px inherit;text-align:center}
 .shtitle{flex:1;min-width:0;font-weight:650;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
