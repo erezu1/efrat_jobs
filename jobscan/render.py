@@ -576,12 +576,12 @@ details.srcs{background:var(--panel);border-radius:16px;box-shadow:var(--e1);pad
 @media (max-width:760px){.card{--scol:40px;--sgap:10px;--padx:14px;--pady:14px}}
 /* the row is pinned to the screen while the ad is open, and stays pinned while it closes */
 .card.expanded .actions,.card.closing .actions{position:sticky;bottom:0;z-index:3}
-.card.expanded .actions::after,.card.closing .actions::after{content:"";position:absolute;inset:0 4px 4px;z-index:-2;
-  border-radius:0 0 12px 12px;pointer-events:none;
+.card.expanded .actions::after,.card.closing .actions::after{content:"";position:absolute;inset:0 4px 0;z-index:-2;
+  border-radius:0 0 16px 16px;pointer-events:none;
   background:linear-gradient(to top,var(--panel) 72%,color-mix(in srgb,var(--panel) 0%,transparent))}
 .card.expanded .actions{
   margin:14px calc(-1 * var(--padx)) calc(-1 * var(--pady)) calc(-1 * (var(--scol) + var(--sgap) + var(--padx)));
-  padding:22px var(--padx) calc(var(--pady) + 8px + env(safe-area-inset-bottom));
+  padding:30px var(--padx) calc(var(--pady) + 8px + env(safe-area-inset-bottom));
   border-radius:0 0 16px 16px}
 
 /* tucks under the bar's bottom fade so no text shows between the search bar and this strip */
