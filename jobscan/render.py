@@ -6,7 +6,7 @@ import re
 from datetime import date, datetime, timezone
 from pathlib import Path
 
-from . import geocode, translate
+from . import geocode, scorer, translate
 
 
 def _norm(t: str) -> str:
@@ -48,7 +48,7 @@ def dedupe_key(title: str, org: str, deadline: str | None = None) -> str | None:
 
 def build_rows(state: dict) -> list[dict]:
     rows, by_title = [], {}
-    tr = translate.load()
+    tr, full_en = translate.load(), translate.load_full()
     today = date.today().isoformat()
     # best copy first, so cross-posted duplicates merge into the scored/prefiltered one
     ordered = sorted(state.items(), key=lambda kv: (
@@ -70,7 +70,9 @@ def build_rows(state: dict) -> list[dict]:
             "summary": s.get("summary", ""),
             "why": s.get("why", ""), "blockers": s.get("blockers", []),
             "title_en": tr.get(translate.key(r["title"])),
-            "summary_en": tr.get(translate.key(s.get("summary", ""))) if s.get("summary") else None,
+            "summary_en": (scorer.summary(full_en[translate.key(ad_text(r))])
+                           if translate.key(ad_text(r)) in full_en
+                           else (tr.get(translate.key(s.get("summary", ""))) if s.get("summary") else None)),
             "dutch": s.get("dutch_required"), "nl": s.get("in_netherlands", True),
             "also": [],
         }
@@ -110,6 +112,11 @@ DETAIL_SHARDS = 16
 DETAIL_MAX = 6000
 
 
+def ad_text(rec: dict) -> str:
+    """The full ad as the page shows it — and so the text that gets translated."""
+    return re.sub(r"\n{3,}", "\n\n", (rec.get("description") or "").strip())[:DETAIL_MAX]
+
+
 def shard_of(key: str) -> int:
     """Same tiny hash as the page's JS (sum of UTF-16 code units), so it knows which file to load."""
     return sum(ord(c) if ord(c) < 0x10000 else 2 for c in key) % DETAIL_SHARDS
@@ -118,10 +125,12 @@ def shard_of(key: str) -> int:
 def write_details(state: dict, rows: list[dict], folder: Path) -> None:
     """Full ad texts, split into small files the page loads only when "More" is tapped."""
     shards = [dict() for _ in range(DETAIL_SHARDS)]
+    full_en = translate.load_full()
     for row in rows:
         if row.get("more"):
-            desc = re.sub(r"\n{3,}", "\n\n", (state[row["key"]].get("description") or "").strip())
-            shards[shard_of(row["key"])][row["key"]] = desc[:DETAIL_MAX]
+            nl = ad_text(state[row["key"]])
+            en = full_en.get(translate.key(nl))
+            shards[shard_of(row["key"])][row["key"]] = [nl, en] if en else [nl]
     folder.mkdir(parents=True, exist_ok=True)
     for old in folder.glob("*.json"):
         old.unlink()
@@ -278,7 +287,6 @@ html[data-lang="en"] .iconbtn.langbtn{background:var(--accent);color:var(--on-ac
   transition:transform .45s cubic-bezier(.4,0,.2,1),opacity .45s cubic-bezier(.4,0,.2,1)}
 html[data-lang="en"] #langlabel .lnl{transform:translateY(100%);opacity:0}
 html[data-lang="nl"] #langlabel .len{transform:translateY(-100%);opacity:0}
-.trtag{text-decoration:none;color:var(--accent)!important}
 input[type=search]:focus,select:focus{outline:2px solid var(--accent);outline-offset:0}
 .chip{border:0;box-shadow:var(--e1);background:var(--panel);padding:6px 12px;transition:box-shadow .15s}
 .chip:hover{box-shadow:var(--e2)}
@@ -981,7 +989,6 @@ function card(r){
   const en = lang === "en";
   const title = en && r.title_en ? r.title_en : r.title;
   const summary = en && r.summary_en ? r.summary_en : r.summary;
-  const translated = en && (r.title_en || r.summary_en);
   const col = sc == null ? "" : sc >= 7 ? "var(--s-hi)" : sc >= 5 ? "var(--s-mid)" : "var(--s-lo)";
   const dl = daysTo(r.deadline);
   const tags = [];
@@ -995,7 +1002,6 @@ function card(r){
   if (DUTCH[r.dutch]) tags.push(`<span class="tag">${DUTCH[r.dutch]}</span>`);
   tags.push(`<span class="tag"><span class="mi">link</span>via ${esc(r.source)}${r.also.map(a=>`, <a href="${esc(a.url)}" target="_blank" rel="noopener">${esc(a.source)}</a>`).join("")}</span>`);
   if (!r.pre) tags.push(`<span class="tag">filtered: ${esc(r.pre_reason)}</span>`);
-  if (translated) tags.push(`<a class="tag trtag" href="https://translate.google.com/translate?sl=nl&tl=en&u=${encodeURIComponent(r.url)}" target="_blank" rel="noopener" title="Translated from Dutch — open the full ad in Google Translate"><span class="mi">translate</span>Translated · full ad</a>`);
   const m = marks[r.key];
   return `<article class="card  ${m==="interested"?"liked":""} ${m==="hidden"?"disliked":""} ${justLiked===r.key?"stripe-in":""} ${expanded.has(r.key)?"expanded":""}" data-k="${esc(r.key)}" data-url="${esc(r.url)}">
     <div class="score ${sc==null?"na":""}" style="${col?`background:${col}`:""}" title="Fit score (0-10)">${sc==null?"–":sc}</div>
@@ -1152,27 +1158,27 @@ function draw(){
 // ---- "More": full ad text, loaded on demand from docs/details/<shard>.json ----
 const expanded = new Set(), details = new Map(), shardLoads = new Map();
 window.__biojobsDetails = (i, d) => { for (const [kk, v] of Object.entries(d)) details.set(kk, v); };
+const adText = k => {   // [dutch, english?] — a shard left over in the browser cache is still a plain string
+  const d = details.get(k);
+  if (!d) return "";
+  return typeof d === "string" ? d : (lang === "en" && d[1]) || d[0];
+};
 const shardOf = k => { let h = 0; for (let i = 0; i < k.length; i++) h += k.charCodeAt(i); return h % 16; };
 function loadDetail(k){
   const i = shardOf(k);
   if (!shardLoads.has(i)) shardLoads.set(i, new Promise(resolve => {
     const el = document.createElement("script");
-    el.src = `details/${i}.js`;
+    el.src = `details/${i}.js?v=${encodeURIComponent(DATA.generated)}`;   // today's scan, not yesterday's copy
     el.onload = resolve;
     el.onerror = () => { shardLoads.delete(i); el.remove(); resolve(); };
     document.head.appendChild(el);
   }));
   return shardLoads.get(i);
 }
-function isDutchText(t){   // rough check: share of very common Dutch vs English words
-  const nl = (t.match(/\b(de|het|een|en|van|voor|wij|jij|je|met|zijn|naar|bij|onze|ons|als|ook|niet|wordt)\b/gi) || []).length;
-  const en = (t.match(/\b(the|and|of|for|with|you|we|our|are|is|to|in|will|this|that|be)\b/gi) || []).length;
-  return nl > 20 && nl > en * 1.5;
-}
 function fullHtml(r){
-  let text = details.get(r.key) || "";
+  let text = adText(r.key);
   // the card already shows the start of the ad as its summary: continue from there instead of repeating it
-  const shown = (r.summary || "").replace(/…$/, "").replace(/\s+/g, " ").trim();
+  const shown = (((lang === "en" && r.summary_en) || r.summary) || "").replace(/…$/, "").replace(/\s+/g, " ").trim();
   const flat = text.replace(/\s+/g, " ");
   if (shown.length > 40 && flat.startsWith(shown)) {
     let i = 0, n = 0;                                 // map the flattened offset back onto the original text

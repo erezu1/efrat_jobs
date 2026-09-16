@@ -39,6 +39,7 @@ jobs:
           ADZUNA_APP_KEY: ${{ secrets.ADZUNA_APP_KEY }}
           JOOBLE_API_KEY: ${{ secrets.JOOBLE_API_KEY }}
           PAGE_URL: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/
+          TRANSLATE_BUDGET_S: "1500"   # at most 25 min per run on whole-ad translation
         run: python -m jobscan.main
 
       - name: Commit results

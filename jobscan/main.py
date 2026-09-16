@@ -181,12 +181,16 @@ def main() -> int:
         RUNS.write_text(json.dumps(runs, indent=1))
 
     from . import geocode, translate
+    from .render import ad_text
     try:
-        texts = []
-        for rec in state.values():
+        texts, ads = [], []
+        # best matches first: if the budget runs out, the jobs she is most likely to open are done
+        for rec in sorted(state.values(), key=lambda r: -((r.get("score") or {}).get("fit_score") or -1)):
             if rec.get("active") and rec.get("score"):
                 texts += [rec["title"], rec["score"].get("summary", "")]
+                ads.append(ad_text(rec))
         translate.update(texts)
+        translate.update_full(ads, budget_s=float(os.environ.get("TRANSLATE_BUDGET_S", 1500)))
     except Exception as e:
         print(f"translation skipped: {e}", file=sys.stderr)
     try:
