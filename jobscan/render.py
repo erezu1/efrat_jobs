@@ -589,7 +589,7 @@ details.srcs{background:var(--panel);border-radius:16px;box-shadow:var(--e1);pad
   .card .actions .vote.no{margin-right:4px}
   .card .actions .vote.yes{margin-left:4px}
 }
-.card.expanded .actions .lessbtn{animation:lessIn .4s cubic-bezier(.25,.8,.3,1)}
+.card.opening .actions .lessbtn{animation:lessIn .4s cubic-bezier(.25,.8,.3,1)}   /* only as she opens it */
 @keyframes lessIn{from{opacity:0;transform:scale(.8)}to{opacity:1;transform:none}}
 .card.expanded .lessbtn .mi{font-size:20px}
 /* card geometry, so sticky strips can span the whole card: score column + gap + padding */
@@ -640,6 +640,10 @@ details.srcs{background:var(--panel);border-radius:16px;box-shadow:var(--e1);pad
   html.mapmode,html.mapmode body{overflow:hidden;height:100%;overscroll-behavior:none}
   html.mapmode main{padding-bottom:0}
   html.mapmode #topbar{transform:none!important}   /* full top bar in map mode */
+  /* …so the title is on screen: no mini logo beside the search box (it slides away and back) */
+  html.mapmode .controls.stuck .minilogo{width:0;opacity:0;margin-right:-8px}
+  html.mapmode .controls.stuck .miniwrap{margin-right:-8px}
+  html.mapmode .controls.stuck .minibadge.has{opacity:0;transform:scale(.4)}
   html.mapmode #map{height:calc(100dvh - var(--tbh,0px) - 12px - env(safe-area-inset-bottom));margin-top:0}
   html.mapmode .srcs{display:none}
   html.mapmode .nomap{position:fixed;left:14px;right:14px;bottom:calc(18px + env(safe-area-inset-bottom));z-index:5;
@@ -1064,12 +1068,17 @@ function draw(){
   $("count").textContent = `${rows.length} job${rows.length===1?"":"s"}`;
   $("qNew").classList.toggle("on", onlyNew); $("qNew").setAttribute("aria-pressed", onlyNew);
   $("qClosing").classList.toggle("on", onlyClosing); $("qClosing").setAttribute("aria-pressed", onlyClosing);
+  // Switching between the list and the map: the list's scroll position and the bar's state are set
+  // aside BEFORE the list is hidden (hiding it shrinks the page, and the browser would already have
+  // clamped the position), and handed back once it is showing again.
+  const wasMap = !$("map").hidden;
+  if (mapMode && !wasMap) window.__barMap?.(true);
   $("map").hidden = !mapMode; $("list").hidden = mapMode; $("nomap").hidden = !mapMode;
   const phoneMap = mapMode && matchMedia("(max-width: 760px)").matches;
-  const entering = phoneMap && !document.documentElement.classList.contains("mapmode");
-  if (entering) window.__barShow?.();                     // map mode needs the whole bar: slide it open
+  const toPhoneMap = phoneMap && !document.documentElement.classList.contains("mapmode");
   document.documentElement.classList.toggle("mapmode", phoneMap);
-  if (entering) window.scrollTo(0, 0);
+  if (toPhoneMap) window.scrollTo(0, 0);
+  if (!mapMode && wasMap) window.__barMap?.(false);
   window.__barUpdate?.();
   if (mapMode) return drawMap(rows);
   // FLIP: remember where cards were, so after re-rendering they glide to their new places
@@ -1265,6 +1274,7 @@ async function toggleMore(btn){
   box.style.transitionDuration = Math.round(dur * .8) + "ms";
   more.style.transitionDuration = dur + "ms";           // the button folds away in step with the text
   clearTimeout(c.__closing); c.classList.remove("closing");
+  c.classList.add("opening"); setTimeout(() => c.classList.remove("opening"), 450);
   flipActions(c, () => c.classList.add("expanded"));
   requestAnimationFrame(() => wrap.classList.add("open"));
   setTimeout(updateStickyHeads, dur + 60);   // once it has finished growing, the card knows where its footer sits
@@ -1528,8 +1538,10 @@ function jumpTo(top){ freezeBar(900); window.scrollTo({top, behavior: "smooth"})
     ctl.classList.toggle("stuck", hide > H - 4);        // mini logo once the title is tucked away
     updateStickyHeads();
   };
+  let away = null, slideT = 0;   // set while the phone map is showing: {hide, y} of the list she left
   const update = () => {
     ticking = false;
+    if (away) return;                                    // the map doesn't scroll; the bar is shown whole
     const y = Math.max(0, scrollY);
     if (Date.now() < (window.__frozenUntil || 0)) { lastY = y; updateStickyHeads(); return; }   // automatic scroll: bar held, strips keep up
     hide = Math.min(H, Math.max(0, hide + (y - lastY)));
@@ -1537,7 +1549,6 @@ function jumpTo(top){ freezeBar(900); window.scrollTo({top, behavior: "smooth"})
     const g = actionRowTop();                            // an open card's buttons must stay tappable:
     if (g < Infinity) hide = Math.max(hide, Math.min(H, B - g));   // the bar gives way instead of covering them
     lastY = y;
-    bar.classList.remove("anim");
     apply();
     bar.classList.toggle("scrolled", y > 2);
   };
@@ -1561,11 +1572,24 @@ function jumpTo(top){ freezeBar(900); window.scrollTo({top, behavior: "smooth"})
   measure(); update();
   window.__barUpdate = () => { measure(); update(); };
   window.__barUnfreeze = () => { lastY = Math.max(0, scrollY); update(); };
-  window.__barShow = () => {                              // e.g. entering map mode: slide the title back in
-    freezeBar(420);                                       // ignore the scroll this causes, so the slide isn't cut short
-    if (!hide) return;
-    bar.classList.add("anim"); hide = 0; apply();
-    setTimeout(() => bar.classList.remove("anim"), 400);
+  // The phone map needs the whole bar and can't scroll. Going there sets the list's scroll position
+  // and the bar's state aside; coming back restores both exactly. Either way the bar slides.
+  const slide = () => {
+    bar.classList.add("anim");
+    clearTimeout(slideT); slideT = setTimeout(() => bar.classList.remove("anim"), 400);
+  };
+  window.__barMap = on => {
+    if (on && !away) {
+      away = {hide, y: Math.max(0, scrollY)};
+      slide();                                           // CSS shows the bar whole in map mode
+    } else if (!on && away) {
+      const back = away; away = null;
+      window.scrollTo(0, back.y);
+      lastY = Math.max(0, scrollY);
+      hide = back.hide;
+      slide(); apply();
+      bar.classList.toggle("scrolled", lastY > 2);
+    }
   };
 })();
 $("minilogo").onclick = e => { e.preventDefault(); window.scrollTo({top: 0, behavior: "smooth"}); };
