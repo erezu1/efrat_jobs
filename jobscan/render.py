@@ -370,6 +370,7 @@ input[type=search]:focus,select:focus{outline:2px solid var(--accent);outline-of
 .toast .msg{white-space:nowrap}
 .toast button{border:0;border-radius:10px;background:transparent;color:#f08cc0;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:8px 12px;font-size:13px}
 .toast button:hover{background:rgba(255,255,255,.08)}
+.toast.note{padding-right:18px}
 @media (prefers-color-scheme: dark){.toast{background:#ece6ee;color:#241a28}.toast .mi,.toast button{color:#7b2d8e}}
 .toph{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
 .toph h1{flex:none}
@@ -640,6 +641,19 @@ details.srcs{background:var(--panel);border-radius:16px;box-shadow:var(--e1);pad
 .shscore{flex:none;width:26px;height:26px;border-radius:8px;color:#fff;font:700 13px/26px inherit;text-align:center}
 .shtitle{flex:1;min-width:0;font-weight:650;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .sh .mi{font-size:20px;color:var(--accent)}
+/* share: a quiet icon in the card's top corner (the title wraps around it), and in the sticky header */
+.share{border:0;background:transparent;color:var(--muted);padding:0;width:32px;height:32px;border-radius:10px;flex:none;
+  display:inline-flex;align-items:center;justify-content:center;cursor:pointer;transition:background .2s,color .2s,transform .15s}
+.share:hover{background:var(--chip);color:var(--accent)}
+.share:active{transform:scale(.9)}
+.share .mi{font-size:19px;color:inherit}
+.cardshare{float:right;margin:-4px -6px 2px 8px}
+.sh .shshare{margin:-6px 0}
+/* a card opened from a link glows once, so the eye finds it */
+.card.linked::before{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;z-index:4;
+  animation:linkedGlow 1.8s cubic-bezier(.3,.6,.4,1) both}
+@keyframes linkedGlow{0%{box-shadow:0 0 0 0 color-mix(in srgb,var(--accent) 55%,transparent)}
+  35%{box-shadow:0 0 0 7px color-mix(in srgb,var(--accent) 28%,transparent)}100%{box-shadow:0 0 0 16px transparent}}
 
 /* odometer roll for tab counts */
 .tabcount.roll,.minibadge.roll{overflow:hidden}
@@ -902,6 +916,9 @@ const Sync = (() => {
 let undoTimer = null;
 function showUndo(k, before){
   const t = $("toast");
+  t.querySelector(".mi").textContent = "block";
+  t.querySelector("button").hidden = false;
+  t.classList.remove("note");
   t.querySelector(".msg").textContent = "Marked not interested";
   t.querySelector("button").onclick = () => {
     if (before.mark) marks[k] = before.mark; else delete marks[k];
@@ -911,6 +928,15 @@ function showUndo(k, before){
   t.classList.remove("out"); t.hidden = false;
   requestAnimationFrame(() => t.classList.add("in"));
   clearTimeout(undoTimer); undoTimer = setTimeout(hideUndo, 5000);
+}
+function showNote(msg, icon = "link"){   // the toast without its Undo button
+  const t = $("toast");
+  t.querySelector(".mi").textContent = icon;
+  t.querySelector(".msg").textContent = msg;
+  t.querySelector("button").hidden = true;
+  t.classList.add("note"); t.classList.remove("out"); t.hidden = false;
+  requestAnimationFrame(() => t.classList.add("in"));
+  clearTimeout(undoTimer); undoTimer = setTimeout(hideUndo, 2600);
 }
 function hideUndo(){
   const t = $("toast"); clearTimeout(undoTimer);
@@ -959,6 +985,7 @@ try {   // reopen on the tab she left
   if (v && VIEWS[v]) view = v;
 } catch(e) {}
 function passesFilters(r, v){
+  if (r.key === linked) return true;       // opened from a link: always shown in its tab
   if (v === "review") {
     if (!r.pre && !$("showfiltered").checked) return false;
     if (r.pre && r.score != null && (r.score < +$("minscore").value || r.nl === false)) return false;
@@ -1006,6 +1033,7 @@ function renderStats(){
   $("minibadge").title = `${curN} in ${VIEWS[view].label}`;
   $("stats").querySelectorAll(".tab").forEach(el => el.onclick = () => {
     if (view === el.dataset.v) return;
+    linked = null;
     tabScroll[view] = scrollY;                 // leave this tab where she was reading
     $("sort").value = onlyClosing ? "deadline" : onlyNew ? "new" : defaultSort(el.dataset.v);
     view = el.dataset.v;
@@ -1046,7 +1074,8 @@ function card(r){
   return `<article class="card  ${m==="interested"?"liked":""} ${m==="hidden"?"disliked":""} ${justLiked===r.key?"stripe-in":""} ${expanded.has(r.key)?"expanded":""} ${expanded.has(r.key)&&headouts.has(r.key)?"headout":""}" data-k="${esc(r.key)}" data-url="${esc(r.url)}">
     <div class="score ${sc==null?"na":""}" style="${col?`background:${col}`:""}" title="Fit score (0-10)">${sc==null?"–":sc}</div>
     <div>
-      ${r.more ? `<div class="stickyhead"><button class="sh" data-k="${esc(r.key)}" title="Back to the top of this job"><span class="shscore" style="${col?`background:${col}`:""}">${sc==null?"–":sc}</span><span class="shtitle">${esc(title)}</span><span class="mi">vertical_align_top</span></button></div>` : ""}
+      ${r.more ? `<div class="stickyhead"><div class="sh" role="button" tabindex="0" data-k="${esc(r.key)}" title="Back to the top of this job"><span class="shscore" style="${col?`background:${col}`:""}">${sc==null?"–":sc}</span><span class="shtitle">${esc(title)}</span><button class="share shshare" data-k="${esc(r.key)}" aria-label="Share this job" title="Share this job"><span class="mi">ios_share</span></button><span class="mi">vertical_align_top</span></div></div>` : ""}
+      <button class="share cardshare" data-k="${esc(r.key)}" aria-label="Share this job" title="Share this job"><span class="mi">ios_share</span></button>
       <a class="title" href="${esc(r.url)}" target="_blank" rel="noopener">${esc(title)}</a>
       <div class="meta"><span><span class="mi">apartment</span>${esc(r.org)}</span>${r.loc?`<a class="placelink" href="#" data-place="${esc(placeKey(r))}" data-label="${esc(r.loc)}" title="Show only jobs in ${esc(r.loc)}"><span class="mi">location_on</span>${esc(r.loc)}</a>`:""}<span><span class="mi">visibility</span>first seen ${esc(r.first_seen)}</span></div>
       <div class="tags">${tags.join("")}</div>
@@ -1153,11 +1182,16 @@ function draw(){
     }
   }
   $("list").querySelectorAll(".morebtn,.lessbtn").forEach(b => b.onclick = e => { e.stopPropagation(); toggleMore(b); });
-  $("list").querySelectorAll(".sh").forEach(b => b.onclick = e => {
-    e.stopPropagation();
-    const c = b.closest(".card"), barvis = window.__barvis || 0;
-    jumpTo(scrollY + c.getBoundingClientRect().top - barvis - 10);
+  $("list").querySelectorAll(".sh").forEach(b => {
+    const toTop = e => {
+      e.stopPropagation();
+      const c = b.closest(".card"), barvis = window.__barvis || 0;
+      jumpTo(scrollY + c.getBoundingClientRect().top - barvis - 10);
+    };
+    b.onclick = toTop;
+    b.onkeydown = e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); toTop(e); } };
   });
+  $("list").querySelectorAll(".share").forEach(b => b.onclick = e => { e.stopPropagation(); shareJob(b.dataset.k); });
   updateStickyHeads();
   $("list").querySelectorAll(".dltag").forEach(b => b.onclick = e => { e.stopPropagation(); showDeadline(b); });
   $("list").querySelectorAll(".cattag").forEach(a => a.onclick = e => { e.preventDefault(); setCat(a.dataset.c); });
@@ -1261,6 +1295,8 @@ async function toggleMore(btn){
   const more = c.querySelector(".morebtn");
   if (expanded.has(k)) {
     expanded.delete(k);
+    clearJobHash(k);
+    if (linked === k) linked = null;
     const dur = growMs(box.scrollHeight);          // closing takes as long as opening did
     wrap.style.transitionDuration = dur + "ms";
     box.style.transitionDuration = Math.round(dur * .8) + "ms";
@@ -1285,6 +1321,7 @@ async function toggleMore(btn){
     return;
   }
   expanded.add(k);
+  setJobHash(k);
   // load the text BEFORE opening: growing into a "Loading…" box and then swapping in the real text
   // skipped the animation entirely, which is why it used to snap open
   if (!details.has(k)) { more.classList.add("busy"); await loadDetail(k); more.classList.remove("busy"); }
@@ -1547,6 +1584,49 @@ function keepPlace(){   // remember the card at the top of the screen, put it ba
     if (Math.abs(d) > 1) { freezeBar(400); window.scrollTo(0, Math.max(0, scrollY + d)); }
   };
 }
+// ---- a fixed link for every job: <page>#job=<key> ----
+let linked = null;   // the job she arrived at by link: filters don't hide it until she moves on
+const jobLink = k => `${location.origin}${location.pathname}#job=${encodeURIComponent(k)}`;
+function setJobHash(k){ try { history.replaceState(null, "", `${location.pathname}${location.search}#job=${encodeURIComponent(k)}`); } catch(e) {} }
+function clearJobHash(k){
+  if (location.hash === `#job=${encodeURIComponent(k)}`) try { history.replaceState(null, "", location.pathname + location.search); } catch(e) {}
+}
+async function shareJob(k){
+  const r = DATA.rows.find(x => x.key === k);
+  if (!r) return;
+  const title = (lang === "en" && r.title_en) || r.title, url = jobLink(k);
+  if (navigator.share) {
+    try { await navigator.share({title, text: `${title} — ${r.org}`, url}); return; }
+    catch (e) { if (e.name === "AbortError") return; }   // she closed the share sheet
+  }
+  try { await navigator.clipboard.writeText(url); showNote("Link copied"); }
+  catch (e) { window.prompt("Copy this link", url); }
+}
+function openJob(k, smooth){
+  const r = DATA.rows.find(x => x.key === k);
+  if (!r) { clearJobHash(k); showNote("That job isn't listed any more", "link_off"); return; }
+  linked = k;
+  if (mapMode) { mapMode = false; $("btnList").classList.add("on"); $("btnMap").classList.remove("on"); moveSegPill(); }
+  const tab = Object.keys(VIEWS).find(v => VIEWS[v].f(r)) || "review";   // where it is for her
+  if (view !== tab) {
+    tabScroll[view] = scrollY;
+    view = tab;
+    try { localStorage.setItem("view", view); } catch(e) {}
+    $("sort").value = onlyClosing ? "deadline" : onlyNew ? "new" : defaultSort(view);
+    updateFilterDot();
+  }
+  draw();
+  const card = $("list").querySelector(`.card[data-k="${CSS.escape(k)}"]`);
+  if (!card) return;
+  const top = Math.max(0, scrollY + card.getBoundingClientRect().top - (window.__barvis || 0) - 10);
+  // glide there in the open app; jump when arriving fresh (or when the page is hidden: no glide runs then)
+  if (smooth && document.visibilityState === "visible") jumpTo(top); else { freezeBar(300); window.scrollTo(0, top); }
+  card.classList.add("linked");
+  setTimeout(() => card.classList.remove("linked"), 1900);
+  if (r.more && !expanded.has(k)) toggleMore(card.querySelector(".morebtn"));
+}
+function jobFromHash(){ const m = location.hash.match(/^#job=(.+)$/); return m ? decodeURIComponent(m[1]) : null; }
+addEventListener("hashchange", () => { const k = jobFromHash(); if (k) openJob(k, true); });
 function jumpTo(top){ freezeBar(900); window.scrollTo({top, behavior: "smooth"}); }
 (() => {
   // The title part of the bar follows the scroll like a phone toolbar: scrolling down pushes it up
@@ -1686,6 +1766,10 @@ $("srcs").innerHTML = Object.entries(DATA.sources).map(([k,v]) =>
   `<tr><td>${esc(k)}</td><td>${v.ok?`${v.count} jobs, ${v.new} new`:`<span class="bad">failed: ${esc(v.error)}</span>`}</td></tr>`).join("");
 applyAutoSort();   // the restored tab picks its own default sort
 draw();
+if (jobFromHash()) {                       // arrived by a job's link: straight to it
+  try { history.scrollRestoration = "manual"; } catch(e) {}
+  setTimeout(() => openJob(jobFromHash(), false), 0);
+}
 // Service worker: always look for a newer version (bypassing HTTP cache) and reload once when it takes over
 if ("serviceWorker" in navigator) {
   const hadController = !!navigator.serviceWorker.controller;
