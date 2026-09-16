@@ -110,6 +110,8 @@ def update_full(texts: list[str], budget_s: float = 1500) -> dict:
     except ImportError:
         print("full-ad translation skipped (transformers not installed)")
         return cache
+    from transformers.utils import logging as hf_logging
+    hf_logging.set_verbosity_error()          # one harmless generation-config warning per sentence otherwise
     tok = MarianTokenizer.from_pretrained(MODEL)
     model = MarianMTModel.from_pretrained(MODEL)
     started, done = time.time(), 0

@@ -49,9 +49,20 @@ jobs:
           git add data docs
           git diff --cached --quiet && exit 0
           git commit -m "Daily scan $(date -u +%F)"
-          # the repo may have changed while scanning: replay our commit on top, preferring scan output
+          # The repo may have changed while scanning: replay our commit on top, preferring the scan's
+          # output — then rebuild the caches as the union of both sides, because a line-based merge
+          # of a JSON cache can silently drop entries (it once lost 136 translations).
           for i in 1 2 3; do
-            git pull --rebase -X theirs && git push && exit 0
+            git fetch -q origin main
+            mine=$(git rev-parse HEAD)
+            if git rebase -X theirs origin/main; then
+              python tools/merge_caches.py origin/main "$mine"
+              git add data
+              git diff --cached --quiet || git commit -q --amend --no-edit
+              git push && exit 0
+            else
+              git rebase --abort || true
+            fi
             sleep 10
           done
           exit 1
