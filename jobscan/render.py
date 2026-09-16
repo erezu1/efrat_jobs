@@ -551,9 +551,6 @@ details.srcs{background:var(--panel);border-radius:16px;box-shadow:var(--e1);pad
 .card .actions .applybox{grid-column:4;justify-self:end}
 .card .actions .vote.no{margin-right:6px}
 .card .actions .vote.yes{margin-left:6px}
-/* while the ad is open the Applied button is out of the way; it keeps its place in the row,
-   so the ✓/✕ pair doesn't move when it goes or comes back */
-.card.expanded .actions .applybox{opacity:0;pointer-events:none;transform:scale(.85);animation:none}
 @media (max-width:760px){   /* the pill is a little smaller here, so it always fits its half of the row */
   .card .actions .applybox{font-size:12.5px;padding:0 11px 0 8px;gap:3px}
   .card .actions .applybox .mi{font-size:18px}
