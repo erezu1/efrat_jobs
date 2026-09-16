@@ -273,8 +273,8 @@ select:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 .iconbtn.langbtn .mi{font-size:19px}
 .iconbtn.langbtn{transition:background .2s,color .2s,box-shadow .2s}
 html[data-lang="en"] .iconbtn.langbtn{background:var(--accent);color:var(--on-accent);box-shadow:var(--e2)}
-#langlabel{position:relative;display:inline-block;width:2.2ch;height:1.05em;overflow:hidden;vertical-align:-.12em}
-#langlabel b{position:absolute;left:0;right:0;top:0;font-weight:inherit;
+#langlabel{display:inline-grid;overflow:hidden;line-height:1.15}
+#langlabel b{grid-area:1/1;font-weight:inherit;text-align:center;
   transition:transform .45s cubic-bezier(.4,0,.2,1),opacity .45s cubic-bezier(.4,0,.2,1)}
 html[data-lang="en"] #langlabel .lnl{transform:translateY(100%);opacity:0}
 html[data-lang="nl"] #langlabel .len{transform:translateY(-100%);opacity:0}
@@ -527,7 +527,7 @@ details.srcs{background:var(--panel);border-radius:16px;box-shadow:var(--e1);pad
 #dlpop small{display:block;color:var(--muted);margin-top:2px}
 
 /* "More": full ad text expands in place */
-.fullwrap{display:grid;grid-template-rows:0fr;transition:grid-template-rows .7s cubic-bezier(.33,0,.15,1)}
+.fullwrap{display:grid;grid-template-rows:0fr;transition:grid-template-rows .7s cubic-bezier(.33,0,.15,1),padding-bottom .7s cubic-bezier(.33,0,.15,1)}
 .fullwrap.open{grid-template-rows:1fr}
 .fulltext{min-height:0;overflow:hidden;opacity:0;transition:opacity .5s ease;cursor:auto}
 .fullwrap.open .fulltext{opacity:1}
@@ -1173,6 +1173,19 @@ function fullHtml(r){
   }
   return text.split(/\n+/).filter(Boolean).map(p => `<p>${esc(p)}</p>`).join("");
 }
+// How much room the More button takes, remembered from a card that still shows one (it is hidden
+// while the ad is open, so it can't be measured there).
+let moreH = 0;
+function moreHeight(c){
+  const b = c.querySelector(".morebtn");
+  if (!b) return moreH;
+  const p = b.parentElement, prev = b.style.display;
+  b.style.display = "inline-flex"; const withIt = p.offsetHeight;   // measure the gap it really leaves,
+  b.style.display = "none";        const without = p.offsetHeight;  // margins and line box included
+  b.style.display = prev;
+  if (withIt > without) moreH = withIt - without;
+  return moreH;
+}
 // A fixed duration made a long ad race open and a short one crawl; the time grows with the text.
 const growMs = px => Math.min(1200, Math.max(560, Math.round(430 + px * .25)));
 // the card keeps gliding after she lets go, so the bar stays frosted until it has landed
@@ -1206,12 +1219,15 @@ async function toggleMore(btn){
     // would send it straight to the card's end — still thousands of pixels down — and it would fly
     // off the screen and back. So the card gives that class up only once it has finished closing.
     wrap.classList.remove("open");
+    wrap.style.paddingBottom = moreHeight(c) + "px";   // grows into the space the More button will take
     more.classList.remove("open"); more.lastElementChild.textContent = "More";
     clearTimeout(c.__closing);
     c.__closing = setTimeout(() => {
       if (expanded.has(k)) return;                 // reopened while it was closing
       // the row has just ridden up with the card; the open and closed paddings differ by a few
       // pixels, so settle that quickly rather than easing back down against the motion
+      // the button reappears exactly as the box gives that space back, so nothing below moves
+      wrap.style.transitionDuration = "0ms"; wrap.style.paddingBottom = "";
       flipActions(c, () => c.classList.remove("expanded", "headout"), 220);
     }, dur + 40);
     // if we were deep inside the ad, bring the card's top back into view
@@ -1229,8 +1245,14 @@ async function toggleMore(btn){
   const dur = growMs(box.scrollHeight);
   wrap.style.transitionDuration = dur + "ms";
   box.style.transitionDuration = Math.round(dur * .8) + "ms";
+  wrap.style.transitionDuration = "0ms";
+  wrap.style.paddingBottom = moreHeight(c) + "px";      // takes over the space the button is leaving
   flipActions(c, () => c.classList.add("expanded"));
-  requestAnimationFrame(() => wrap.classList.add("open"));
+  requestAnimationFrame(() => {
+    wrap.style.transitionDuration = dur + "ms";
+    wrap.style.paddingBottom = "0px";
+    wrap.classList.add("open");
+  });
   setTimeout(updateStickyHeads, dur + 60);   // once it has finished growing, the card knows where its footer sits
 }
 function updateStickyHeads(){   // show a card's mini header once its real title is under the top bar
