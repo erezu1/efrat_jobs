@@ -20,7 +20,7 @@ from email.message import EmailMessage
 from pathlib import Path
 from zoneinfo import ZoneInfo
 
-from .render import build_rows
+from .render import build_rows, eu_date as eu
 
 ROOT = Path(__file__).resolve().parent.parent
 HEADER = ROOT / "docs" / "icons" / "email-header.png"   # logo + wordmark, made by tools/make_email_header.py
@@ -54,7 +54,7 @@ def collect(state: dict, today: date) -> tuple[list[dict], list[tuple[int, dict]
 def _meta(r: dict) -> str:
     bits = [r["org"], r["loc"], CATS.get(r["cat"], "")]
     if r["deadline"]:
-        bits.append(f"deadline {r['deadline']}")
+        bits.append(f"deadline {eu(r['deadline'])}")
     return " · ".join(b for b in bits if b)
 
 
@@ -91,7 +91,7 @@ def build_email(new, closing, today: date, header_src: str = "cid:biojobs-header
             label = "Deadline today" if days_left == 0 else f"{days_left} day{'s' if days_left != 1 else ''} left"
             tags += pill(label, "#b3261e" if days_left <= 7 else "#fbeadf", "#fff" if days_left <= 7 else "#b4541a")
         elif r["deadline"]:
-            tags += pill(f"Deadline {r['deadline']}", "#fbeadf", "#b4541a")
+            tags += pill(f"Deadline {eu(r['deadline'])}", "#fbeadf", "#b4541a")
         if r["cat"]:
             tags += pill(CATS.get(r["cat"], r["cat"]), CHIP, MUTED)
         where = " · ".join(x for x in (r["org"], r["loc"]) if x)

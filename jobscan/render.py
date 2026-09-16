@@ -34,6 +34,11 @@ def guess_category(title: str, source: str) -> str | None:
     return None
 
 
+def eu_date(iso: str | None) -> str:
+    """2026-09-13 → 13/09/2026 (the page and the emails use European dates)."""
+    return "/".join(reversed(iso.split("-"))) if iso else ""
+
+
 def dedupe_key(title: str, org: str, deadline: str | None = None) -> str | None:
     """Key for spotting the same ad on several sites. Long titles are distinctive on their
     own (orgs are often spelled differently across boards); shorter ones also need the same
@@ -1087,6 +1092,7 @@ function renderStats(){
   });
 }
 
+const euDate = iso => iso ? iso.split("-").reverse().join("/") : "";   // 2026-09-13 → 13/09/2026
 function timeLeft(d){          // days until deadline, in words
   if (d === 0) return "today";
   if (d === 1) return "tomorrow";
@@ -1121,7 +1127,7 @@ function card(r){
       ${r.more ? `<div class="stickyhead"><div class="sh" role="button" tabindex="0" data-k="${esc(r.key)}" title="Back to the top of this job"><span class="shscore" style="${col?`background:${col}`:""}">${sc==null?"–":sc}</span><span class="shtitle">${esc(title)}</span><span class="mi">vertical_align_top</span><button class="share shshare" data-k="${esc(r.key)}" aria-label="Share this job" title="Share this job"><span class="mi">ios_share</span></button></div></div>` : ""}
       <button class="share cardshare" data-k="${esc(r.key)}" aria-label="Share this job" title="Share this job"><span class="mi">ios_share</span></button>
       <a class="title" href="${esc(r.url)}" target="_blank" rel="noopener">${esc(title)}</a>
-      <div class="meta"><span><span class="mi">apartment</span>${esc(r.org)}</span>${r.loc?`<a class="placelink" href="#" data-place="${esc(placeKey(r))}" data-label="${esc(r.loc)}" title="Show only jobs in ${esc(r.loc)}"><span class="mi">location_on</span>${esc(r.loc)}</a>`:""}<span><span class="mi">visibility</span>first seen ${esc(r.first_seen)}</span></div>
+      <div class="meta"><span><span class="mi">apartment</span>${esc(r.org)}</span>${r.loc?`<a class="placelink" href="#" data-place="${esc(placeKey(r))}" data-label="${esc(r.loc)}" title="Show only jobs in ${esc(r.loc)}"><span class="mi">location_on</span>${esc(r.loc)}</a>`:""}<span title="First seen"><span class="mi">visibility</span>${esc(euDate(r.first_seen))}</span></div>
       <div class="tags">${tags.join("")}</div>
       ${summary?`<p class="summary">${esc(summary)}</p>`:""}
       ${r.more ? `<div class="fullwrap"><div class="fulltext"></div></div>` : ""}
@@ -1925,7 +1931,7 @@ setTimeout(() => moveSegPill(false), 0);
 
 Sync.init();
 $("unscored").hidden = !DATA.rows.some(r => r.pre && r.score == null);
-$("gen").textContent = "updated " + new Date(DATA.generated).toLocaleString();
+$("gen").textContent = "updated " + new Date(DATA.generated).toLocaleString("en-GB", {day:"2-digit", month:"2-digit", year:"numeric", hour:"2-digit", minute:"2-digit"});
 $("type").insertAdjacentHTML("beforeend", Object.entries(CATS).map(([k,v]) => `<option value="${k}">${v}</option>`).join(""));
 $("type").addEventListener("input", () => setCat($("type").value));
 // quick filters pick a matching sort: Closing → deadline, New → newest, none → the tab's default

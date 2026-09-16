@@ -10,7 +10,7 @@ import os
 from datetime import date
 from pathlib import Path
 
-from .render import build_rows
+from .render import build_rows, eu_date as eu
 
 ROOT = Path(__file__).resolve().parent.parent
 MIN_SCORE = int(os.environ.get("DIGEST_MIN_SCORE", "6"))
@@ -19,7 +19,7 @@ REMIND_DAYS = {7, 3, 1}
 
 def _line(r: dict, extra: str = "") -> str:
     s = r["score"] if r["score"] is not None else "?"
-    dl = f" — deadline {r['deadline']}" if r.get("deadline") else ""
+    dl = f" — deadline {eu(r['deadline'])}" if r.get("deadline") else ""
     summary = f"\n  {r['summary']}" if r.get("summary") else ""
     return f"- **[{s}/10] [{r['title']}]({r['url']})** — {r['org']}{dl}{extra}{summary}"
 
