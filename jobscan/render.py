@@ -381,7 +381,10 @@ input[type=search]:focus,select:focus{outline:2px solid var(--accent);outline-of
 .card.lifted .actions::before{-webkit-mask-image:linear-gradient(to top,#000 72%,transparent);mask-image:linear-gradient(to top,#000 72%,transparent)}
 .card[data-dir="yes"] .sh::before,.card.lifted[data-dir="yes"] .actions::before{background:linear-gradient(to right,color-mix(in srgb,var(--accent) 26%,var(--panel)) 0%,color-mix(in srgb,var(--panel) 60%,transparent) 70%)}
 .card[data-dir="no"] .sh::before,.card.lifted[data-dir="no"] .actions::before{background:linear-gradient(to left,color-mix(in srgb,var(--danger) 22%,var(--panel)) 0%,color-mix(in srgb,var(--panel) 60%,transparent) 70%)}
-.card .actions{position:relative;z-index:3}
+.card .actions{position:relative}
+/* while dragging, the tint washes over the card and More/Less; only the ✓ / ✕ it is choosing rise above it */
+.card .actions .vote,.card .actions .applybox{position:relative;z-index:3}
+.card.lifted .actions::before{z-index:1}
 .toast{position:fixed;left:50%;bottom:max(20px,env(safe-area-inset-bottom));z-index:50;display:flex;align-items:center;gap:10px;
   background:#2a2030;color:#fff;border-radius:14px;padding:10px 10px 10px 16px;box-shadow:0 8px 28px rgba(20,10,25,.35);
   font-size:14px;width:max-content;max-width:calc(100vw - 28px);transform:translate(-50%,24px);opacity:0;transition:transform .25s ease,opacity .25s ease}
@@ -989,11 +992,11 @@ let lang = "en";   // "en" = show English translations of Dutch ads, "nl" = orig
 try { lang = localStorage.getItem("lang") || "en"; } catch(e) {}
 let place = null;   // {key, label}: show only jobs from one location
 const placeKey = r => r.ll ? r.ll.join(",") : (r.loc || "").trim().toLowerCase();
-function setPlace(key, label){
+function setPlace(key, label, anchor){
   place = key ? {key, label} : null;
+  const stay = keepPlace(anchor);
   $("placechip").hidden = !place; $("placename").textContent = place ? label : "";
-  window.scrollTo({top: 0, behavior: "smooth"});
-  draw();
+  draw(); stay();
 }
 const $ = id => document.getElementById(id);
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
@@ -1010,6 +1013,7 @@ const VIEWS = {
 const tabScroll = {};
 try { Object.assign(tabScroll, JSON.parse(sessionStorage.getItem("tabScroll") || "{}")); } catch(e) {}
 function restoreScroll(){
+  $("list").style.minHeight = "";              // room kept for another tab's short list isn't this tab's
   const max = Math.max(0, document.documentElement.scrollHeight - innerHeight);
   freezeBar(80);                               // the jump isn't a scroll gesture: don't move the search bar with it
   window.scrollTo(0, Math.min(tabScroll[view] || 0, max));
@@ -1161,6 +1165,7 @@ function draw(){
   // The open card is redrawn with everything else: remember where she was in it, close it quietly,
   // and lift the new card back in once the list is drawn (unless it has left this list).
   const keep = reading && !mapMode ? {key: reading.key, headout: reading.el.classList.contains("headout"),
+    from: (({top, left, width, height}) => ({top, left, width, height}))(reading.el.getBoundingClientRect()),
     frac: reading.el.scrollTop / Math.max(1, reading.el.scrollHeight - reading.el.clientHeight)} : null;
   if (reading) closeReader({instant: true, rebuild: !!keep});
   // List <-> map (see the bar's controller for the three calls)
@@ -1244,8 +1249,8 @@ function draw(){
   });
   $("list").querySelectorAll(".share").forEach(b => b.onclick = e => { e.stopPropagation(); shareJob(b.dataset.k); });
   $("list").querySelectorAll(".dltag").forEach(b => b.onclick = e => { e.stopPropagation(); showDeadline(b); });
-  $("list").querySelectorAll(".cattag").forEach(a => a.onclick = e => { e.preventDefault(); setCat(a.dataset.c); });
-  $("list").querySelectorAll(".placelink").forEach(a => a.onclick = e => { e.preventDefault(); setPlace(a.dataset.place, a.dataset.label); });
+  $("list").querySelectorAll(".cattag").forEach(a => a.onclick = e => { e.preventDefault(); setCat(a.dataset.c, a.closest(".card")?.dataset.k); });
+  $("list").querySelectorAll(".placelink").forEach(a => a.onclick = e => { e.preventDefault(); setPlace(a.dataset.place, a.dataset.label, a.closest(".card")?.dataset.k); });
   $("list").querySelectorAll(".vote").forEach(b => b.onclick = () => {
     const c = b.closest(".card"), k = b.dataset.k, m = b.dataset.m;
     if (m === "hidden" && marks[k] !== "hidden" && c.animateReject) return c.animateReject();
@@ -1284,7 +1289,7 @@ function draw(){
     const el = $("list").querySelector(`.card[data-k="${CSS.escape(keep.key)}"]`), r = DATA.rows.find(x => x.key === keep.key);
     if (el && r?.more && details.has(keep.key)) {
       fillReader(el, r);
-      lift(el, {animate: false, headout: keep.headout, quiet: true});
+      lift(el, {animate: false, headout: keep.headout, quiet: true, from: keep.from});
       el.scrollTop = keep.frac * Math.max(0, el.scrollHeight - el.clientHeight);   // same place in the text
     } else { popJob(keep.key); if (linked === keep.key) linked = null; }
   }
@@ -1349,7 +1354,7 @@ function fillReader(el, r){
   const box = el.querySelector(".fulltext");
   if (box) box.innerHTML = details.has(r.key) ? fullHtml(r) : '<p class="fullnote">Couldn\'t load the full text.</p>';
 }
-function lift(el, {animate = true, headout = false, quiet = false} = {}){
+function lift(el, {animate = true, headout = false, quiet = false, from = null} = {}){
   const r = el.getBoundingClientRect(), slot = document.createElement("div");
   slot.className = "cardslot";
   slot.style.height = r.height + "px"; slot.style.margin = getComputedStyle(el).margin;
@@ -1364,8 +1369,11 @@ function lift(el, {animate = true, headout = false, quiet = false} = {}){
   el.scrollTop = 0;                                    // an ad always opens at its top
   if (!animate) {
     el.classList.add("reader"); el.classList.toggle("headout", headout);
-    placeReader(el, readerFrame(), 0);
-    if (quiet) requestAnimationFrame(() => requestAnimationFrame(() => el.classList.remove("quiet")));
+    placeReader(el, from || readerFrame(), 0);        // rebuilt: exactly where it was on screen
+    if (quiet) requestAnimationFrame(() => requestAnimationFrame(() => {
+      el.classList.remove("quiet");
+      if (from && reading?.el === el) placeReader(el, readerFrame(), 300);   // the bar grew or shrank: follow it gently
+    }));
     return;
   }
   void el.offsetHeight;
@@ -1702,17 +1710,27 @@ function freezeBar(ms){
   clearTimeout(window.__unfreezeTimer);
   window.__unfreezeTimer = setTimeout(() => window.__barUnfreeze?.(), ms + 30);
 }
-function keepPlace(){   // remember the card at the top of the screen, put it back there after a re-render
+function keepPlace(k){   // a re-render (filter, language…) must not move her: the card she is at stays put
   freezeBar(700);        // the page shifting under a re-render is not a scroll: the bar stays as it is
-  const bar = window.__barvis || 0;
-  const el = [...$("list").querySelectorAll(".card:not(.lifted)")].find(c => c.getBoundingClientRect().bottom > bar + 8);
-  if (!el) return () => {};
-  const k = el.dataset.k, was = el.getBoundingClientRect().top;
+  const bar = window.__barvis || 0, hide = window.__barEff || 0;
+  const at = k => k === reading?.key ? reading.slot : $("list").querySelector(`.card[data-k="${CSS.escape(k)}"]`);
+  if (reading) k = reading.key;                        // an open card: its place in the list, under the veil
+  else if (!k || !at(k)) k = [...$("list").querySelectorAll(".card")].find(c => c.getBoundingClientRect().bottom > bar + 8)?.dataset.k;
+  const was = k && at(k) ? at(k).getBoundingClientRect().top : null;
   return () => {
-    const now = $("list").querySelector(`.card[data-k="${CSS.escape(k)}"]`);
-    if (!now) return;
-    const d = now.getBoundingClientRect().top - was;
-    if (Math.abs(d) > 1) { freezeBar(400); window.scrollTo(0, Math.max(0, scrollY + d)); }
+    const now = k && at(k);
+    let d;
+    if (now && was != null) d = now.getBoundingClientRect().top - was;
+    else {   // it left the list: go to where the list starts, but never so high that the bar has to open
+      const start = scrollY + $("list").getBoundingClientRect().top - bar - 10;
+      d = Math.min(scrollY, start) - scrollY;
+    }
+    // a short list can't hold that scroll: room below it, so the page (and the bar) stay where they were
+    const list = $("list"), to = Math.max(hide, scrollY + d);   // near the top, the bar's state wins over the card's spot
+    list.style.minHeight = "";
+    const short = to - (document.documentElement.scrollHeight - innerHeight);
+    if (short > 0) list.style.minHeight = `${list.offsetHeight + short}px`;
+    if (Math.abs(d) > 1 || short > 0) { freezeBar(400); window.scrollTo(0, to); }
   };
 }
 // ---- a fixed link for every job: <page>#job=<key> ----
@@ -1818,7 +1836,10 @@ function jumpTo(top){ freezeBar(900); window.scrollTo({top, behavior: "smooth"})
     apply();
   };
   addEventListener("scroll", () => { if (!ticking) { ticking = true; requestAnimationFrame(update); } }, {passive: true});
-  new ResizeObserver(() => { measure(); update(); if (reading) placeReader(reading.el, readerFrame(), 0); }).observe(bar);
+  new ResizeObserver(() => {
+    measure(); update();
+    if (reading && !reading.el.classList.contains("quiet")) placeReader(reading.el, readerFrame(), 300);   // a chip came or went
+  }).observe(bar);
   measure(); update();
   window.__barUpdate = () => { measure(); update(); };
   window.__barUnfreeze = () => { lastY = Math.max(0, scrollY); update(); };
@@ -1850,14 +1871,14 @@ function jumpTo(top){ freezeBar(900); window.scrollTo({top, behavior: "smooth"})
 })();
 $("minilogo").onclick = e => { e.preventDefault(); window.scrollTo({top: 0, behavior: "smooth"}); };
 document.querySelector("h1").onclick = () => window.scrollTo({top: 0, behavior: "smooth"});   // logo / title: back to top
-function setCat(c, scroll = true){   // show only this job type ("" = all types)
+function setCat(c, anchor){   // show only this job type ("" = all types)
+  const stay = keepPlace(anchor);
   cats = c ? new Set([c]) : new Set();
   $("type").value = c || "";
   $("typechip").hidden = !c; $("typename").textContent = c ? CATS[c] : "";
-  if (scroll) window.scrollTo({top: 0, behavior: "smooth"});
-  draw();
+  draw(); stay();
 }
-$("typechip").onclick = () => setCat("", false);
+$("typechip").onclick = () => setCat("");
 function updateLangBtn(){
   document.documentElement.dataset.lang = lang;        // the button's look follows this, from the first paint on
   $("btnLang").setAttribute("aria-pressed", lang === "en");
@@ -1904,12 +1925,12 @@ Sync.init();
 $("unscored").hidden = !DATA.rows.some(r => r.pre && r.score == null);
 $("gen").textContent = "updated " + new Date(DATA.generated).toLocaleString();
 $("type").insertAdjacentHTML("beforeend", Object.entries(CATS).map(([k,v]) => `<option value="${k}">${v}</option>`).join(""));
-$("type").addEventListener("input", () => setCat($("type").value, false));
+$("type").addEventListener("input", () => setCat($("type").value));
 // quick filters pick a matching sort: Closing → deadline, New → newest, none → the tab's default
 const autoSort = () => onlyClosing ? "deadline" : onlyNew ? "new" : defaultSort(view);
 const applyAutoSort = () => { $("sort").value = autoSort(); updateFilterDot(); };
-$("qNew").onclick = () => { onlyNew = !onlyNew; applyAutoSort(); draw(); };
-$("qClosing").onclick = () => { onlyClosing = !onlyClosing; applyAutoSort(); draw(); };
+$("qNew").onclick = () => { const stay = keepPlace(); onlyNew = !onlyNew; applyAutoSort(); draw(); stay(); };
+$("qClosing").onclick = () => { const stay = keepPlace(); onlyClosing = !onlyClosing; applyAutoSort(); draw(); stay(); };
 ["q","minscore","sort","showfiltered"].forEach(id => $(id).addEventListener("input", () => { updateFilterDot(); draw(); }));
 $("srcs").innerHTML = Object.entries(DATA.sources).map(([k,v]) =>
   `<tr><td>${esc(k)}</td><td>${v.ok?`${v.count} jobs, ${v.new} new`:`<span class="bad">failed: ${esc(v.error)}</span>`}</td></tr>`).join("");
