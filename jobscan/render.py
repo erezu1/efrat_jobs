@@ -554,7 +554,7 @@ details.srcs{background:var(--panel);border-radius:16px;box-shadow:var(--e1);pad
    never push them or reach them — open or closed, in any tab */
 .card .actions{display:grid;grid-template-columns:1fr auto auto 1fr;align-items:center;column-gap:0;
   margin-left:calc(-1 * (var(--scol) + var(--sgap)));
-  transition:padding .3s cubic-bezier(.25,.8,.3,1),margin .3s cubic-bezier(.25,.8,.3,1),border-radius .16s linear}
+  transition:padding .3s cubic-bezier(.25,.8,.3,1),margin .3s cubic-bezier(.25,.8,.3,1)}
 .card .actions .lessbtn{grid-column:1;justify-self:start}
 .card .actions .vote.no{grid-column:2}
 .card .actions .vote.yes{grid-column:3}
@@ -576,16 +576,16 @@ details.srcs{background:var(--panel);border-radius:16px;box-shadow:var(--e1);pad
 @media (max-width:760px){.card{--scol:40px;--sgap:10px;--padx:14px;--pady:14px}}
 /* the row is pinned to the screen while the ad is open, and stays pinned while it closes */
 .card.expanded .actions,.card.closing .actions{position:sticky;bottom:0;z-index:3;
-  background:linear-gradient(to top,var(--panel) 72%,color-mix(in srgb,var(--panel) 0%,transparent))}
+  background:linear-gradient(to top,var(--panel) 72%,color-mix(in srgb,var(--panel) 0%,transparent)) 4px 0/calc(100% - 8px) 100% no-repeat}
 .card.expanded .actions{
   margin:14px calc(-1 * var(--padx)) calc(-1 * var(--pady)) calc(-1 * (var(--scol) + var(--sgap) + var(--padx)));
   padding:22px var(--padx) calc(var(--pady) + 8px + env(safe-area-inset-bottom));
-  border-radius:0 0 var(--fr,0px) var(--fr,0px)}
+  border-radius:0 0 16px 16px}
 
 /* tucks under the bar's bottom fade so no text shows between the search bar and this strip */
 .stickyhead{position:sticky;top:calc(var(--sht,0px) - 26px);height:0;z-index:4}
 .sh{position:absolute;left:calc(-1 * (var(--scol) + var(--sgap) + var(--padx)));right:calc(-1 * var(--padx));top:0;display:flex;align-items:center;gap:8px;border:0;border-radius:0;
-  background:linear-gradient(to bottom,var(--panel) 72%,color-mix(in srgb,var(--panel) 0%,transparent));box-shadow:none;
+  background:linear-gradient(to bottom,var(--panel) 72%,color-mix(in srgb,var(--panel) 0%,transparent)) 4px 0/calc(100% - 8px) 100% no-repeat;box-shadow:none;
   padding:27px var(--padx) 20px;cursor:pointer;color:var(--ink);text-align:left;
   opacity:0;transform:translateY(-8px);pointer-events:none;transition:opacity .28s ease,transform .28s ease}
 .card.expanded.headout .sh{opacity:1;transform:none;pointer-events:auto}
@@ -630,12 +630,10 @@ details.srcs{background:var(--panel);border-radius:16px;box-shadow:var(--e1);pad
   .ctlrow .left{padding:1px 0}
 }
 
-/* keep the interested / rejected edge stripe visible on the sticky strips of an expanded card */
-.card.liked .sh,.card.liked.expanded .actions{box-shadow:inset 4px 0 0 var(--accent)}
-.card.disliked .sh,.card.disliked.expanded .actions{box-shadow:inset -4px 0 0 var(--danger)}
-/* the footer rounds off as the card's end comes up to meet it (--fr, set while scrolling), so its
-   stripe ends exactly like the card's; while it floats over the text it is square and runs
-   straight into the stripe below it */
+/* The strips don't draw the interested / rejected stripe themselves — they leave the card's own
+   4px edge uncovered and it shows through, so it is one unbroken stripe that ends at the card's
+   corner exactly like any other card's. (Nothing but the card's background sits out there, so no
+   text can leak through the gap.) */
 
 </style>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -1254,12 +1252,6 @@ function updateStickyHeads(){   // show a card's mini header once its real title
     if (sh && sh.__top !== barvis) { sh.__top = barvis; sh.style.setProperty("--sht", barvis + "px"); }
     const t = c.querySelector(".title").getBoundingClientRect(), r = c.getBoundingClientRect();
     c.classList.toggle("headout", t.bottom < barvis + 4 && r.bottom > barvis + 140);
-    const a = c.querySelector(".actions");
-    if (a) {   // the last 24px of the card round the footer's corners off, rather than snapping them
-      const gap = r.bottom - a.getBoundingClientRect().bottom;
-      const fr = Math.round(Math.max(0, Math.min(16, 16 - gap * (16 / 40))) * 2) / 2;
-      if (c.__fr !== fr) { c.__fr = fr; c.style.setProperty("--fr", fr + "px"); }
-    }
   });
 }
 function settleOn(key, tries = 0){   // after the glide, make sure the card sits exactly under the bar (bar height can change meanwhile)
