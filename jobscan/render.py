@@ -373,7 +373,8 @@ input[type=search]:focus,select:focus{outline:2px solid var(--accent);outline-of
 @media (prefers-color-scheme: dark){.toast{background:#ece6ee;color:#241a28}.toast .mi,.toast button{color:#7b2d8e}}
 .toph{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
 .toph h1{flex:none}
-.toph .stats{flex-basis:100%;order:3}                      /* its own line while the screen is narrow */
+.toph .stats{flex-basis:100%;order:3;margin-left:0;margin-right:0;padding-left:0;padding-right:0}   /* its own line while narrow */
+/* (the bleed-to-the-edges margins it had outside this row can't widen a flex item — they only shifted it left) */
 @media (min-width:900px){                                  /* wide enough: title, tabs and sync share a line */
   .toph{gap:24px;flex-wrap:nowrap;align-items:flex-start}
   /* the logo and the sync button match the tab icons, and sit on the same line as them */
@@ -512,8 +513,11 @@ details.srcs{background:var(--panel);border-radius:16px;box-shadow:var(--e1);pad
   background:var(--panel);color:var(--ink);font:700 11px/20px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
   text-align:center;box-shadow:var(--e1)}
 .tab.on .tabcount{background:var(--ink);color:var(--bg)}
-.tablabel{font-size:12px;font-weight:600;white-space:nowrap}
+.tablabel{font-size:12px;font-weight:600;white-space:nowrap;transition:opacity .2s ease}
 .tab.on .tablabel{color:var(--ink)}
+/* too narrow for four labels to breathe: only the current tab keeps its name (the others fade) */
+.stats{container-type:inline-size}
+@container (max-width:310px){ .tab:not(.on) .tablabel{opacity:0} }
 @media (max-width:760px){
   .stats{margin:6px -14px 0;padding:8px 14px 0;gap:2px}
   .stats{-webkit-mask-image:linear-gradient(to right,#000 85%,transparent);mask-image:linear-gradient(to right,#000 85%,transparent)}
@@ -528,6 +532,12 @@ details.srcs{background:var(--panel);border-radius:16px;box-shadow:var(--e1);pad
 .qchip{flex:none;border:0;border-radius:999px;padding:6px 13px 6px 9px;display:inline-flex;align-items:center;gap:5px;
   font-size:13px;font-weight:600;background:var(--panel);color:var(--muted);box-shadow:var(--e1);transition:background .2s,color .2s,box-shadow .2s}
 .qchip .mi{font-size:18px}
+/* when the row is too narrow for both labels beside List/Map, the chips keep only their icons */
+.ctlrow{container-type:inline-size}
+@container (max-width:340px){
+  .qchip{padding:6px 9px}
+  .qchip .qlab{display:none}
+}
 .qchip.on{background:var(--accent);color:var(--on-accent);box-shadow:var(--e2)}
 @media (max-width:760px){ .tab{flex:1 1 0;min-width:0} .stats{-webkit-mask-image:none;mask-image:none;justify-content:space-between} }
 
@@ -703,8 +713,8 @@ details.srcs{background:var(--panel);border-radius:16px;box-shadow:var(--e1);pad
     </div>
     <div class="ctlrow">
       <div class="left">
-        <button class="qchip" id="qNew" aria-pressed="false" title="Only jobs first seen this week"><span class="mi">new_releases</span>New</button>
-        <button class="qchip" id="qClosing" aria-pressed="false" title="Only jobs with a deadline in the next 14 days"><span class="mi">hourglass_bottom</span>Closing</button>
+        <button class="qchip" id="qNew" aria-pressed="false" aria-label="New" title="Only jobs first seen this week"><span class="mi">post_add</span><span class="qlab">New</span></button>
+        <button class="qchip" id="qClosing" aria-pressed="false" aria-label="Closing" title="Only jobs with a deadline in the next 14 days"><span class="mi">hourglass_bottom</span><span class="qlab">Closing</span></button>
         <span class="chip on fchip" id="typechip" hidden><span id="typename"></span><span class="mi">close</span></span>
         <span class="chip on fchip placechip" id="placechip" hidden><span class="mi">location_on</span><span id="placename"></span><span class="mi">close</span></span>
       </div>
