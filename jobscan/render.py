@@ -373,6 +373,7 @@ input[type=search]:focus,select:focus{outline:2px solid var(--accent);outline-of
 .card[data-dir="yes"]::after{background:linear-gradient(to right,color-mix(in srgb,var(--accent) 26%,var(--panel)) 0%,color-mix(in srgb,var(--panel) 60%,transparent) 70%)}
 .card[data-dir="no"]::after{background:linear-gradient(to left,color-mix(in srgb,var(--danger) 22%,var(--panel)) 0%,color-mix(in srgb,var(--panel) 60%,transparent) 70%)}
 .card::after{z-index:2}
+.card.lifted::after{transform:translateY(var(--st,0px))}   /* an open card scrolls inside itself: keep the tint over what's in view */
 .card .sh{isolation:isolate}
 .card.lifted .actions::before,.card .sh::before{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;z-index:-1;
   opacity:calc(var(--p,0) * .92)}
@@ -1408,7 +1409,7 @@ function closeReader({instant = false, rebuild = false, fromHistory = false} = {
   const done = () => {
     el.classList.remove("lifted", "reader", "headout", "willclose", "quiet");
     ["top", "left", "width", "height", "transition", "transform"].forEach(p => el.style[p] = "");
-    el.scrollTop = 0;
+    el.scrollTop = 0; el.style.removeProperty("--st");
     const box = el.querySelector(".fulltext"); if (box) box.innerHTML = "";
     slot.remove();
     if (reading) return;
@@ -1444,6 +1445,7 @@ function wireReader(el){
   };
   // the mini header shows once the title has scrolled under it
   el.addEventListener("scroll", () => {
+    el.style.setProperty("--st", el.scrollTop + "px");   // the drag tint stays on the frame, not on the text
     if (!on()) return;
     const t = el.querySelector(".title"), sh = el.querySelector(".sh");
     if (t && sh) el.classList.toggle("headout", el.scrollTop > t.offsetTop + t.offsetHeight - 10);   // the real title has gone
