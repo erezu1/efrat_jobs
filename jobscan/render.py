@@ -377,20 +377,14 @@ input[type=search]:focus,select:focus{outline:2px solid var(--accent);outline-of
   background:color-mix(in srgb,var(--panel) 62%,transparent)}
 .card[data-dir="yes"]::after{background:linear-gradient(to right,color-mix(in srgb,var(--accent) 26%,var(--panel)) 0%,color-mix(in srgb,var(--panel) 60%,transparent) 70%)}
 .card[data-dir="no"]::after{background:linear-gradient(to left,color-mix(in srgb,var(--danger) 22%,var(--panel)) 0%,color-mix(in srgb,var(--panel) 60%,transparent) 70%)}
-.card::after{z-index:2}
+/* One tint for the whole card, laid over everything in it — the sticky header and footer included, so
+   nothing is tinted twice — with only the ✓ / ✕ (and Applied) it is choosing between rising above it. */
+.card{isolation:isolate}
+.card::after{z-index:6}
 .card.lifted::after{transform:translateY(var(--st,0px))}   /* an open card scrolls inside itself: keep the tint over what's in view */
 .card .sh{isolation:isolate}
-.card.lifted .actions::before,.card .sh::before{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;z-index:-1;
-  opacity:calc(var(--p,0) * .92)}
-/* fade the strips' tint exactly like their background, so it doesn't stack with the card's tint in the fade zone */
-.card .sh::before{-webkit-mask-image:linear-gradient(to bottom,#000 72%,transparent);mask-image:linear-gradient(to bottom,#000 72%,transparent)}
-.card.lifted .actions::before{-webkit-mask-image:linear-gradient(to top,#000 72%,transparent);mask-image:linear-gradient(to top,#000 72%,transparent)}
-.card[data-dir="yes"] .sh::before,.card.lifted[data-dir="yes"] .actions::before{background:linear-gradient(to right,color-mix(in srgb,var(--accent) 26%,var(--panel)) 0%,color-mix(in srgb,var(--panel) 60%,transparent) 70%)}
-.card[data-dir="no"] .sh::before,.card.lifted[data-dir="no"] .actions::before{background:linear-gradient(to left,color-mix(in srgb,var(--danger) 22%,var(--panel)) 0%,color-mix(in srgb,var(--panel) 60%,transparent) 70%)}
 .card .actions{position:relative}
-/* while dragging, the tint washes over the card and More/Less; only the ✓ / ✕ it is choosing rise above it */
-.card .actions .vote,.card .actions .applybox{position:relative;z-index:3}
-.card.lifted .actions::before{z-index:1}
+.card .actions .vote,.card .actions .applybox{position:relative;z-index:7}
 .toast{position:fixed;left:50%;bottom:max(20px,env(safe-area-inset-bottom));z-index:50;display:flex;align-items:center;gap:10px;
   background:#2a2030;color:#fff;border-radius:14px;padding:10px 10px 10px 16px;box-shadow:0 8px 28px rgba(20,10,25,.35);
   font-size:14px;width:max-content;max-width:calc(100vw - 28px);transform:translate(-50%,24px);opacity:0;transition:transform .25s ease,opacity .25s ease}
@@ -645,10 +639,20 @@ details.srcs{background:var(--panel);border-radius:16px;box-shadow:var(--e1);pad
 /* card geometry, so sticky strips can span the whole card: score column + gap + padding */
 .card{--scol:52px;--sgap:14px;--padx:18px;--pady:16px}
 @media (max-width:760px){.card{--scol:40px;--sgap:10px;--padx:14px;--pady:14px}}
-.card.lifted .actions{position:sticky;bottom:0;z-index:3}
-.card.lifted .actions::after{content:"";position:absolute;inset:0 4px 0;z-index:-2;
+/* The open card's footer is sticky, and a sticky box is a layer of its own: the ✓ / ✕ inside can only
+   rise above the tint if the whole footer does. So the footer carries the tint in its own white area,
+   blended in before that area fades out at the top: over the card's tint below it this adds up to
+   exactly one tint, with no band where the two meet. More/Less fades the way the tint fades the text. */
+.card.lifted .actions{position:sticky;bottom:0;z-index:7}
+.card.lifted .actions::before{content:"";position:absolute;inset:0 4px 0;z-index:-1;
   border-radius:0 0 16px 16px;pointer-events:none;
-  background:linear-gradient(to top,var(--panel) 72%,color-mix(in srgb,var(--panel) 0%,transparent))}
+  background:var(--panel);
+  -webkit-mask-image:linear-gradient(to top,#000 72%,transparent);mask-image:linear-gradient(to top,#000 72%,transparent)}
+.card.lifted[data-dir="yes"] .actions::before{
+  background:linear-gradient(to right,color-mix(in srgb,color-mix(in srgb,var(--accent) 26%,var(--panel)) calc(var(--p) * 92%),transparent) 0%,color-mix(in srgb,var(--panel) calc(var(--p) * 55.2%),transparent) 70%) -4px 0/calc(100% + 8px) 100%,var(--panel)}
+.card.lifted[data-dir="no"] .actions::before{
+  background:linear-gradient(to left,color-mix(in srgb,color-mix(in srgb,var(--danger) 22%,var(--panel)) calc(var(--p) * 92%),transparent) 0%,color-mix(in srgb,var(--panel) calc(var(--p) * 55.2%),transparent) 70%) -4px 0/calc(100% + 8px) 100%,var(--panel)}
+.card.lifted[data-dir] .actions .toggle{opacity:calc(1 - var(--p) * .92);transition:background .2s,color .2s}   /* in step with the drag */
 .card.reader .actions{
   margin:14px calc(-1 * var(--padx)) 0 calc(-1 * (var(--scol) + var(--sgap) + var(--padx)));
   padding:30px var(--padx) calc(var(--pady) + 8px + env(safe-area-inset-bottom));
@@ -657,7 +661,7 @@ details.srcs{background:var(--panel);border-radius:16px;box-shadow:var(--e1);pad
 .stickyhead{position:sticky;top:0;height:0;z-index:4}
 .card.lifted .stickyhead{top:calc(-1 * var(--pady))}   /* sticky strips stick to the padding edge: sit flush instead */
 /* at the reader's rounded top its white area rounds too, leaving the interested / rejected stripe visible */
-.card.lifted .sh::after,.card.lifted .sh::before{border-radius:16px 16px 0 0}
+.card.lifted .sh::after{border-radius:16px 16px 0 0}
 .sh{position:absolute;left:calc(-1 * (var(--scol) + var(--sgap) + var(--padx)));right:calc(-1 * var(--padx));top:0;display:flex;align-items:center;gap:8px;border:0;border-radius:0;
   background:none;box-shadow:none;
   padding:14px var(--padx) 18px;cursor:pointer;color:var(--ink);text-align:left;
