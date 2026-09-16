@@ -648,6 +648,8 @@ details.srcs{background:var(--panel);border-radius:16px;box-shadow:var(--e1);pad
 
 .stickyhead{position:sticky;top:0;height:0;z-index:4}
 .card.lifted .stickyhead{top:calc(-1 * var(--pady))}   /* sticky strips stick to the padding edge: sit flush instead */
+/* at the reader's rounded top its white area rounds too, leaving the interested / rejected stripe visible */
+.card.lifted .sh::after,.card.lifted .sh::before{border-radius:16px 16px 0 0}
 .sh{position:absolute;left:calc(-1 * (var(--scol) + var(--sgap) + var(--padx)));right:calc(-1 * var(--padx));top:0;display:flex;align-items:center;gap:8px;border:0;border-radius:0;
   background:none;box-shadow:none;
   padding:14px var(--padx) 18px;cursor:pointer;color:var(--ink);text-align:left;
@@ -1276,7 +1278,7 @@ function draw(){
       fillReader(el, r);
       lift(el, {animate: false, headout: keep.headout, quiet: true});
       el.scrollTop = keep.frac * Math.max(0, el.scrollHeight - el.clientHeight);   // same place in the text
-    } else { clearJobHash(keep.key); if (linked === keep.key) linked = null; }
+    } else { popJob(keep.key); if (linked === keep.key) linked = null; }
   }
   if (wasMap) window.__barBackToList?.();       // the list has its real height again: back to her place
 }
@@ -1362,9 +1364,10 @@ function lift(el, {animate = true, headout = false, quiet = false} = {}){
   placeReader(el, readerFrame(), 420);                 // the frame grows into the reader…
   el.classList.add("reader");                          // …while the ad opens inside it, More folds, Less comes
 }
-async function openReader(k, {glow = false} = {}){
+async function openReader(k, {glow = false, fromHistory = false} = {}){
   if (reading?.key === k) return;
-  if (reading) closeReader({instant: true});
+  if (reading) closeReader({instant: true, rebuild: true});   // another card was open: its history step is reused
+  if (linked && linked !== k) linked = null;
   const r = DATA.rows.find(x => x.key === k);
   let el = $("list").querySelector(`.card[data-k="${CSS.escape(k)}"]`);
   if (!r || !el || !r.more) return;
@@ -1378,14 +1381,14 @@ async function openReader(k, {glow = false} = {}){
   const glide = document.visibilityState === "visible";
   if (isPhone()) window.__barCollapse?.(glide);        // on a phone the ad gets the room
   lift(el, {animate: glide, quiet: !glide});
-  setJobHash(k);
+  if (!fromHistory) pushJob(k);
   if (glow) { el.classList.add("linked"); setTimeout(() => el.classList.remove("linked"), 1900); }
 }
-function closeReader({instant = false, rebuild = false} = {}){
+function closeReader({instant = false, rebuild = false, fromHistory = false} = {}){
   if (!reading) return;
   const {key, el, slot} = reading;
   reading = null;
-  if (!rebuild) { clearJobHash(key); if (linked === key) linked = null; }
+  if (!rebuild) { if (!fromHistory) popJob(key); if (linked === key) linked = null; }
   const done = () => {
     el.classList.remove("lifted", "reader", "headout", "willclose", "quiet");
     ["top", "left", "width", "height", "transition", "transform"].forEach(p => el.style[p] = "");
@@ -1707,9 +1710,21 @@ function keepPlace(){   // remember the card at the top of the screen, put it ba
 // ---- a fixed link for every job: <page>#job=<key> ----
 let linked = null;   // the job she arrived at by link: filters don't hide it until she moves on
 const jobLink = k => `${location.origin}${location.pathname}#job=${encodeURIComponent(k)}`;
-function setJobHash(k){ try { history.replaceState(null, "", `${location.pathname}${location.search}#job=${encodeURIComponent(k)}`); } catch(e) {} }
-function clearJobHash(k){
-  if (location.hash === `#job=${encodeURIComponent(k)}`) try { history.replaceState(null, "", location.pathname + location.search); } catch(e) {}
+// Opening a card is a step in the browser's history: Back closes it, Forward opens it again. Closing
+// it any other way (Less, a pull, marking it…) uses that step up, so Back never lands on nothing.
+const pageUrl = () => location.pathname + location.search;
+function pushJob(k){
+  const url = `${pageUrl()}#job=${encodeURIComponent(k)}`;
+  try {
+    if (history.state?.job) history.replaceState({job: k}, "", url);   // straight from one card to another: one step
+    else history.pushState({job: k}, "", url);
+  } catch(e) {}
+}
+function popJob(k){
+  try {
+    if (history.state?.job === k) history.back();                        // its own step: go back over it
+    else if (location.hash === `#job=${encodeURIComponent(k)}`) history.replaceState(null, "", pageUrl());
+  } catch(e) {}
 }
 async function shareJob(k){
   const r = DATA.rows.find(x => x.key === k);
@@ -1723,9 +1738,9 @@ async function shareJob(k){
   try { await navigator.clipboard.writeText(url); showNote("Link copied"); }
   catch (e) { window.prompt("Copy this link", url); }
 }
-function openJob(k, smooth){
+function openJob(k, smooth, {fromHistory = false} = {}){
   const r = DATA.rows.find(x => x.key === k);
-  if (!r) { clearJobHash(k); showNote("That job isn't listed any more", "link_off"); return; }
+  if (!r) { popJob(k); showNote("That job isn't listed any more", "link_off"); return; }
   linked = k;
   if (mapMode) { mapMode = false; $("btnList").classList.add("on"); $("btnMap").classList.remove("on"); moveSegPill(); }
   const tab = Object.keys(VIEWS).find(v => VIEWS[v].f(r)) || "review";   // where it is for her
@@ -1745,7 +1760,7 @@ function openJob(k, smooth){
     freezeBar(300);
     window.scrollTo(0, Math.max(0, scrollY + card.getBoundingClientRect().top - (window.__barvis || 0) - 10));
   }
-  if (r.more) openReader(k, {glow: true});       // in the open app it rises from wherever the card is
+  if (r.more) openReader(k, {glow: true, fromHistory});   // in the open app it rises from wherever the card is
   else { card.classList.add("linked"); setTimeout(() => card.classList.remove("linked"), 1900); }
 }
 function jobFromHash(){ const m = location.hash.match(/^#job=(.+)$/); return m ? decodeURIComponent(m[1]) : null; }
@@ -1759,7 +1774,12 @@ if ("launchQueue" in window) {             // installed app already open: the li
     openJob(k, true);
   });
 }
-addEventListener("hashchange", () => { const k = jobFromHash(); if (k) openJob(k, true); });
+// Back / Forward (and a job link followed inside the open page): the address decides what is open
+addEventListener("popstate", () => {
+  const k = jobFromHash();
+  if (k) { if (reading?.key !== k) openJob(k, true, {fromHistory: true}); }
+  else if (reading) closeReader({fromHistory: true});
+});
 function jumpTo(top){ freezeBar(900); window.scrollTo({top, behavior: "smooth"}); }
 (() => {
   // The title part of the bar follows the scroll like a phone toolbar: scrolling down pushes it up
@@ -1888,8 +1908,14 @@ $("srcs").innerHTML = Object.entries(DATA.sources).map(([k,v]) =>
 applyAutoSort();   // the restored tab picks its own default sort
 draw();
 if (jobFromHash()) {                       // arrived by a job's link: straight to it
-  try { history.scrollRestoration = "manual"; } catch(e) {}
-  setTimeout(() => openJob(jobFromHash(), false), 0);
+  const k = jobFromHash(), r = DATA.rows.find(x => x.key === k);
+  try {
+    history.scrollRestoration = "manual";
+    // put the list underneath it, so Back closes the card instead of leaving the site
+    history.replaceState(null, "", pageUrl());
+    if (r?.more) history.pushState({job: k}, "", `${pageUrl()}#job=${encodeURIComponent(k)}`);
+  } catch(e) {}
+  setTimeout(() => openJob(k, false, {fromHistory: true}), 0);
 }
 // Service worker: always look for a newer version (bypassing HTTP cache) and reload once when it takes over
 if ("serviceWorker" in navigator) {
