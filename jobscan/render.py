@@ -532,6 +532,7 @@ details.srcs{background:var(--panel);border-radius:16px;box-shadow:var(--e1);pad
 .qchip{flex:none;border:0;border-radius:999px;padding:6px 13px 6px 9px;display:inline-flex;align-items:center;gap:5px;
   font-size:13px;font-weight:600;background:var(--panel);color:var(--muted);box-shadow:var(--e1);transition:background .2s,color .2s,box-shadow .2s}
 .qchip .mi{font-size:18px}
+#qNew .mi{font-size:21px;margin:-1.5px 0}   /* the flame's teardrop reads small at the hourglass's size */
 /* when the row is too narrow for both labels beside List/Map, the chips keep only their icons */
 .ctlrow{container-type:inline-size}
 @container (max-width:340px){
