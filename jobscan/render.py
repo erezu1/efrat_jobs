@@ -273,8 +273,11 @@ select:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 .iconbtn.langbtn .mi{font-size:19px}
 .iconbtn.langbtn{transition:background .2s,color .2s,box-shadow .2s}
 html[data-lang="en"] .iconbtn.langbtn{background:var(--accent);color:var(--on-accent);box-shadow:var(--e2)}
-#langlabel::before{content:"EN"}
-html[data-lang="nl"] #langlabel::before{content:"NL"}
+#langlabel{position:relative;display:inline-block;width:2.2ch;height:1.05em;overflow:hidden;vertical-align:-.12em}
+#langlabel b{position:absolute;left:0;right:0;top:0;font-weight:inherit;
+  transition:transform .45s cubic-bezier(.4,0,.2,1),opacity .45s cubic-bezier(.4,0,.2,1)}
+html[data-lang="en"] #langlabel .lnl{transform:translateY(100%);opacity:0}
+html[data-lang="nl"] #langlabel .len{transform:translateY(-100%);opacity:0}
 .trtag{text-decoration:none;color:var(--accent)!important}
 input[type=search]:focus,select:focus{outline:2px solid var(--accent);outline-offset:0}
 .chip{border:0;box-shadow:var(--e1);background:var(--panel);padding:6px 12px;transition:box-shadow .15s}
@@ -569,7 +572,8 @@ details.srcs{background:var(--panel);border-radius:16px;box-shadow:var(--e1);pad
 @media (max-width:760px){.card{--scol:40px;--sgap:10px;--padx:14px;--pady:14px}}
 .card.expanded .actions{position:sticky;bottom:0;z-index:3;
   margin:14px calc(-1 * var(--padx)) calc(-1 * var(--pady)) calc(-1 * (var(--scol) + var(--sgap) + var(--padx)));
-  padding:22px var(--padx) calc(var(--pady) + env(safe-area-inset-bottom));border-radius:0 0 var(--fr,0px) var(--fr,0px);
+  padding:22px var(--padx) calc(var(--pady) + 8px + env(safe-area-inset-bottom));
+  border-radius:0 0 var(--fr,0px) var(--fr,0px);transition:border-radius .16s linear;
   background:linear-gradient(to top,var(--panel) 72%,color-mix(in srgb,var(--panel) 0%,transparent))}
 
 /* tucks under the bar's bottom fade so no text shows between the search bar and this strip */
@@ -650,7 +654,7 @@ details.srcs{background:var(--panel);border-radius:16px;box-shadow:var(--e1);pad
     <div class="toprow">
       <span class="miniwrap"><a class="minilogo" href="#" id="minilogo" title="Back to top"><svg class="helix" viewBox="0 0 64 64" aria-hidden="true"><g fill="none" stroke="#fff" stroke-width="4.5" stroke-linecap="round"><path d="M21 10C21 23 43 23 43 32S21 41 21 54"/><path d="M43 10C43 23 21 23 21 32S43 41 43 54"/></g><g stroke="#fff" stroke-width="3" stroke-linecap="round" opacity=".8"><path d="M25 15h14M25 49h14M29 22h6M29 42h6"/></g></svg></a><span class="minibadge" id="minibadge"></span></span>
       <input type="search" id="q" placeholder="Search jobs…">
-      <button class="iconbtn langbtn" id="btnLang" title="Show Dutch ads in English / original Dutch"><span class="mi">translate</span><b id="langlabel"></b></button>
+      <button class="iconbtn langbtn" id="btnLang" title="Show Dutch ads in English / original Dutch"><span class="mi">translate</span><span id="langlabel"><b class="len">EN</b><b class="lnl">NL</b></span></button>
       <button class="iconbtn" id="btnFilters" title="Filters" aria-expanded="false"><span class="mi">tune</span><span class="fdot" id="fdot" hidden></span></button>
     </div>
     <div class="filters" id="filters">
@@ -1171,7 +1175,7 @@ function fullHtml(r){
 }
 // A fixed duration made a long ad race open and a short one crawl; the time grows with the text.
 const growMs = px => Math.min(1200, Math.max(560, Math.round(430 + px * .25)));
-function flipActions(c, change){   // the action row changes layout: let its buttons slide there instead of jumping
+function flipActions(c, change, ms = 450){   // the action row changes layout: let its buttons slide there instead of jumping
   const items = [...c.querySelectorAll(".actions > *")];
   const before = items.map(el => el.getBoundingClientRect());
   change();
@@ -1181,7 +1185,7 @@ function flipActions(c, change){   // the action row changes layout: let its but
     const dx = before[i].left - now.left, dy = before[i].top - now.top;
     if (!dx && !dy) return;
     el.animate([{transform: `translate(${dx}px,${dy}px)`}, {transform: "none"}],
-               {duration: 450, easing: "cubic-bezier(.25,.8,.3,1)"});
+               {duration: ms, easing: "cubic-bezier(.25,.8,.3,1)"});
   });
 }
 async function toggleMore(btn){
@@ -1201,7 +1205,9 @@ async function toggleMore(btn){
     clearTimeout(c.__closing);
     c.__closing = setTimeout(() => {
       if (expanded.has(k)) return;                 // reopened while it was closing
-      flipActions(c, () => c.classList.remove("expanded", "headout"));
+      // the row has just ridden up with the card; the open and closed paddings differ by a few
+      // pixels, so settle that quickly rather than easing back down against the motion
+      flipActions(c, () => c.classList.remove("expanded", "headout"), 220);
     }, dur + 40);
     // if we were deep inside the ad, bring the card's top back into view
     const top = c.getBoundingClientRect().top, barvis = window.__barvis || 0;
@@ -1233,7 +1239,7 @@ function updateStickyHeads(){   // show a card's mini header once its real title
     const a = c.querySelector(".actions");
     if (a) {   // the last 24px of the card round the footer's corners off, rather than snapping them
       const gap = r.bottom - a.getBoundingClientRect().bottom;
-      const fr = Math.round(Math.max(0, Math.min(16, 16 - gap * (16 / 24))) * 2) / 2;
+      const fr = Math.round(Math.max(0, Math.min(16, 16 - gap * (16 / 40))) * 2) / 2;
       if (c.__fr !== fr) { c.__fr = fr; c.style.setProperty("--fr", fr + "px"); }
     }
   });
