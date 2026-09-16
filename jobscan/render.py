@@ -661,6 +661,7 @@ details.srcs{background:var(--panel);border-radius:16px;box-shadow:var(--e1);pad
 .shscore{flex:none;width:26px;height:26px;border-radius:8px;color:#fff;font:700 13px/26px inherit;text-align:center}
 .shtitle{flex:1;min-width:0;font-weight:650;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .sh .mi{font-size:20px;color:var(--accent)}
+.credit{text-align:center;color:var(--muted);font-size:12px;padding:22px 0 calc(8px + env(safe-area-inset-bottom));opacity:.8}
 /* share: a quiet icon in the card's top corner (the title wraps around it), and in the sticky header */
 .share{border:0;background:transparent;color:var(--muted);padding:0;width:32px;height:32px;border-radius:10px;flex:none;
   display:inline-flex;align-items:center;justify-content:center;cursor:pointer;transition:background .2s,color .2s,transform .15s}
@@ -702,7 +703,7 @@ details.srcs{background:var(--panel);border-radius:16px;box-shadow:var(--e1);pad
   html.mapmode .controls.stuck .miniwrap{margin-right:-8px}
   html.mapmode .controls.stuck .minibadge.has{opacity:0;transform:scale(.4)}
   html.mapmode #map{height:calc(100dvh - var(--tbh,0px) - 12px - env(safe-area-inset-bottom));margin-top:0}
-  html.mapmode .srcs{display:none}
+  html.mapmode .srcs,html.mapmode .credit{display:none}
   html.mapmode .nomap{position:fixed;left:14px;right:14px;bottom:calc(18px + env(safe-area-inset-bottom));z-index:5;
     background:var(--panel);border-radius:10px;padding:6px 10px;box-shadow:var(--e1);text-align:center}
   html.mapmode .nomap:empty{display:none}
@@ -779,6 +780,7 @@ details.srcs{background:var(--panel);border-radius:16px;box-shadow:var(--e1);pad
   <div id="list"></div>
   <div class="toast" id="toast" hidden role="status"><span class="mi">block</span><span class="msg"></span><button>Undo</button></div>
   <details class="srcs"><summary>Sources in the last run · <span id="gen"></span></summary><table id="srcs"></table></details>
+  <footer class="credit">© Erez Y. Urbach 2026</footer>
 </main>
 <script>
 const DATA = __DATA__;
@@ -1641,7 +1643,8 @@ async function shareJob(k){
   const r = DATA.rows.find(x => x.key === k);
   if (!r) return;
   const title = (lang === "en" && r.title_en) || r.title, url = jobLink(k);
-  if (navigator.share) {
+  const touch = !matchMedia("(hover: hover) and (pointer: fine)").matches;
+  if (navigator.share && touch) {
     try { await navigator.share({title, text: `${title} — ${r.org}`, url}); return; }
     catch (e) { if (e.name === "AbortError") return; }   // she closed the share sheet
   }
