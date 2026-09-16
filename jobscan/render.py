@@ -713,7 +713,7 @@ details.srcs{background:var(--panel);border-radius:16px;box-shadow:var(--e1);pad
     </div>
     <div class="ctlrow">
       <div class="left">
-        <button class="qchip" id="qNew" aria-pressed="false" aria-label="New" title="Only jobs first seen this week"><span class="mi">post_add</span><span class="qlab">New</span></button>
+        <button class="qchip" id="qNew" aria-pressed="false" aria-label="New" title="Only jobs first seen this week"><span class="mi">local_fire_department</span><span class="qlab">New</span></button>
         <button class="qchip" id="qClosing" aria-pressed="false" aria-label="Closing" title="Only jobs with a deadline in the next 14 days"><span class="mi">hourglass_bottom</span><span class="qlab">Closing</span></button>
         <span class="chip on fchip" id="typechip" hidden><span id="typename"></span><span class="mi">close</span></span>
         <span class="chip on fchip placechip" id="placechip" hidden><span class="mi">location_on</span><span id="placename"></span><span class="mi">close</span></span>
