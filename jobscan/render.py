@@ -371,7 +371,15 @@ input[type=search]:focus,select:focus{outline:2px solid var(--accent);outline-of
 .toast button{border:0;border-radius:10px;background:transparent;color:#f08cc0;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:8px 12px;font-size:13px}
 .toast button:hover{background:rgba(255,255,255,.08)}
 @media (prefers-color-scheme: dark){.toast{background:#ece6ee;color:#241a28}.toast .mi,.toast button{color:#7b2d8e}}
-.toph{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.toph{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.toph h1{flex:none}
+.toph .stats{flex-basis:100%;order:3}                      /* its own line while the screen is narrow */
+@media (min-width:900px){                                  /* wide enough: title, tabs and sync share a line */
+  .toph{gap:24px;flex-wrap:nowrap}
+  .toph .stats{flex:1 1 auto;order:0;flex-basis:auto;justify-content:center;margin:0;padding:4px 0;
+    -webkit-mask-image:none;mask-image:none;overflow:visible}
+  header{padding-bottom:0}
+}
 .iconbtn.syncbtn{display:inline-flex;flex:none;width:42px;height:42px;border-radius:14px;background:var(--panel)}
 .iconbtn.syncbtn .mi{font-size:22px}
 .syncbtn.on{background:var(--panel);color:var(--accent)}
@@ -657,9 +665,9 @@ details.srcs{background:var(--panel);border-radius:16px;box-shadow:var(--e1);pad
 <header>
   <div class="toph">
     <h1><span class="logo"><svg class="helix" viewBox="0 0 64 64" aria-hidden="true"><g fill="none" stroke="#fff" stroke-width="4.5" stroke-linecap="round"><path d="M21 10C21 23 43 23 43 32S21 41 21 54"/><path d="M43 10C43 23 21 23 21 32S43 41 43 54"/></g><g stroke="#fff" stroke-width="3" stroke-linecap="round" opacity=".8"><path d="M25 15h14M25 49h14M29 22h6M29 42h6"/></g></svg></span><span class="name">BioJobs</span></h1>
+    <div class="stats" id="stats"></div>
     <button class="iconbtn syncbtn" id="syncbtn" title="Sync marks across devices"><span class="mi">cloud_off</span></button>
   </div>
-  <div class="stats" id="stats"></div>
   <div class="syncpanel" id="syncpanel" hidden>
     <div class="head"><b>Sync across devices</b><button class="x" id="syncclose" aria-label="Close"><span class="mi">close</span></button></div>
     <div class="body"></div>
@@ -1485,6 +1493,18 @@ function freezeBar(ms){
   clearTimeout(window.__unfreezeTimer);
   window.__unfreezeTimer = setTimeout(() => window.__barUnfreeze?.(), ms + 30);
 }
+function keepPlace(){   // remember the card at the top of the screen, put it back there after a re-render
+  const bar = window.__barvis || 0;
+  const el = [...$("list").querySelectorAll(".card")].find(c => c.getBoundingClientRect().bottom > bar + 8);
+  if (!el) return () => {};
+  const k = el.dataset.k, was = el.getBoundingClientRect().top;
+  return () => {
+    const now = $("list").querySelector(`.card[data-k="${CSS.escape(k)}"]`);
+    if (!now) return;
+    const d = now.getBoundingClientRect().top - was;
+    if (Math.abs(d) > 1) { freezeBar(400); window.scrollTo(0, Math.max(0, scrollY + d)); }
+  };
+}
 function jumpTo(top){ freezeBar(900); window.scrollTo({top, behavior: "smooth"}); }
 (() => {
   // The title part of the bar follows the scroll like a phone toolbar: scrolling down pushes it up
@@ -1553,7 +1573,12 @@ function updateLangBtn(){
   $("btnLang").setAttribute("aria-pressed", lang === "en");
   $("btnLang").title = lang === "en" ? "Showing English translations — tap for original Dutch" : "Showing original Dutch — tap for English";
 }
-$("btnLang").onclick = () => { lang = lang === "en" ? "nl" : "en"; try { localStorage.setItem("lang", lang); } catch(e) {} updateLangBtn(); draw(); };
+$("btnLang").onclick = () => {
+  const stay = keepPlace();          // the other language is a different length: don't move her in the page
+  lang = lang === "en" ? "nl" : "en";
+  try { localStorage.setItem("lang", lang); } catch(e) {}
+  updateLangBtn(); draw(); stay();
+};
 updateLangBtn();
 $("btnFilters").onclick = () => {
   const open = $("filters").classList.toggle("open");
