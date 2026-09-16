@@ -373,7 +373,7 @@ input[type=search]:focus,select:focus{outline:2px solid var(--accent);outline-of
 @media (prefers-color-scheme: dark){.toast{background:#ece6ee;color:#241a28}.toast .mi,.toast button{color:#7b2d8e}}
 .toph{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
 .toph h1{flex:none}
-.toph .stats{flex-basis:100%;order:3;margin-left:0;margin-right:0;padding-left:0;padding-right:0}   /* its own line while narrow */
+.toph .stats{flex-basis:100%;order:3;margin-left:0;margin-right:0;padding-left:0;padding-right:0;justify-content:center}   /* its own line while narrow, centred */
 /* (the bleed-to-the-edges margins it had outside this row can't widen a flex item — they only shifted it left) */
 @media (min-width:900px){                                  /* wide enough: title, tabs and sync share a line */
   .toph{gap:24px;flex-wrap:nowrap;align-items:flex-start}
