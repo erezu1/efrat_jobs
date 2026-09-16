@@ -648,7 +648,7 @@ details.srcs{background:var(--panel);border-radius:16px;box-shadow:var(--e1);pad
 .share:active{transform:scale(.9)}
 .share .mi{font-size:19px;color:inherit}
 .cardshare{float:right;margin:-4px -6px 2px 8px}
-.sh .shshare{margin:-6px 0}
+.sh .shshare{margin:-6px -6px -6px 0}   /* the same spot as the card's own share button */
 /* a card opened from a link glows once, so the eye finds it */
 .card.linked::before{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;z-index:4;
   animation:linkedGlow 1.8s cubic-bezier(.3,.6,.4,1) both}
@@ -1074,7 +1074,7 @@ function card(r){
   return `<article class="card  ${m==="interested"?"liked":""} ${m==="hidden"?"disliked":""} ${justLiked===r.key?"stripe-in":""} ${expanded.has(r.key)?"expanded":""} ${expanded.has(r.key)&&headouts.has(r.key)?"headout":""}" data-k="${esc(r.key)}" data-url="${esc(r.url)}">
     <div class="score ${sc==null?"na":""}" style="${col?`background:${col}`:""}" title="Fit score (0-10)">${sc==null?"–":sc}</div>
     <div>
-      ${r.more ? `<div class="stickyhead"><div class="sh" role="button" tabindex="0" data-k="${esc(r.key)}" title="Back to the top of this job"><span class="shscore" style="${col?`background:${col}`:""}">${sc==null?"–":sc}</span><span class="shtitle">${esc(title)}</span><button class="share shshare" data-k="${esc(r.key)}" aria-label="Share this job" title="Share this job"><span class="mi">ios_share</span></button><span class="mi">vertical_align_top</span></div></div>` : ""}
+      ${r.more ? `<div class="stickyhead"><div class="sh" role="button" tabindex="0" data-k="${esc(r.key)}" title="Back to the top of this job"><span class="shscore" style="${col?`background:${col}`:""}">${sc==null?"–":sc}</span><span class="shtitle">${esc(title)}</span><span class="mi">vertical_align_top</span><button class="share shshare" data-k="${esc(r.key)}" aria-label="Share this job" title="Share this job"><span class="mi">ios_share</span></button></div></div>` : ""}
       <button class="share cardshare" data-k="${esc(r.key)}" aria-label="Share this job" title="Share this job"><span class="mi">ios_share</span></button>
       <a class="title" href="${esc(r.url)}" target="_blank" rel="noopener">${esc(title)}</a>
       <div class="meta"><span><span class="mi">apartment</span>${esc(r.org)}</span>${r.loc?`<a class="placelink" href="#" data-place="${esc(placeKey(r))}" data-label="${esc(r.loc)}" title="Show only jobs in ${esc(r.loc)}"><span class="mi">location_on</span>${esc(r.loc)}</a>`:""}<span><span class="mi">visibility</span>first seen ${esc(r.first_seen)}</span></div>
