@@ -1309,7 +1309,7 @@ function flipActions(c, change, ms = 450){   // the action row changes layout: l
                {duration: ms, easing: "cubic-bezier(.25,.8,.3,1)"});
   });
 }
-async function toggleMore(btn){
+async function toggleMore(btn, opts = {}){
   const c = btn.closest(".card"), k = btn.dataset.k, wrap = c.querySelector(".fullwrap"), box = c.querySelector(".fulltext");
   const r = DATA.rows.find(x => x.key === k);
   const more = c.querySelector(".morebtn");
@@ -1352,6 +1352,7 @@ async function toggleMore(btn){
   wrap.style.transitionDuration = dur + "ms";
   box.style.transitionDuration = Math.round(dur * .8) + "ms";
   more.style.transitionDuration = dur + "ms";           // the button folds away in step with the text
+  if (!opts.placed) bringToTop(c, true, dur + 80);      // reading it: up under the (tucked-away) search bar
   clearTimeout(c.__closing); c.classList.remove("closing");
   c.classList.add("opening"); setTimeout(() => c.classList.remove("opening"), 450);
   flipActions(c, () => c.classList.add("expanded"));
@@ -1369,6 +1370,17 @@ function updateStickyHeads(){   // show a card's mini header once its real title
     c.classList.toggle("headout", out);
     if (out) headouts.add(c.dataset.k); else headouts.delete(c.dataset.k);   // survives a re-render
   });
+}
+// Bring a card up to be read: on a phone the search bar tucks its title away, and the card slides up
+// under the bar. Glides when the page is showing, jumps otherwise (a hidden page runs no glide).
+// A card near the end of the list can't get there until its text has grown, so it is checked again.
+function bringToTop(card, glide, settleAfter = 0){
+  glide = glide && document.visibilityState === "visible";
+  freezeBar(glide ? 900 : 300);
+  if (matchMedia("(max-width: 760px)").matches) window.__barCollapse?.(glide);
+  const top = Math.max(0, scrollY + card.getBoundingClientRect().top - (window.__barvis || 0) - 10);
+  if (Math.abs(top - scrollY) > 2) window.scrollTo(glide ? {top, behavior: "smooth"} : {top});
+  if (settleAfter) setTimeout(() => settleOn(card.dataset.k), settleAfter);
 }
 function settleOn(key, tries = 0){   // after the glide, make sure the card sits exactly under the bar (bar height can change meanwhile)
   setTimeout(() => {
@@ -1638,16 +1650,10 @@ function openJob(k, smooth){
   draw();
   const card = $("list").querySelector(`.card[data-k="${CSS.escape(k)}"]`);
   if (!card) return;
-  // glide there in the open app; jump when arriving fresh (or when the page is hidden: no glide runs then)
-  const glide = smooth && document.visibilityState === "visible";
-  freezeBar(glide ? 900 : 300);
-  // on a phone the ad gets the room: the search bar tucks its title away first
-  if (matchMedia("(max-width: 760px)").matches) window.__barCollapse?.(glide);
-  const top = Math.max(0, scrollY + card.getBoundingClientRect().top - (window.__barvis || 0) - 10);
-  if (glide) jumpTo(top); else window.scrollTo(0, top);
-  card.classList.add("linked");
+  bringToTop(card, smooth, r.more ? 1400 : 0);   // glide there in the open app; jump when arriving fresh
+  card.classList.add("linked");            // …and a glow, so the eye finds it
   setTimeout(() => card.classList.remove("linked"), 1900);
-  if (r.more && !expanded.has(k)) toggleMore(card.querySelector(".morebtn"));
+  if (r.more && !expanded.has(k)) toggleMore(card.querySelector(".morebtn"), {placed: true});
 }
 function jobFromHash(){ const m = location.hash.match(/^#job=(.+)$/); return m ? decodeURIComponent(m[1]) : null; }
 if ("launchQueue" in window) {             // installed app already open: the link arrives here, no reload
