@@ -374,13 +374,13 @@ input[type=search]:focus,select:focus{outline:2px solid var(--accent);outline-of
 .card[data-dir="no"]::after{background:linear-gradient(to left,color-mix(in srgb,var(--danger) 22%,var(--panel)) 0%,color-mix(in srgb,var(--panel) 60%,transparent) 70%)}
 .card::after{z-index:2}
 .card .sh{isolation:isolate}
-.card.reader .actions::before,.card .sh::before{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;z-index:-1;
+.card.lifted .actions::before,.card .sh::before{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;z-index:-1;
   opacity:calc(var(--p,0) * .92)}
 /* fade the strips' tint exactly like their background, so it doesn't stack with the card's tint in the fade zone */
 .card .sh::before{-webkit-mask-image:linear-gradient(to bottom,#000 72%,transparent);mask-image:linear-gradient(to bottom,#000 72%,transparent)}
-.card.reader .actions::before{-webkit-mask-image:linear-gradient(to top,#000 72%,transparent);mask-image:linear-gradient(to top,#000 72%,transparent)}
-.card[data-dir="yes"] .sh::before,.card.reader[data-dir="yes"] .actions::before{background:linear-gradient(to right,color-mix(in srgb,var(--accent) 26%,var(--panel)) 0%,color-mix(in srgb,var(--panel) 60%,transparent) 70%)}
-.card[data-dir="no"] .sh::before,.card.reader[data-dir="no"] .actions::before{background:linear-gradient(to left,color-mix(in srgb,var(--danger) 22%,var(--panel)) 0%,color-mix(in srgb,var(--panel) 60%,transparent) 70%)}
+.card.lifted .actions::before{-webkit-mask-image:linear-gradient(to top,#000 72%,transparent);mask-image:linear-gradient(to top,#000 72%,transparent)}
+.card[data-dir="yes"] .sh::before,.card.lifted[data-dir="yes"] .actions::before{background:linear-gradient(to right,color-mix(in srgb,var(--accent) 26%,var(--panel)) 0%,color-mix(in srgb,var(--panel) 60%,transparent) 70%)}
+.card[data-dir="no"] .sh::before,.card.lifted[data-dir="no"] .actions::before{background:linear-gradient(to left,color-mix(in srgb,var(--danger) 22%,var(--panel)) 0%,color-mix(in srgb,var(--panel) 60%,transparent) 70%)}
 .card .actions{position:relative;z-index:3}
 .toast{position:fixed;left:50%;bottom:max(20px,env(safe-area-inset-bottom));z-index:50;display:flex;align-items:center;gap:10px;
   background:#2a2030;color:#fff;border-radius:14px;padding:10px 10px 10px 16px;box-shadow:0 8px 28px rgba(20,10,25,.35);
@@ -581,32 +581,34 @@ details.srcs{background:var(--panel);border-radius:16px;box-shadow:var(--e1);pad
 #dlpop small{display:block;color:var(--muted);margin-top:2px}
 
 /* "More": the card becomes a reader of its own (see openReader); the full text lives only there */
-.fullwrap{display:none}
-.card.reader .fullwrap{display:block}
-.fulltext{cursor:auto;animation:fullIn .45s ease both}
-.card.leaving .fulltext{opacity:0;transition:opacity .18s ease}
-.card.quiet .fulltext{animation:none}
-@keyframes fullIn{from{opacity:0;transform:translateY(6px)}}
+.fullwrap{display:grid;grid-template-rows:0fr;transition:grid-template-rows .42s cubic-bezier(.25,.8,.3,1)}
+.card.reader .fullwrap{grid-template-rows:1fr}
+.fulltext{min-height:0;overflow:hidden;cursor:auto;opacity:0;transition:opacity .3s ease}
+.card.reader .fulltext{opacity:1}
 .fulltext p{margin:8px 0;font-size:14px;line-height:1.55;color:var(--ink);white-space:pre-line;overflow-wrap:anywhere}
 .fulltext .fullnote{color:var(--muted);font-size:13px;display:flex;align-items:center;gap:6px}
 .fulltext .fullnote .mi{font-size:17px;color:var(--accent)}
 .morebtn{border:0;background:transparent;color:var(--accent);font:600 13px/1 inherit;padding:6px 8px 6px 2px;margin:2px 0 0;
-  display:inline-flex;align-items:center;gap:2px;border-radius:8px;cursor:pointer}
-.card.reader .morebtn{display:none}
+  display:inline-flex;align-items:center;gap:2px;border-radius:8px;cursor:pointer;max-height:44px;overflow:hidden;
+  transition:max-height .42s cubic-bezier(.25,.8,.3,1),padding .42s cubic-bezier(.25,.8,.3,1),margin .42s cubic-bezier(.25,.8,.3,1),opacity .25s ease}
+.card.reader .morebtn{max-height:0;padding-top:0;padding-bottom:0;margin-top:0;opacity:0;pointer-events:none}
 .morebtn .mi{font-size:20px}
 .morebtn:hover{background:var(--accent-soft)}
 .morebtn.busy{opacity:.5}   /* fetching the full text; the card opens once it's here */
 
-/* reader: the action row sticks to its bottom, the mini header to its top */
-.actions .lessbtn{display:none}
-.card.reader .actions .lessbtn{display:inline-flex;border:0;border-radius:999px;background:var(--chip);color:var(--accent);
-  font:600 13px/1 inherit;padding:10px 14px 10px 10px;align-items:center;gap:2px;cursor:pointer}
+/* Less is always in the row (unseen while the card is closed), so it can fade in and out with it */
+.card .actions .lessbtn{display:inline-flex;border:0;border-radius:999px;background:var(--chip);color:var(--accent);
+  font:600 13px/1 inherit;padding:10px 14px 10px 10px;align-items:center;gap:2px;cursor:pointer;
+  visibility:hidden;opacity:0;transform:scale(.85);pointer-events:none;
+  transition:opacity .2s ease,transform .2s ease,visibility 0s linear .2s,background .2s,color .2s}
+.card.reader .actions .lessbtn{visibility:visible;opacity:1;transform:none;pointer-events:auto;
+  transition:opacity .3s ease .1s,transform .3s ease .1s,visibility 0s,background .2s,color .2s}
 /* ✓/✕ sit in the middle of the card in every state: the row spans the card's whole width and
    its two outer columns are always equal, so Less on the left and Applied on the right can
    never push them or reach them — open or closed, in any tab */
 .card .actions{display:grid;grid-template-columns:1fr auto auto 1fr;align-items:center;column-gap:0;
   margin-left:calc(-1 * (var(--scol) + var(--sgap)));
-  transition:padding .3s cubic-bezier(.25,.8,.3,1),margin .3s cubic-bezier(.25,.8,.3,1)}
+  transition:padding .4s cubic-bezier(.25,.8,.3,1),margin .4s cubic-bezier(.25,.8,.3,1)}
 .card .actions .lessbtn{grid-column:1;justify-self:start}
 .card .actions .vote.no{grid-column:2}
 .card .actions .vote.yes{grid-column:3}
@@ -616,7 +618,7 @@ details.srcs{background:var(--panel);border-radius:16px;box-shadow:var(--e1);pad
 @media (max-width:760px){   /* the pill is a little smaller here, so it always fits its half of the row */
   .card .actions .applybox{font-size:12.5px;padding:0 11px 0 8px;gap:3px}
   .card .actions .applybox .mi{font-size:18px}
-  .card.reader .actions .lessbtn{font-size:12px;padding:9px 11px 9px 7px}
+  .card .actions .lessbtn{font-size:12px;padding:9px 11px 9px 7px}
   .card .actions .vote.no{margin-right:4px}
   .card .actions .vote.yes{margin-left:4px}
 }
@@ -629,27 +631,26 @@ details.srcs{background:var(--panel);border-radius:16px;box-shadow:var(--e1);pad
 }
 @container (max-width:256px){          /* 104 + 2 × (Less 66 + 10) */
   .card .actions .lessbtn .lesslab{display:none}
-  .card.reader .actions .lessbtn{padding:9px}
+  .card .actions .lessbtn{padding:9px}
 }
-@keyframes lessIn{from{opacity:0;transform:scale(.8)}to{opacity:1;transform:none}}
-.card.reader .lessbtn .mi{font-size:20px}
+.card .actions .lessbtn .mi{font-size:20px}
 /* card geometry, so sticky strips can span the whole card: score column + gap + padding */
 .card{--scol:52px;--sgap:14px;--padx:18px;--pady:16px}
 @media (max-width:760px){.card{--scol:40px;--sgap:10px;--padx:14px;--pady:14px}}
-.card.reader .actions{position:sticky;bottom:0;z-index:3}
-.card.reader .actions::after{content:"";position:absolute;inset:0 4px 0;z-index:-2;
+.card.lifted .actions{position:sticky;bottom:0;z-index:3}
+.card.lifted .actions::after{content:"";position:absolute;inset:0 4px 0;z-index:-2;
   border-radius:0 0 16px 16px;pointer-events:none;
   background:linear-gradient(to top,var(--panel) 72%,color-mix(in srgb,var(--panel) 0%,transparent))}
 .card.reader .actions{
-  margin:14px calc(-1 * var(--padx)) calc(-1 * var(--pady)) calc(-1 * (var(--scol) + var(--sgap) + var(--padx)));
+  margin:14px calc(-1 * var(--padx)) 0 calc(-1 * (var(--scol) + var(--sgap) + var(--padx)));
   padding:30px var(--padx) calc(var(--pady) + 8px + env(safe-area-inset-bottom));
   border-radius:0 0 16px 16px}
 
-/* the reader's top sits under the search bar's soft edge; the strip's padding clears it */
 .stickyhead{position:sticky;top:0;height:0;z-index:4}
+.card.lifted .stickyhead{top:calc(-1 * var(--pady))}   /* sticky strips stick to the padding edge: sit flush instead */
 .sh{position:absolute;left:calc(-1 * (var(--scol) + var(--sgap) + var(--padx)));right:calc(-1 * var(--padx));top:0;display:flex;align-items:center;gap:8px;border:0;border-radius:0;
   background:none;box-shadow:none;
-  padding:27px var(--padx) 20px;cursor:pointer;color:var(--ink);text-align:left;
+  padding:14px var(--padx) 18px;cursor:pointer;color:var(--ink);text-align:left;
   opacity:0;transform:translateY(-8px);pointer-events:none;transition:opacity .28s ease,transform .28s ease}
 .card .sh::after{content:"";position:absolute;inset:0 4px;z-index:-2;pointer-events:none;
   background:linear-gradient(to bottom,var(--panel) 72%,color-mix(in srgb,var(--panel) 0%,transparent))}
@@ -666,23 +667,24 @@ details.srcs{background:var(--panel);border-radius:16px;box-shadow:var(--e1);pad
 .share .mi{font-size:19px;color:inherit}
 .cardshare{float:right;margin:-4px -6px 2px 8px}
 .sh .shshare{margin:-6px -6px -6px 0}   /* the same spot as the card's own share button */
-/* the reader: the open card, pinned under the search bar with its own scrolling; the list waits behind */
+/* The reader: the open card lifted over the list and pinned under the search bar, scrolling on its own.
+   Two states, so everything moves together: "lifted" is the frame (where it is), "reader" is the
+   content (the ad open, More folded, Less shown). Closing drops "reader" first — the ad folds away as
+   the frame returns — and "lifted" only once it is back in its place. */
 html{scrollbar-gutter:stable}                        /* locking the page doesn't shift it sideways */
 html.reading{overflow:hidden;overscroll-behavior:none}
 .cardslot{pointer-events:none}                       /* keeps the card's place in the list */
-.card.reader{position:fixed;z-index:5;margin:0;overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;
+#veil{position:fixed;inset:0;z-index:4;background:var(--bg);opacity:0;pointer-events:none;transition:opacity .35s ease}
+html.reading #veil{opacity:.94}
+html.reading.unveil #veil{opacity:0}
+.card.lifted{position:fixed;z-index:5;margin:0;overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;
   box-shadow:var(--e3);cursor:auto}
-.card.reader.liked{box-shadow:var(--e3),inset 4px 0 0 var(--accent)}
-.card.reader.disliked{box-shadow:var(--e3),inset -4px 0 0 var(--danger)}
-.card.reader:active{transform:none}
-.card.reader{border-radius:16px 16px 0 0}                /* it reaches the screen's end, like a sheet */
-.card.reader .actions,.card.reader .actions::after,.card.reader .actions::before{border-radius:0}
-/* sticky strips stick to the scroll area's padding edge: cancel the card's padding so they sit flush */
+.card.lifted.liked{box-shadow:var(--e3),inset 4px 0 0 var(--accent)}
+.card.lifted.disliked{box-shadow:var(--e3),inset -4px 0 0 var(--danger)}
+.card.lifted:active{transform:none}
 .card.reader{padding-bottom:0}
-.card.reader .actions{margin-bottom:0}
-.card.reader .stickyhead{top:calc(-1 * var(--pady))}
 .card.reader.willclose .actions .lessbtn{background:var(--accent);color:var(--on-accent)}   /* let go to close */
-.card.opening .actions .lessbtn{animation:lessIn .4s cubic-bezier(.25,.8,.3,1)}
+.card.quiet,.card.quiet *{transition:none!important}      /* rebuilt while open: nothing animates again */
 /* a card opened from a link glows once, so the eye finds it */
 .card.linked::before{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;z-index:4;
   animation:linkedGlow 1.8s cubic-bezier(.3,.6,.4,1) both}
@@ -795,6 +797,7 @@ html.reading{overflow:hidden;overscroll-behavior:none}
   <details class="srcs"><summary>Sources in the last run · <span id="gen"></span></summary><table id="srcs"></table></details>
   <footer class="credit">© Erez Y. Urbach 2026</footer>
 </main>
+<div id="veil"></div>
 <script>
 const DATA = __DATA__;
 const CATS = {phd:"PhD", technician_research:"Research & lab", conservation_zoo_ngo:"Nature & zoos", industry:"Industry", other:"Other"};
@@ -1323,13 +1326,13 @@ function dropFrost(){
 let reading = null;   // {key, el, slot}
 const isPhone = () => matchMedia("(max-width: 760px)").matches;
 const READER_EASE = "cubic-bezier(.25,.8,.3,1)";
-function readerFrame(){   // under the search bar's solid part (its soft edge overlaps), down to the screen's end like a sheet
-  const top = Math.round((window.__barvis || 0) - (isPhone() ? 14 : 20));
+function readerFrame(){   // a card with a little air all round: under the search bar, above the screen's end
+  const gap = isPhone() ? 8 : 12, top = Math.round((window.__barvis || 0) + gap);
   const list = $("list").getBoundingClientRect();
-  return {top, left: list.left, width: list.width, height: Math.max(200, innerHeight - top)};
+  return {top, left: list.left, width: list.width, height: Math.max(200, innerHeight - top - (isPhone() ? 8 : 16))};
 }
 function placeReader(el, f, ms){
-  el.style.transition = ms ? ["top", "left", "width", "height", "transform"].map(p => `${p} ${ms}ms ${READER_EASE}`).join(",") : "none";
+  el.style.transition = ms ? ["top", "left", "width", "height", "transform", "padding-bottom"].map(p => `${p} ${ms}ms ${READER_EASE}`).join(",") : "none";
   el.style.top = f.top + "px"; el.style.left = f.left + "px"; el.style.width = f.width + "px"; el.style.height = f.height + "px";
 }
 function fillReader(el, r){
@@ -1341,17 +1344,23 @@ function lift(el, {animate = true, headout = false, quiet = false} = {}){
   slot.className = "cardslot";
   slot.style.height = r.height + "px"; slot.style.margin = getComputedStyle(el).margin;
   el.before(slot);
-  placeReader(el, {top: r.top, left: r.left, width: r.width, height: r.height}, 0);   // lifted, not moved yet
-  el.classList.toggle("quiet", quiet);                 // a rebuild: nothing fades in again
-  el.classList.add("reader");
-  el.classList.toggle("headout", headout);
+  el.classList.toggle("quiet", quiet);                 // rebuilt while open: nothing animates again
+  placeReader(el, {top: r.top, left: r.left, width: r.width, height: r.height}, 0);
+  el.classList.add("lifted");                          // off the list, exactly where it was
+  document.documentElement.classList.remove("unveil");
   document.documentElement.classList.add("reading");
   reading = {key: el.dataset.k, el, slot};
   wireReader(el);
-  if (!animate) return placeReader(el, readerFrame(), 0);
-  el.classList.add("opening"); setTimeout(() => el.classList.remove("opening"), 450);
+  el.scrollTop = 0;                                    // an ad always opens at its top
+  if (!animate) {
+    el.classList.add("reader"); el.classList.toggle("headout", headout);
+    placeReader(el, readerFrame(), 0);
+    if (quiet) requestAnimationFrame(() => requestAnimationFrame(() => el.classList.remove("quiet")));
+    return;
+  }
   void el.offsetHeight;
-  placeReader(el, readerFrame(), 420);
+  placeReader(el, readerFrame(), 420);                 // the frame grows into the reader…
+  el.classList.add("reader");                          // …while the ad opens inside it, More folds, Less comes
 }
 async function openReader(k, {glow = false} = {}){
   if (reading?.key === k) return;
@@ -1368,7 +1377,7 @@ async function openReader(k, {glow = false} = {}){
   fillReader(el, r);
   const glide = document.visibilityState === "visible";
   if (isPhone()) window.__barCollapse?.(glide);        // on a phone the ad gets the room
-  lift(el, {animate: glide});
+  lift(el, {animate: glide, quiet: !glide});
   setJobHash(k);
   if (glow) { el.classList.add("linked"); setTimeout(() => el.classList.remove("linked"), 1900); }
 }
@@ -1378,21 +1387,24 @@ function closeReader({instant = false, rebuild = false} = {}){
   reading = null;
   if (!rebuild) { clearJobHash(key); if (linked === key) linked = null; }
   const done = () => {
-    el.classList.remove("reader", "headout", "opening", "willclose", "leaving", "quiet");
+    el.classList.remove("lifted", "reader", "headout", "willclose", "quiet");
     ["top", "left", "width", "height", "transition", "transform"].forEach(p => el.style[p] = "");
+    el.scrollTop = 0;
     const box = el.querySelector(".fulltext"); if (box) box.innerHTML = "";
     slot.remove();
     if (reading) return;
-    document.documentElement.classList.remove("reading");
+    document.documentElement.classList.remove("reading", "unveil");
     if (!rebuild) { window.__barSlide?.(); window.__barUnfreeze?.(); }   // the bar follows the page again
   };
   if (instant || !el.isConnected || document.visibilityState !== "visible") return done();
   const s = slot.getBoundingClientRect();
-  el.classList.add("leaving"); el.classList.remove("headout", "willclose");
+  document.documentElement.classList.add("unveil");    // the list comes back as the card settles into it
+  el.classList.remove("headout", "willclose");
   el.scrollTo({top: 0, behavior: "smooth"});
-  placeReader(el, {top: s.top, left: s.left, width: s.width, height: s.height}, 380);
+  placeReader(el, {top: s.top, left: s.left, width: s.width, height: s.height}, 400);
   el.style.transform = "";
-  setTimeout(done, 400);
+  el.classList.remove("reader");                       // the ad folds away, More returns, Less goes — all on the way
+  setTimeout(done, 440);
 }
 function wireReader(el){
   if (el.__reader) return;
@@ -1415,7 +1427,7 @@ function wireReader(el){
   el.addEventListener("scroll", () => {
     if (!on()) return;
     const t = el.querySelector(".title"), sh = el.querySelector(".sh");
-    if (t && sh) el.classList.toggle("headout", t.offsetTop + t.offsetHeight < el.scrollTop + sh.offsetHeight - 6);
+    if (t && sh) el.classList.toggle("headout", el.scrollTop > t.offsetTop + t.offsetHeight - 10);   // the real title has gone
   }, {passive: true});
   // touch: pull past either end
   let touch = null;
@@ -1682,7 +1694,7 @@ function freezeBar(ms){
 function keepPlace(){   // remember the card at the top of the screen, put it back there after a re-render
   freezeBar(700);        // the page shifting under a re-render is not a scroll: the bar stays as it is
   const bar = window.__barvis || 0;
-  const el = [...$("list").querySelectorAll(".card:not(.reader)")].find(c => c.getBoundingClientRect().bottom > bar + 8);
+  const el = [...$("list").querySelectorAll(".card:not(.lifted)")].find(c => c.getBoundingClientRect().bottom > bar + 8);
   if (!el) return () => {};
   const k = el.dataset.k, was = el.getBoundingClientRect().top;
   return () => {
