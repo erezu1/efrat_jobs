@@ -218,6 +218,9 @@ label.tog{font-size:13px;color:var(--muted);display:flex;gap:5px;align-items:cen
 .meta{color:var(--muted);font-size:13px;margin-top:2px;display:flex;gap:10px;flex-wrap:wrap}
 .tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
 .tag{font-size:12px;padding:2px 8px;border-radius:6px;background:var(--chip);color:var(--muted)}
+/* links take the theme's accent (light purple in dark mode) instead of the browser's fixed blue */
+a{color:var(--accent)}
+.tag a{text-decoration-thickness:1px;text-underline-offset:2px}
 .tag.new{background:var(--accent-soft);color:var(--accent);font-weight:600}
 .tag.dl{background:var(--warn-soft);color:var(--warn);font-weight:600}
 .tag.urgent{background:var(--danger);color:#fff}
@@ -1085,7 +1088,7 @@ function card(r){
   }
   if (r.cat) tags.push(`<a class="tag cattag" href="#" data-c="${esc(r.cat)}" title="Show only ${esc(CATS[r.cat]||r.cat)} jobs">${CATS[r.cat]||r.cat}</a>`);
   if (DUTCH[r.dutch]) tags.push(`<span class="tag">${DUTCH[r.dutch]}</span>`);
-  tags.push(`<span class="tag"><span class="mi">link</span>via ${esc(r.source)}${r.also.map(a=>`, <a href="${esc(a.url)}" target="_blank" rel="noopener">${esc(a.source)}</a>`).join("")}</span>`);
+  tags.push(`<span class="tag"><span class="mi">link</span><span>via ${esc(r.source)}${r.also.map(a=>`, <a href="${esc(a.url)}" target="_blank" rel="noopener">${esc(a.source)}</a>`).join("")}</span></span>`);
   if (!r.pre) tags.push(`<span class="tag">filtered: ${esc(r.pre_reason)}</span>`);
   const m = marks[r.key];
   return `<article class="card  ${m==="interested"?"liked":""} ${m==="hidden"?"disliked":""} ${justLiked===r.key?"stripe-in":""} ${expanded.has(r.key)?"expanded":""} ${expanded.has(r.key)&&headouts.has(r.key)?"headout":""}" data-k="${esc(r.key)}" data-url="${esc(r.url)}">
