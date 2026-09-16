@@ -1416,7 +1416,13 @@ function closeReader({instant = false, rebuild = false, fromHistory = false} = {
   const {key, el, slot} = reading;
   reading = null;
   if (!rebuild) { if (!fromHistory) popJob(key); if (linked === key) linked = null; }
+  // Scrolled down: scrolling back up while the ad folds would fight the folding (the page clamps its
+  // scroll as it shrinks, and the sticky footer jumps). Instead jump to the top and hold the content
+  // where it was with a transform, then let it glide down — the footer just follows the frame.
+  const S = instant ? 0 : el.scrollTop;
+  const parts = S > 0 ? el.querySelectorAll(":scope > .score, :scope > div > :not(.actions):not(.stickyhead)") : [];
   const done = () => {
+    parts.forEach(p => { p.style.transition = p.style.transform = p.style.position = p.style.top = ""; });
     el.classList.remove("lifted", "reader", "headout", "willclose", "quiet");
     ["top", "left", "width", "height", "transition", "transform"].forEach(p => el.style[p] = "");
     el.scrollTop = 0; el.style.removeProperty("--st");
@@ -1430,7 +1436,21 @@ function closeReader({instant = false, rebuild = false, fromHistory = false} = {
   const s = slot.getBoundingClientRect();
   document.documentElement.classList.add("unveil");    // the list comes back as the card settles into it
   el.classList.remove("headout", "willclose");
-  el.scrollTo({top: 0, behavior: "smooth"});
+  if (S > 0) {
+    const own = [...parts].map(p => { const t = getComputedStyle(p).transition; return t && !t.startsWith("all 0s") ? t + ", " : ""; });
+    el.scrollTop = 0;
+    // (a transform doesn't move an inline box like the title link: those are shifted with top instead)
+    const inline = [...parts].map(p => getComputedStyle(p).display === "inline" && getComputedStyle(p).position === "static");
+    parts.forEach((p, i) => {
+      p.style.transition = "none";
+      if (inline[i]) { p.style.position = "relative"; p.style.top = `${-S}px`; } else p.style.transform = `translateY(${-S}px)`;
+    });
+    void el.offsetHeight;
+    parts.forEach((p, i) => {
+      p.style.transition = `${own[i]}${inline[i] ? "top" : "transform"} 400ms ${READER_EASE}`;   // keeps the folding
+      if (inline[i]) p.style.top = "0px"; else p.style.transform = "";
+    });
+  }
   placeReader(el, {top: s.top, left: s.left, width: s.width, height: s.height}, 400);
   el.style.transform = "";
   el.classList.remove("reader");                       // the ad folds away, More returns, Less goes — all on the way
