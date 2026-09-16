@@ -6,6 +6,8 @@
   "start_url": "./?app=biojobs",
   "scope": "./",
   "display": "standalone",
+  "launch_handler": {"client_mode": ["focus-existing", "auto"]},
+  "handle_links": "preferred",
   "background_color": "#f7f3f8",
   "theme_color": "#7b2d8e",
   "icons": [

@@ -1618,14 +1618,28 @@ function openJob(k, smooth){
   draw();
   const card = $("list").querySelector(`.card[data-k="${CSS.escape(k)}"]`);
   if (!card) return;
-  const top = Math.max(0, scrollY + card.getBoundingClientRect().top - (window.__barvis || 0) - 10);
   // glide there in the open app; jump when arriving fresh (or when the page is hidden: no glide runs then)
-  if (smooth && document.visibilityState === "visible") jumpTo(top); else { freezeBar(300); window.scrollTo(0, top); }
+  const glide = smooth && document.visibilityState === "visible";
+  freezeBar(glide ? 900 : 300);
+  // on a phone the ad gets the room: the search bar tucks its title away first
+  if (matchMedia("(max-width: 760px)").matches) window.__barCollapse?.(glide);
+  const top = Math.max(0, scrollY + card.getBoundingClientRect().top - (window.__barvis || 0) - 10);
+  if (glide) jumpTo(top); else window.scrollTo(0, top);
   card.classList.add("linked");
   setTimeout(() => card.classList.remove("linked"), 1900);
   if (r.more && !expanded.has(k)) toggleMore(card.querySelector(".morebtn"));
 }
 function jobFromHash(){ const m = location.hash.match(/^#job=(.+)$/); return m ? decodeURIComponent(m[1]) : null; }
+if ("launchQueue" in window) {             // installed app already open: the link arrives here, no reload
+  window.launchQueue.setConsumer(params => {
+    if (!params.targetURL) return;
+    const m = new URL(params.targetURL).hash.match(/^#job=(.+)$/);
+    if (!m) return;
+    const k = decodeURIComponent(m[1]);
+    if (k === jobFromHash() && expanded.has(k)) return;   // the launch that loaded this page: already handled
+    openJob(k, true);
+  });
+}
 addEventListener("hashchange", () => { const k = jobFromHash(); if (k) openJob(k, true); });
 function jumpTo(top){ freezeBar(900); window.scrollTo({top, behavior: "smooth"}); }
 (() => {
@@ -1684,6 +1698,7 @@ function jumpTo(top){ freezeBar(900); window.scrollTo({top, behavior: "smooth"})
     clearTimeout(slideT); slideT = setTimeout(() => bar.classList.remove("anim"), 420);
   };
   window.__barSlide = slide;
+  window.__barCollapse = animate => { if (animate) slide(); hide = H; apply(); };
   window.__barLeaveList = () => {
     if (away) return;
     away = {hide, y: Math.max(0, scrollY)};
