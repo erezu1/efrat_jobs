@@ -137,6 +137,7 @@ TEMPLATE = r"""<!doctype html>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow, noarchive, nosnippet, noimageindex">
+<script>try{document.documentElement.dataset.lang=localStorage.getItem("lang")==="nl"?"nl":"en"}catch(e){document.documentElement.dataset.lang="en"}</script>
 <link rel="manifest" href="app.webmanifest">
 <meta name="application-name" content="BioJobs">
 <meta name="apple-mobile-web-app-title" content="BioJobs">
@@ -271,7 +272,9 @@ select:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 .iconbtn.langbtn{display:inline-flex;width:auto;padding:0 10px;gap:3px;font-size:12px;background:var(--panel)}
 .iconbtn.langbtn .mi{font-size:19px}
 .iconbtn.langbtn{transition:background .2s,color .2s,box-shadow .2s}
-.iconbtn.langbtn.on{background:var(--accent);color:var(--on-accent);box-shadow:var(--e2)}
+html[data-lang="en"] .iconbtn.langbtn{background:var(--accent);color:var(--on-accent);box-shadow:var(--e2)}
+#langlabel::before{content:"EN"}
+html[data-lang="nl"] #langlabel::before{content:"NL"}
 .trtag{text-decoration:none;color:var(--accent)!important}
 input[type=search]:focus,select:focus{outline:2px solid var(--accent);outline-offset:0}
 .chip{border:0;box-shadow:var(--e1);background:var(--panel);padding:6px 12px;transition:box-shadow .15s}
@@ -647,7 +650,7 @@ details.srcs{background:var(--panel);border-radius:16px;box-shadow:var(--e1);pad
     <div class="toprow">
       <span class="miniwrap"><a class="minilogo" href="#" id="minilogo" title="Back to top"><svg class="helix" viewBox="0 0 64 64" aria-hidden="true"><g fill="none" stroke="#fff" stroke-width="4.5" stroke-linecap="round"><path d="M21 10C21 23 43 23 43 32S21 41 21 54"/><path d="M43 10C43 23 21 23 21 32S43 41 43 54"/></g><g stroke="#fff" stroke-width="3" stroke-linecap="round" opacity=".8"><path d="M25 15h14M25 49h14M29 22h6M29 42h6"/></g></svg></a><span class="minibadge" id="minibadge"></span></span>
       <input type="search" id="q" placeholder="Search jobs…">
-      <button class="iconbtn langbtn" id="btnLang" title="Show Dutch ads in English / original Dutch"><span class="mi">translate</span><b id="langlabel">EN</b></button>
+      <button class="iconbtn langbtn" id="btnLang" title="Show Dutch ads in English / original Dutch"><span class="mi">translate</span><b id="langlabel"></b></button>
       <button class="iconbtn" id="btnFilters" title="Filters" aria-expanded="false"><span class="mi">tune</span><span class="fdot" id="fdot" hidden></span></button>
     </div>
     <div class="filters" id="filters">
@@ -1518,8 +1521,8 @@ function setCat(c, scroll = true){   // show only this job type ("" = all types)
 }
 $("typechip").onclick = () => setCat("", false);
 function updateLangBtn(){
-  $("langlabel").textContent = lang === "en" ? "EN" : "NL";
-  $("btnLang").classList.toggle("on", lang === "en"); $("btnLang").setAttribute("aria-pressed", lang === "en");
+  document.documentElement.dataset.lang = lang;        // the button's look follows this, from the first paint on
+  $("btnLang").setAttribute("aria-pressed", lang === "en");
   $("btnLang").title = lang === "en" ? "Showing English translations — tap for original Dutch" : "Showing original Dutch — tap for English";
 }
 $("btnLang").onclick = () => { lang = lang === "en" ? "nl" : "en"; try { localStorage.setItem("lang", lang); } catch(e) {} updateLangBtn(); draw(); };
