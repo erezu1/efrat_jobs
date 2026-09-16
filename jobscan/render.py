@@ -375,7 +375,7 @@ input[type=search]:focus,select:focus{outline:2px solid var(--accent);outline-of
 .toph h1{flex:none}
 .toph .stats{flex-basis:100%;order:3;margin-left:0;margin-right:0;padding-left:0;padding-right:0;justify-content:center}   /* its own line while narrow, centred */
 /* (the bleed-to-the-edges margins it had outside this row can't widen a flex item — they only shifted it left) */
-@media (min-width:900px){                                  /* wide enough: title, tabs and sync share a line */
+@media (min-width:761px){                                  /* not a phone: title, tabs and sync share a line */
   .toph{gap:24px;flex-wrap:nowrap;align-items:flex-start}
   /* the logo and the sync button match the tab icons, and sit on the same line as them */
   h1{height:52px;margin-top:6px}
