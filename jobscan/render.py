@@ -136,7 +136,7 @@ TEMPLATE = r"""<!doctype html>
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="robots" content="noindex">
+<meta name="robots" content="noindex, nofollow, noarchive, nosnippet, noimageindex">
 <link rel="manifest" href="app.webmanifest">
 <meta name="application-name" content="BioJobs">
 <meta name="apple-mobile-web-app-title" content="BioJobs">
@@ -566,7 +566,7 @@ details.srcs{background:var(--panel);border-radius:16px;box-shadow:var(--e1);pad
 @media (max-width:760px){.card{--scol:40px;--sgap:10px;--padx:14px;--pady:14px}}
 .card.expanded .actions{position:sticky;bottom:0;z-index:3;
   margin:14px calc(-1 * var(--padx)) calc(-1 * var(--pady)) calc(-1 * (var(--scol) + var(--sgap) + var(--padx)));
-  padding:22px var(--padx) calc(var(--pady) + env(safe-area-inset-bottom));border-radius:0;
+  padding:22px var(--padx) calc(var(--pady) + env(safe-area-inset-bottom));border-radius:0 0 var(--fr,0px) var(--fr,0px);
   background:linear-gradient(to top,var(--panel) 72%,color-mix(in srgb,var(--panel) 0%,transparent))}
 
 /* tucks under the bar's bottom fade so no text shows between the search bar and this strip */
@@ -620,9 +620,9 @@ details.srcs{background:var(--panel);border-radius:16px;box-shadow:var(--e1);pad
 /* keep the interested / rejected edge stripe visible on the sticky strips of an expanded card */
 .card.liked .sh,.card.liked.expanded .actions{box-shadow:inset 4px 0 0 var(--accent)}
 .card.disliked .sh,.card.disliked.expanded .actions{box-shadow:inset -4px 0 0 var(--danger)}
-/* the footer rounds off only where the card ends, so its stripe ends exactly like the card's;
-   while it floats over the text it stays square and runs into the card's stripe below */
-.card.expanded.footend .actions{border-radius:0 0 16px 16px}
+/* the footer rounds off as the card's end comes up to meet it (--fr, set while scrolling), so its
+   stripe ends exactly like the card's; while it floats over the text it is square and runs
+   straight into the stripe below it */
 
 </style>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -1190,8 +1190,16 @@ async function toggleMore(btn){
     const dur = growMs(box.scrollHeight);          // closing takes as long as opening did
     wrap.style.transitionDuration = dur + "ms";
     box.style.transitionDuration = Math.round(dur * .8) + "ms";
-    flipActions(c, () => { wrap.classList.remove("open"); c.classList.remove("expanded", "headout", "footend"); });
+    // The row stays pinned to the screen while the text shrinks under it. Dropping "expanded" now
+    // would send it straight to the card's end — still thousands of pixels down — and it would fly
+    // off the screen and back. So the card gives that class up only once it has finished closing.
+    wrap.classList.remove("open");
     more.classList.remove("open"); more.lastElementChild.textContent = "More";
+    clearTimeout(c.__closing);
+    c.__closing = setTimeout(() => {
+      if (expanded.has(k)) return;                 // reopened while it was closing
+      flipActions(c, () => c.classList.remove("expanded", "headout"));
+    }, dur + 40);
     // if we were deep inside the ad, bring the card's top back into view
     const top = c.getBoundingClientRect().top, barvis = window.__barvis || 0;
     if (top < barvis) jumpTo(scrollY + top - barvis - 10);
@@ -1220,7 +1228,11 @@ function updateStickyHeads(){   // show a card's mini header once its real title
     const t = c.querySelector(".title").getBoundingClientRect(), r = c.getBoundingClientRect();
     c.classList.toggle("headout", t.bottom < barvis + 4 && r.bottom > barvis + 140);
     const a = c.querySelector(".actions");
-    if (a) c.classList.toggle("footend", r.bottom - a.getBoundingClientRect().bottom < 1.5);
+    if (a) {   // the last 24px of the card round the footer's corners off, rather than snapping them
+      const gap = r.bottom - a.getBoundingClientRect().bottom;
+      const fr = Math.round(Math.max(0, Math.min(16, 16 - gap * (16 / 24))) * 2) / 2;
+      if (c.__fr !== fr) { c.__fr = fr; c.style.setProperty("--fr", fr + "px"); }
+    }
   });
 }
 function settleOn(key, tries = 0){   // after the glide, make sure the card sits exactly under the bar (bar height can change meanwhile)
