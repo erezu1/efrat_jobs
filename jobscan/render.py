@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import json
+import os
 import re
 from datetime import date, datetime, timezone
 from pathlib import Path
@@ -104,7 +105,9 @@ def render(state: dict, runs: list[dict], out: Path) -> None:
         row["more"] = len(desc) > len(row.get("summary") or "") + 40
     data = json.dumps(payload, ensure_ascii=False).replace("</", "<\\/")
     out.parent.mkdir(parents=True, exist_ok=True)
-    out.write_text(TEMPLATE.replace("__DATA__", data))
+    # link previews need absolute URLs; PAGE_URL is set in the daily workflow
+    site = (os.environ.get("PAGE_URL") or "https://erezu1.github.io/efrat_jobs/").rstrip("/") + "/"
+    out.write_text(TEMPLATE.replace("__SITE__", site).replace("__DATA__", data))
     write_details(state, rows, out.parent / "details")
 
 
@@ -145,7 +148,21 @@ TEMPLATE = r"""<!doctype html>
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="robots" content="noindex, nofollow, noarchive, nosnippet, noimageindex">
+<meta name="robots" content="noindex, nofollow, noarchive">
+<meta name="description" content="Genetics, conservation and aquaculture jobs in the Netherlands, updated daily.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="BioJobs">
+<meta property="og:title" content="BioJobs">
+<meta property="og:description" content="Biology jobs in the Netherlands, updated daily.">
+<meta property="og:url" content="__SITE__">
+<meta property="og:image" content="__SITE__icons/share.png">
+<meta property="og:image:type" content="image/png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="BioJobs">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="__SITE__icons/share.png">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
 <script>try{document.documentElement.dataset.lang=localStorage.getItem("lang")==="nl"?"nl":"en"}catch(e){document.documentElement.dataset.lang="en"}</script>
 <link rel="manifest" href="app.webmanifest">
 <meta name="application-name" content="BioJobs">
