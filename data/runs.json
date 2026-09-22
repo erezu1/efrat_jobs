@@ -1570,5 +1570,159 @@
    "euraxess",
    "werkzoeken"
   ]
+ },
+ {
+  "time": "2026-09-22T09:58:57+00:00",
+  "sources": {
+   "academictransfer": {
+    "ok": true,
+    "count": 141,
+    "new": 7,
+    "seconds": 8.8
+   },
+   "adzuna": {
+    "ok": true,
+    "count": 0,
+    "new": 0,
+    "seconds": 0.0
+   },
+   "avl": {
+    "ok": true,
+    "count": 46,
+    "new": 0,
+    "seconds": 5.2
+   },
+   "eurofins": {
+    "ok": true,
+    "count": 164,
+    "new": 8,
+    "seconds": 4.9
+   },
+   "fondsen": {
+    "ok": true,
+    "count": 85,
+    "new": 3,
+    "seconds": 6.1
+   },
+   "greenjobs": {
+    "ok": true,
+    "count": 211,
+    "new": 9,
+    "seconds": 5.0
+   },
+   "groeneruimte": {
+    "ok": true,
+    "count": 19,
+    "new": 1,
+    "seconds": 2.7
+   },
+   "industry": {
+    "ok": true,
+    "count": 127,
+    "new": 1,
+    "seconds": 68.2
+   },
+   "jooble": {
+    "ok": true,
+    "count": 0,
+    "new": 0,
+    "seconds": 0.0
+   },
+   "knaw": {
+    "ok": true,
+    "count": 14,
+    "new": 2,
+    "seconds": 3.2
+   },
+   "leiden": {
+    "ok": true,
+    "count": 38,
+    "new": 0,
+    "seconds": 4.3
+   },
+   "lumc": {
+    "ok": true,
+    "count": 86,
+    "new": 2,
+    "seconds": 8.6
+   },
+   "nature_employers": {
+    "ok": true,
+    "count": 73,
+    "new": 1,
+    "seconds": 41.5
+   },
+   "naturecareers": {
+    "ok": true,
+    "count": 3,
+    "new": 0,
+    "seconds": 0.5
+   },
+   "sustainablejobs": {
+    "ok": true,
+    "count": 51,
+    "new": 1,
+    "seconds": 6.8
+   },
+   "umcu": {
+    "ok": true,
+    "count": 118,
+    "new": 5,
+    "seconds": 5.8
+   },
+   "uu": {
+    "ok": true,
+    "count": 44,
+    "new": 2,
+    "seconds": 3.3
+   },
+   "uva": {
+    "ok": true,
+    "count": 69,
+    "new": 2,
+    "seconds": 11.0
+   },
+   "wageningen_companies": {
+    "ok": true,
+    "count": 18,
+    "new": 0,
+    "seconds": 24.4
+   },
+   "werkenvoornederland": {
+    "ok": true,
+    "count": 442,
+    "new": 22,
+    "seconds": 60.1
+   },
+   "wur": {
+    "ok": true,
+    "count": 33,
+    "new": 1,
+    "seconds": 3.3
+   },
+   "euraxess": {
+    "ok": false,
+    "count": 0,
+    "new": 0,
+    "seconds": 2.7,
+    "error": "only 0 jobs (had 381); treating as partial, not closing any"
+   },
+   "werknl": {
+    "ok": true,
+    "count": 627,
+    "new": 95,
+    "seconds": 71.7
+   },
+   "werkzoeken": {
+    "ok": false,
+    "error": "HTTPError: 403 Client Error: Forbidden for url: https://www.werkzoeken.nl/vacatures/?reqtype=spa&reqrouter=vacancy&action=feed-page&what=genetica&where=&r=&filtered=0&pnr=3"
+   }
+  },
+  "new": 162,
+  "scored": 1496,
+  "errors": [
+   "euraxess",
+   "werkzoeken"
+  ]
  }
 ]
