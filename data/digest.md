@@ -1,15 +1,13 @@
+## 🆕 2 new matches
+
+- **[10/10] [BSc Research Technician Virology](https://www.academictransfer.com/en/jobs/364248/bsc-research-technician-virology/)** — Wageningen University & Research — deadline 12/10/2026
+  Do you want to help combat animal disease outbreaks such as foot-and-mouth disease and bluetongue? Do you have experience with virological, immunological, and molecular techniques, and do you want to participate in…
+- **[7/10] [PhD in Automated Spectroscopy of Photoactive Molecules and Thin Films](https://www.academictransfer.com/en/jobs/364237/phd-in-automated-spectroscopy-of-photoactive-molecules-and-thin-films/)** — UvA — deadline 31/10/2026
+  How can we accelerate the discovery of next-generation materials — from porous architectures for CO₂ capture to photoactive systems for sustainable solar-energy conversion and unprecedented photomedicines? In this PhD…
 
 ## ⏰ Deadlines coming up
 
-- **[10/10] [PhD Student North Sea Power](https://www.naturalis.nl/en/about-us/job-opportunities/phd-student-north-sea-power)** — Naturalis Biodiversity Center — deadline 28/09/2026 (**3 days left**)
-  As aPhD student... You will find yourself in a unique research environment, inspired by passionate scientists from a wide range of disciplines (e.g., taxonomy, evolution, ecology and geology).You will receive dedicated…
-- **[9/10] [PhD student North Sea Power (Marine foodwebs)](https://www.academictransfer.com/en/jobs/363747/phd-student-north-sea-power-marine-foodwebs/)** — Naturalis Biodiversity Center — deadline 28/09/2026 (**3 days left**)
-  Pursuing a PhD at Naturalis in Leiden (the Netherlands) means working on research with a truly global impact — contributing directly to biodiversity. And you'll be well supported every step of the way.
-- **[7/10] [PhD Position: Nature-Inclusive Dairy Transitions and Biodiversity Recovery](https://www.academictransfer.com/en/jobs/363544/phd-position-nature-inclusive-dairy-transitions-and-biodiversity-recovery/)** — Wageningen University & Research — deadline 28/09/2026 (**3 days left**)
-  Are you a systems thinker passionate about bending the curve of biodiversity loss in agroecosystems? Are you looking for a meaningful research path with impact on the ground? Are you eager to join a stimulating…
-- **[6/10] [PhD Impact of reward schemes for biodiversity in Dutch dairy farming systems](https://www.academictransfer.com/en/jobs/363545/phd-impact-of-reward-schemes-for-biodiversity-in-dutch-dairy-farming-systems/)** — Wageningen University & Research — deadline 28/09/2026 (**3 days left**)
-  Well-designed reward schemes are a crucial step in improving farm-level biodiversity.
-- **[10/10] [Research Assistant position: Extraction and purification of RNA from biomarker producing bacteria](https://workingat.nioz.nl/o/research-assistant-position-extraction-and-purification-of-rna-from-biomarker-producing-bacteria)** — NIOZ Royal Netherlands Institute for Sea Research — deadline 02/10/2026 (**7 days left**)
-  The Department of Marine Microbiology and Biogeochemistry at the Royal Netherlands Institute of Sea Research (NIOZ-Texel) is looking for a highly motivated assistant with expertise in molecular microbiology,…
+- **[6/10] [Veldmedewerker Ecologie & Agrarisch Beheer (Junior/Medior)](https://greenjobs.nl/vacature/veldmedewerker-ecologie-agrarisch-beheer-junior-medior-mo)** — Natuurrijk Limburg — deadline 29/09/2026 (**3 days left**)
+  Veldmedewerker Ecologie & Agrarisch Beheer (Junior/Medior) De taal van de boer spreken. Kansen zien. Resultaat realiseren.
 
 Full list: https://erezu1.github.io/efrat_jobs/
