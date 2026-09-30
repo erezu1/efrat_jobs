@@ -1,19 +1,17 @@
-## 🆕 3 new matches
+## 🆕 1 new match
 
-- **[9/10] [PhD positions Immunogenetics](https://www.academictransfer.com/en/jobs/364304/phd-positions-immunogenetics/)** — University Medical Center Groningen (UMCG) — deadline 27/10/2026
-  To delineate the effects of genetic and environmental factors on CeD onset and progression that we have prioritized in our current research lines, we wish to expand on our current model systems to make them more…
-- **[6/10] [Shift Laboratory Analyst](https://www.werk.nl/nl/vacatures/71528493)** — Talentmark
-  - 50+ jaar ervaring in recruitment - Diepgaande vakkennis - Wereldwijd netwerk in Life Sciences Shift Laboratory Analyst - Laboratory - Netherlands, Amsterdam - 12 augustus 2026 - Fulltime - mbo-3, mbo-4, mbo, hbo -…
-- **[6/10] [Promovendus: ziektemechanismen van ALS](https://www.werk.nl/nl/vacatures/71529129)** — Amsterdam UMC
-  Wil je de ziektemechanismen van ALS onderzoeken met menselijk hersenweefsel en geavanceerde celkweekmodellen? Werk samen met experts in neuropathologie en moleculaire neurowetenschappen aan onderzoek naar nieuwe…
+- **[7/10] [PhD Position on Biophysical Origins of RNA Toxicity in Huntington’s Disease](https://www.academictransfer.com/en/jobs/364327/phd-position-on-biophysical-origins-of-rna-toxicity-in-huntingtons-disease/)** — Universiteit Utrecht — deadline 31/10/2026
+  In Huntington’s Disease (HD), expansion of CAG repeats in the huntingtin (HTT) gene leads to a toxic gain-of-function that ultimately results in fatal neurodegeneration.
 
 ## ⏰ Deadlines coming up
 
-- **[8/10] [PhD in Modelling Offshore Windfarm Impacts on Marine Bird Populations](https://www.academictransfer.com/en/jobs/363488/phd-in-modelling-offshore-windfarm-impacts-on-marine-bird-populations/)** — UvA — deadline 30/09/2026 (**1 day left**)
-  Are you interested in exploring the potential consequences of offshore wind farms for marine bird populations using mathematical and computational approaches? The Institute of Biodiversity and Ecosystem Dynamics is…
-- **[6/10] [Promovendus erfelijke hartspierziekten bij kinderen](https://www.academictransfer.com/en/jobs/363586/promovendus-erfelijke-hartspierziekten-bij-kinderen/)** — Erasmus MC — deadline 30/09/2026 (**1 day left**)
-  Als promovendus onderzoek je hoe we hartfalen bij kinderen met erfelijke hartspierziekten beter kunnen voorspellen, diagnosticeren en behandelen.
-- **[10/10] [Research Assistant position: Extraction and purification of RNA from biomarker producing bacteria](https://workingat.nioz.nl/o/research-assistant-position-extraction-and-purification-of-rna-from-biomarker-producing-bacteria)** — NIOZ Royal Netherlands Institute for Sea Research — deadline 02/10/2026 (**3 days left**)
-  The Department of Marine Microbiology and Biogeochemistry at the Royal Netherlands Institute of Sea Research (NIOZ-Texel) is looking for a highly motivated assistant with expertise in molecular microbiology,…
+- **[10/10] [PhD Student: Decoding Epigenetic Mechanisms of Gene Regulation in T Cells](https://www.werkenbijavl.nl/vacatures/phd-student-decoding-epigenetic-mechanisms-of-gene-regulation-in-t-cells/)** — Netherlands Cancer Institute – Antoni van Leeuwenhoek — deadline 01/10/2026 (**1 day left**)
+  PhD Student: Decoding Epigenetic Mechanisms of Gene Regulation in T Cells Solliciteer PhD Student: Decoding Epigenetic Mechanisms of Gene Regulation in T Cells 36 € 3.813 - € 4.629 wo Sluitingsdatum: 1 okt.
+- **[8/10] [PhD position: Exposing the contribution of epialleles to heritable variation in plants](https://www.academictransfer.com/en/jobs/363554/phd-position-exposing-the-contribution-of-epialleles-to-heritable-variation-in-plants/)** — NIOO-KNAW — deadline 01/10/2026 (**1 day left**)
+  To face climate change and other environmental challenges, the capacity for rapid adaptation is crucial for both natural plant populations and crops. Heritable trait variation fuels such adaptation.
+- **[9/10] [Biotechnologisch Analist](https://www.werk.nl/nl/vacatures/71472535)** — Stichting Zestor, arbeidsmarkt- en opleidingsfonds hbo — deadline 07/10/2026 (**7 days left**)
+  - Biotechnologisch Analist HAN University of Applied Sciences Biotechnologisch Analist Nijmegen 32 uur Werk- en denkniveau : Bachelor Tijdelijk Biotechnologisch Analist - Geplaatst: 23 september 2026 - Sluitingsdatum: 7…
+- **[7/10] [Bioinformatician Tumorgenetics](https://www.academictransfer.com/en/jobs/364046/bioinformatician-tumorgenetics/)** — Radboudumc — deadline 07/10/2026 (**7 days left**)
+  Job description Within the Department of Human Genetics, we implement and apply the latest genome analysis technologies for patient diagnostics, including exome and genome sequencing, as well as long-read sequencing for…
 
 Full list: https://erezu1.github.io/efrat_jobs/
