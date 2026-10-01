@@ -269,6 +269,10 @@
 52.2501,
 6.2243
 ],
+"creil": [
+52.7634,
+5.6589
+],
 "culemborg": [
 51.9574,
 5.2253
@@ -365,6 +369,10 @@
 "deventer": [
 52.2695,
 6.2365
+],
+"didam": [
+51.9375,
+6.1278
 ],
 "diemen": [
 52.335,
@@ -590,6 +598,7 @@
 ],
 "groningen en amsterdam": null,
 "groningen of amersfoort": null,
+"groningen of den haag": null,
 "grou": [
 53.0937,
 5.8322
@@ -621,6 +630,10 @@
 "harderwijk": [
 52.3491,
 5.6189
+],
+"harreveld": [
+51.9786,
+6.5161
 ],
 "harskamp": [
 52.1317,
@@ -804,6 +817,10 @@
 51.7684,
 4.4445
 ],
+"koog aan de zaan": [
+52.4621,
+4.8071
+],
 "koppert b.v.": [
 51.979,
 4.4584
@@ -900,6 +917,10 @@
 52.0115,
 6.4717
 ],
+"marine etablissement amsterdam": [
+52.3741,
+4.9182
+],
 "marker wadden": [
 52.5875,
 5.3832
@@ -952,6 +973,10 @@
 "neede": [
 52.135,
 6.6113
+],
+"nicosia": [
+52.0973,
+5.072
 ],
 "nieuwegein": [
 52.0367,
@@ -1035,6 +1060,7 @@
 5.4897
 ],
 "omgeving giessenburg": null,
+"omgeving gorichem - waardenburg": null,
 "omgeving overijssel": null,
 "ooltgensplaat": [
 51.6836,
@@ -1063,6 +1089,10 @@
 "opmeer": [
 52.7032,
 4.9478
+],
+"ospel": [
+51.298,
+5.7836
 ],
 "oss": [
 51.7784,
@@ -1128,6 +1158,10 @@
 "regio salland": [
 52.3964,
 6.3598
+],
+"regio west-brabant": [
+51.7803,
+5.0608
 ],
 "rhenen": [
 51.9609,
@@ -1312,6 +1346,10 @@
 52.1862,
 5.6921
 ],
+"surhuisterveen": [
+53.1803,
+6.1701
+],
 "ter apel": [
 52.8742,
 7.0618
@@ -1432,6 +1470,10 @@
 "vlaardingen": [
 51.9228,
 4.3296
+],
+"vlijmen": [
+51.6943,
+5.2091
 ],
 "vlissingen": [
 51.4481,
@@ -1578,6 +1620,10 @@
 52.0859,
 4.8833
 ],
+"woonplaats": [
+52.2067,
+6.8903
+],
 "woudenberg": [
 52.0805,
 5.4134
@@ -1626,6 +1672,10 @@
 52.1139,
 4.5052
 ],
+"zuid": [
+52.3373,
+4.8948
+],
 "zuid holland": [
 51.9967,
 4.5597
@@ -1657,5 +1707,9 @@
 "zwolle": [
 52.509,
 6.0944
+],
+"’s-hertogenbosch": [
+51.6889,
+5.3031
 ]
 }
