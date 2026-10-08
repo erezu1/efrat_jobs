@@ -1,19 +1,23 @@
-## 🆕 3 new matches
+## 🆕 4 new matches
 
-- **[10/10] [Laboratory Technician (DNA Synthesis)](https://www.werk.nl/nl/vacatures/71695158)** — Biolegio
-  - Phone +31 (0)24 358 6885 - Fax +31 (0)24 358 0259 - Mail info@biolegio.com Vacancy: Laboratory Technician (DNA Synthesis) Location Nijmegen Laboratory Technician (DNA Synthesis) Location : Nijmegen Education Level :…
-- **[9/10] [PhD student to study shelled zooplankton in a changing Arctic Ocean](https://www.naturalis.nl/en/about-us/job-opportunities/phd-student-to-study-shelled-zooplankton-in-a-changing-arctic-ocean)** — Naturalis Biodiversity Center — deadline 29/10/2026
-  As aPhD student ... You will find yourself in a unique research environment, inspired by passionate scientists from a wide range of disciplines (e.g., taxonomy, evolution, ecology and oceanography).You will receive…
-- **[7/10] [PhD position in organoids for personalized antiviral testing](https://www.academictransfer.com/en/jobs/364518/phd-position-in-organoids-for-personalized-antiviral-testing/)** — Amsterdam UMC — deadline 21/10/2026
-  For rapid control of virus outbreaks, fast availability of antivirals is a major bottleneck. In DETECTIVE, innovative models will be used for setting up an antiviral testing pipeline without the need for animals models.
+- **[10/10] [Research Technician](https://www.werkenbijavl.nl/vacatures/research-technician-4/)** — Netherlands Cancer Institute – Antoni van Leeuwenhoek — deadline 18/10/2026
+  Research Technician Solliciteren Research Technician 36 € 3.228 - € 4.346 hbo ervaren Sluitingsdatum: 18 okt.
+- **[10/10] [PhD position (1.0 fte, 4 years) in deep-sea benthic ecology in the Arctic Ocean](https://werkenbij.uva.nl/en/vacancies/phd-position-1-0-fte-4-years-in-deep-sea-benthic-ecology-in-the-arctic-ocean-netherlands-15494)** — University of Amsterdam — Faculty of Science — deadline 31/10/2026
+  €3,204 - €4,051; Master's; 38 hours About the position You will be working within an international team of Dutch research institutes (UvA, the Naturalis Biodiversity Center, NIOZ Royal Netherlands Institute for Sea…
+- **[9/10] [Biologisch Onderzoeker Aquacultuur](https://www.werk.nl/nl/vacatures/71700182)** — Glasaal Volendam
+  Glasaal Volendam is op zoek naar een alleskunner om ons team van onderzoekers te versterken.
+- **[7/10] [Analist QC Immunologie (8445)](https://www.werk.nl/nl/vacatures/71712719)** — CheckMark | Expert in food, chemie & life sciences
+  In deze functie als Analist QC Immunologie speel je een belangrijke rol in de uitvoering van een complexe immunologische analyse ten behoeve van de kwaliteitscontrole.
 
 ## ⏰ Deadlines coming up
 
-- **[9/10] [DETECTIVE DOCTORAL CANDIDATE VACANCY: Advanced Automated Virus Culture & Epidemic Preparedness](https://euraxess.ec.europa.eu/jobs/465902)** — National Institute for Public Health and the Environment — deadline 08/10/2026 (**1 day left**)
-  About DETECTIVE DETECTIVE (Data driven Excellence in Training of Epidemiological, Clinical, Technological and Innovative Virus Experts) is an EU-funded MSCA training programme aimed at developing new, data-driven…
-- **[6/10] [PhD position in molecular imaging of microbial infections](https://www.academictransfer.com/en/jobs/364371/phd-position-in-molecular-imaging-of-microbial-infections/)** — University of Groningen — deadline 08/10/2026 (**1 day left**)
-  With the recent introduction of the Vanco-800CW optical tracer and the Vanco-PQ-[18F]VE PET tracer, and their ongoing (pre)clinical translation, Groningen is taking the lead in imaging of Gram-positive infections.
-- **[6/10] [PhD Precision Repair of Donor Livers During Machine Perfusion](https://www.academictransfer.com/en/jobs/364180/phd-precision-repair-of-donor-livers-during-machine-perfusion/)** — University Medical Center Groningen (UMCG) — deadline 14/10/2026 (**7 days left**)
-  Make more donor livers transplantable through cutting-edge transplantation research Improving the quality and availability of donor organs is one of the greatest challenges in modern transplantation.
+- **[6/10] [PhD Position in the Fatigue Performance and Weldability of Next-Generation Structural Steels](https://euraxess.ec.europa.eu/jobs/465742)** — Delft University of Technology via AcademicTransfer — deadline 11/10/2026 (**3 days left**)
+  Do you want to contribute to the scientific and engineering foundations of the next generation of sustainable structural steels? Job description The steel industry is undergoing a major transformation to reduce its…
+- **[8/10] [Three PhD positions in ML-guided directed evolution](https://www.academictransfer.com/en/jobs/363254/three-phd-positions-in-ml-guided-directed-evolution/)** — University of Groningen — deadline 15/10/2026 (**7 days left**)
+  Are you passionate about combining the directed evolution of diverse biomolecules with deep learning approaches and contributing to the development of better (bio)catalysts and drugs? We are offering three fully-funded,…
+- **[8/10] [IBL-laboratoriumtechnicus practicum biology](https://www.academictransfer.com/en/jobs/364369/ibl-laboratoriumtechnicus-practicum-biology/)** — Universiteit Leiden — deadline 15/10/2026 (**7 days left**)
+  De werkzaamheden Het Instituut Biologie Leiden (IBL) verwelkomt jaarlijks circa 140 tot 200 eerstejaarsstudenten Biologie.
+- **[6/10] [PhD positions in Structural Health Monitoring of Welded Thermoplastic Composite Assemblies](https://www.academictransfer.com/en/jobs/364071/phd-positions-in-structural-health-monitoring-of-welded-thermoplastic-composite-assemblies/)** — Universiteit Twente — deadline 15/10/2026 (**7 days left**)
+  Thermoplastic composites are widely regarded as promising materials for the next generation of commercial aircraft, combining excellent mechanical performance with low weight.
 
 Full list: https://erezu1.github.io/efrat_jobs/

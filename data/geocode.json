@@ -165,6 +165,10 @@
 51.4945,
 4.2872
 ],
+"bergschenhoek": [
+51.9893,
+4.5017
+],
 "berkel en rodenrijs": [
 51.9914,
 4.4739
@@ -418,6 +422,10 @@
 53.3244,
 5.9992
 ],
+"dongen": [
+51.6429,
+4.9579
+],
 "donkerbroek": [
 53.0176,
 6.2355
@@ -469,6 +477,10 @@
 "echt": [
 51.1073,
 5.872
+],
+"edam": [
+52.5119,
+5.0563
 ],
 "ede": [
 52.0717,
@@ -752,6 +764,10 @@
 52.2316,
 5.1735
 ],
+"hoevelaken": [
+52.1757,
+5.4577
+],
 "home office - south holland": null,
 "home-based in omgeving ’s-hertogenbosch met klantbezoeken": null,
 "hoofddorp": [
@@ -970,6 +986,10 @@
 51.6773,
 4.7932
 ],
+"margraten": [
+50.8202,
+5.8217
+],
 "marienvelde": [
 52.0115,
 6.4717
@@ -997,6 +1017,10 @@
 "meppel l e": [
 52.7002,
 6.1728
+],
+"mexico": [
+52.9469,
+6.1457
 ],
 "middelburg": [
 51.4997,
@@ -1168,6 +1192,10 @@
 52.1015,
 5.7721
 ],
+"oud-beijerland": [
+51.8214,
+4.4165
+],
 "oudecampsweg 35c": [
 51.9623,
 4.2341
@@ -1183,6 +1211,10 @@
 "overveen": [
 52.3934,
 4.6116
+],
+"papendrecht": [
+51.8347,
+4.7047
 ],
 "peking": [
 51.8429,
@@ -1270,6 +1302,10 @@
 53.1676,
 6.4686
 ],
+"roelofarendsveen": [
+52.2027,
+4.6312
+],
 "roermond": [
 51.1934,
 5.9883
@@ -1285,6 +1321,10 @@
 "rotterdam": [
 51.9244,
 4.4778
+],
+"rotterdam en dordrecht": [
+51.8156,
+4.6713
 ],
 "rozenburg zh": [
 51.9056,
@@ -1332,6 +1372,10 @@
 6.1066
 ],
 "siebengeweld": null,
+"sint anthonis": [
+51.6269,
+5.8817
+],
 "sint maarten": [
 52.7736,
 4.7449
