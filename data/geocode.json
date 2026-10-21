@@ -221,6 +221,10 @@
 52.0834,
 4.7511
 ],
+"boedapest": [
+52.0951,
+5.0672
+],
 "boekarest": [
 52.096,
 5.0717
@@ -320,6 +324,10 @@
 "colmschate": [
 52.2501,
 6.2243
+],
+"colombo": [
+52.4324,
+4.6629
 ],
 "cotonou": null,
 "creil": [
@@ -588,6 +596,10 @@
 "everdingen": [
 51.9666,
 5.1551
+],
+"farmsum": [
+53.3227,
+6.9286
 ],
 "fijnaart": [
 51.6353,
@@ -1216,6 +1228,7 @@
 "omgeving giessenburg": null,
 "omgeving gorichem - waardenburg": null,
 "omgeving overijssel": null,
+"omgeving spijkerboor": null,
 "ooltgensplaat": [
 51.6836,
 4.3491
@@ -1352,6 +1365,7 @@
 51.7803,
 5.0608
 ],
+"regio zuidwest-": null,
 "rhenen": [
 51.9609,
 5.5722
@@ -1571,6 +1585,10 @@
 53.1803,
 6.1701
 ],
+"tbilisi": [
+52.2252,
+5.1776
+],
 "ter apel": [
 52.8742,
 7.0618
@@ -1630,6 +1648,7 @@
 ],
 "utrecht en zwolle": null,
 "utrecht gvr 200": null,
+"utrecht kromhout kazerne": null,
 "valkenburg zh": [
 52.1594,
 4.4437

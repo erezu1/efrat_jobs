@@ -1,23 +1,19 @@
-## 🆕 5 new matches
+## 🆕 3 new matches
 
-- **[9/10] [Bioinformatician single-cell and multi-omics in infection and vaccine immunology](https://www.werkenvoornederland.nl/vacatures/bioinformatician-single-cell-and-multi-omics-in-infection-and-vaccine-immunology-RIVM-2026-6471)** — RIVM — deadline 02/11/2026
-  Dit ga je doen Are you active in the field of immunology of infectious diseases and eager to contribute to better pandemic preparedness? As a bioinformatician at RIVM, you will analyze large-scale immunological and…
-- **[7/10] [Freshwater Ecology Researcher](https://www.academictransfer.com/en/jobs/364884/freshwater-ecology-researcher/)** — Wageningen University & Research — deadline 09/11/2026
-  Are you an ecologist who wants to contribute to the restoration of Dutch freshwater ecosystems? Do you have knowledge of freshwater ecology and the organisms that inhabit these systems, experience in ecological…
-- **[7/10] [Specialist - Large Molecule Biocritical Reagents](https://jobs.smartrecruiters.com/Eurofins/744000156290092)** — Eurofins
-  JOB DESCRIPTION: We are looking for a Specialist to join the ATS-Bio Technical Life Cycle Management Biomaterials team.
-- **[7/10] [Research Analist experimentele neurologie](https://www.werkenbijumcutrecht.nl/vacatures/wetenschap-en-onderzoek/research-analist-experimentele-neurologie-2026-7533)** — UMC Utrecht — deadline 27/10/2026
-  Research; 32 - 36 uur; €3.171 - €4.492 Als research analist speel je een centrale rol in het onderzoek naar neuromusculaire ziekten.
-- **[6/10] [Onderzoeker zoetwaterecologie](https://www.academictransfer.com/en/jobs/364886/onderzoeker-zoetwaterecologie/)** — Wageningen University & Research — deadline 09/11/2026
-  Ben jij ecoloog en wil je bijdragen aan het herstel van de Nederlandse waternatuur? Heb je kennis van zoetwaterecologie, de organismen die daar te vinden zijn, ervaring met het doen van ecologisch onderzoek, en vind je…
+- **[9/10] [PhD Position: Biodiversity for Nature-Inclusive Dairy Farming](https://www.academictransfer.com/en/jobs/364928/phd-position-biodiversity-for-nature-inclusive-dairy-farming/)** — Radboud Universiteit — deadline 22/11/2026
+  In this PhD position, you will develop integrated and innovative biodiversity monitoring and data analysis techniques to aid in the decision-making of businesses within the dairy sector for the benefit of biodiversity.
+- **[8/10] [Data Steward - Sequencing & Phenotyping](https://www.academictransfer.com/en/jobs/364919/data-steward-sequencing-phenotyping/)** — TU Delft — deadline 15/11/2026
+  TU Delft & CropXR are looking for a Data Steward with a strong affinity for plant research, sequencing and phenotyping data.
+- **[6/10] [Promovendus internationaal onderzoek naar de hersenziekte MLC](https://www.academictransfer.com/en/jobs/364926/promovendus-internationaal-onderzoek-naar-de-hersenziekte-mlc/)** — Amsterdam UMC — deadline 04/11/2026
+  Het Amsterdam Leukodystrofie Centrum biedt een promotieplaats van vier jaar. Het centrum onderzoekt leukodystrofieën: erfelijke aandoeningen die de witte stof van de hersenen aantasten.
 
 ## ⏰ Deadlines coming up
 
-- **[9/10] [PhD positions Immunogenetics](https://www.academictransfer.com/en/jobs/364304/phd-positions-immunogenetics/)** — University Medical Center Groningen (UMCG) — deadline 27/10/2026 (**7 days left**)
-  To delineate the effects of genetic and environmental factors on CeD onset and progression that we have prioritized in our current research lines, we wish to expand on our current model systems to make them more…
-- **[8/10] [Marine Ecologist](https://www.wur.nl/en/vacancy/marine-ecologist-0)** — Wageningen University & Research — Wageningen Marine Research — deadline 27/10/2026 (**7 days left**)
-  Marine Ecologist Your job As a Marine Ecologist specialized in the Delta ecosystems at Wageningen Marine Research (WMR) in Yerseke, you will play an active role in restoring and enhancing the unique natural environment…
-- **[6/10] [Medewerker Visserijregelingen](https://www.werkenvoornederland.nl/vacatures/medewerker-visserijregelingen-RVO-2026-7139)** — Rijksdienst voor Ondernemend Nederland (RVO) — deadline 27/10/2026 (**7 days left**)
-  Dit ga je doen Een toekomstbestendige visserij vraagt om zorgvuldige uitvoering van wet- en regelgeving. Bij de Rijksdienst voor Ondernemend Nederland (RVO) draag jij daar direct aan bij.
+- **[9/10] [15 PhD positions in the MSCA Doctoral Network ORFeus: decoding the dark proteome](https://euraxess.ec.europa.eu/jobs/469449)** — Prinses Máxima Centrum — deadline 22/10/2026 (**1 day left**)
+  Program description ORFeus is a Marie Skłodowska-Curie Actions Doctoral Network, funded by Horizon Europe (Grant Agreement No. 101309891), that recruits 15 doctoral candidates to work on the dark proteome.
+- **[9/10] [15 PhD positions in the MSCA-DN ORFeus: decoding the dark proteome](https://euraxess.ec.europa.eu/jobs/470256)** — jobRxiv — deadline 22/10/2026 (**1 day left**)
+  Description ORFeus is a Marie Skłodowska-Curie Actions Doctoral Network, funded by Horizon Europe (Grant Agreement No. 101309891) and coordinated by the Princess Máxima Center for Pediatric Oncology in Utrecht.
+- **[6/10] [Research Technician 100-plus onderzoek](https://www.academictransfer.com/en/jobs/364737/research-technician-100-plus-onderzoek/)** — Amsterdam UMC — deadline 28/10/2026 (**7 days left**)
+  In Nederland zullen naar schatting in 2050 meer dan een half miljoen mensen dementie hebben. De maatschappelijke impact is groot en neemt toe door de vergrijzing.
 
 Full list: https://erezu1.github.io/efrat_jobs/
