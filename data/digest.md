@@ -1,19 +1,21 @@
-## 🆕 3 new matches
+## 🆕 2 new matches
 
-- **[9/10] [PhD Position: Biodiversity for Nature-Inclusive Dairy Farming](https://www.academictransfer.com/en/jobs/364928/phd-position-biodiversity-for-nature-inclusive-dairy-farming/)** — Radboud Universiteit — deadline 22/11/2026
-  In this PhD position, you will develop integrated and innovative biodiversity monitoring and data analysis techniques to aid in the decision-making of businesses within the dairy sector for the benefit of biodiversity.
-- **[8/10] [Data Steward - Sequencing & Phenotyping](https://www.academictransfer.com/en/jobs/364919/data-steward-sequencing-phenotyping/)** — TU Delft — deadline 15/11/2026
-  TU Delft & CropXR are looking for a Data Steward with a strong affinity for plant research, sequencing and phenotyping data.
-- **[6/10] [Promovendus internationaal onderzoek naar de hersenziekte MLC](https://www.academictransfer.com/en/jobs/364926/promovendus-internationaal-onderzoek-naar-de-hersenziekte-mlc/)** — Amsterdam UMC — deadline 04/11/2026
-  Het Amsterdam Leukodystrofie Centrum biedt een promotieplaats van vier jaar. Het centrum onderzoekt leukodystrofieën: erfelijke aandoeningen die de witte stof van de hersenen aantasten.
+- **[6/10] [PhD student on Key Performance Indicators for biodiversity-inclusive agriculture](https://www.academictransfer.com/en/jobs/364942/phd-student-on-key-performance-indicators-for-biodiversity-inclusive-agriculture/)** — Universiteit Leiden — deadline 23/11/2026
+  The Institute of Environmental Sciences CML and Faculty of Science is looking for: PhD student on Key Performance Indicators for biodiversity-inclusive agriculture In collaboration with Technical University Eindhoven…
+- **[6/10] [Assistant Scientist USP/DSP](https://jobs.smartrecruiters.com/Eurofins/744000157054029)** — Eurofins
+  JOB DESCRIPTION: For our team in Leiden we are looking for an Assistant Scientist USP/DSP. As an Assistant Scientist USP/DSP you have a passion for precision and excellence in laboratory settings.
 
 ## ⏰ Deadlines coming up
 
-- **[9/10] [15 PhD positions in the MSCA Doctoral Network ORFeus: decoding the dark proteome](https://euraxess.ec.europa.eu/jobs/469449)** — Prinses Máxima Centrum — deadline 22/10/2026 (**1 day left**)
-  Program description ORFeus is a Marie Skłodowska-Curie Actions Doctoral Network, funded by Horizon Europe (Grant Agreement No. 101309891), that recruits 15 doctoral candidates to work on the dark proteome.
-- **[9/10] [15 PhD positions in the MSCA-DN ORFeus: decoding the dark proteome](https://euraxess.ec.europa.eu/jobs/470256)** — jobRxiv — deadline 22/10/2026 (**1 day left**)
-  Description ORFeus is a Marie Skłodowska-Curie Actions Doctoral Network, funded by Horizon Europe (Grant Agreement No. 101309891) and coordinated by the Princess Máxima Center for Pediatric Oncology in Utrecht.
-- **[6/10] [Research Technician 100-plus onderzoek](https://www.academictransfer.com/en/jobs/364737/research-technician-100-plus-onderzoek/)** — Amsterdam UMC — deadline 28/10/2026 (**7 days left**)
-  In Nederland zullen naar schatting in 2050 meer dan een half miljoen mensen dementie hebben. De maatschappelijke impact is groot en neemt toe door de vergrijzing.
+- **[10/10] [PhD candidate 'Quest for genetic causes of bleeding tendency'](https://www.academictransfer.com/en/jobs/364392/phd-candidate-quest-for-genetic-causes-of-bleeding-tendency/)** — Radboudumc — deadline 25/10/2026 (**3 days left**)
+  Job description Within the Thrombosis and Hemostasis research group of the Laboratory of Hematology, we investigate the mechanisms that maintain the delicate balance of the hemostatic system.
+- **[6/10] [PhD-kandidaat LUCID](https://www.lumc.nl/over-het-lumc/werken-bij/vacatures/b-26-ab-mr-99-phd-kandidaat-lucid/)** — LUMC — LUCID — deadline 25/10/2026 (**3 days left**)
+  Je hebt nog 21 dag(en) om te solliciteren Internationaal onderzoek, geavanceerde immunologische technologieën en directe impact op infectieziektebestrijding komen samen in deze functie.
+- **[9/10] [PhD student to study shelled zooplankton in a changing Arctic Ocean](https://www.naturalis.nl/en/about-us/job-opportunities/phd-student-to-study-shelled-zooplankton-in-a-changing-arctic-ocean)** — Naturalis Biodiversity Center — deadline 29/10/2026 (**7 days left**)
+  As aPhD student ... You will find yourself in a unique research environment, inspired by passionate scientists from a wide range of disciplines (e.g., taxonomy, evolution, ecology and oceanography).You will receive…
+- **[9/10] [Wetenschappelijk medewerker Research & Development - Probabilistische genotypering](https://www.werkenvoornederland.nl/vacatures/wetenschappelijk-medewerker-research-development-probabilistische-genotypering-NFI-2026-5621)** — Nederlands Forensisch Instituut — deadline 29/10/2026 (**7 days left**)
+  Dit ga je doen DNA-onderzoek kan van doorslaggevend belang zijn in zowel de opsporing, als de bewijsvoering in strafzaken.
+- **[6/10] [Wetenschappelijk medewerker Research & Development -Databank zoekingen](https://www.werkenvoornederland.nl/vacatures/wetenschappelijk-medewerker-research-development-databank-zoekingen-NFI-2026-1064)** — Nederlands Forensisch Instituut — deadline 29/10/2026 (**7 days left**)
+  Dit ga je doen DNA-onderzoek kan van doorslaggevend belang zijn in zowel de opsporing, als de bewijsvoering in strafzaken.
 
 Full list: https://erezu1.github.io/efrat_jobs/
