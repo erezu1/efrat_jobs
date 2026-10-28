@@ -117,6 +117,10 @@
 52.3389,
 4.7845
 ],
+"bakoe": [
+51.8715,
+4.3521
+],
 "balkbrug": [
 52.5994,
 6.393
@@ -280,6 +284,10 @@
 "brunssum": [
 50.9438,
 5.9748
+],
+"brussel": [
+52.3436,
+4.8091
 ],
 "budel": [
 51.2745,
@@ -1345,6 +1353,10 @@
 51.8347,
 4.7047
 ],
+"paramaribo": [
+53.2046,
+5.7994
+],
 "peking": [
 51.8429,
 5.8609
@@ -1365,6 +1377,10 @@
 "poortugaal": [
 51.8578,
 4.3914
+],
+"pretoria": [
+50.8787,
+5.9577
 ],
 "purmerend": [
 52.5025,
@@ -1396,6 +1412,7 @@
 "regio den bosch": null,
 "regio diksmuide": null,
 "regio nieuwleusen": null,
+"regio noord-limburg": null,
 "regio salland": [
 52.3964,
 6.3598
