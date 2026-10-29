@@ -1,31 +1,29 @@
-## 🆕 3 new matches
+## 🆕 4 new matches
 
-- **[10/10] [Laboratory Technician](https://jobs.smartrecruiters.com/Eurofins/744000157995850)** — Eurofins
-  JOB DESCRIPTION: As Molecular Biology Analyst, you will be responsible for carrying out a wide range of test methods on various biopharmaceutical products.
-- **[6/10] [Cytologisch Analist](https://jobs.smartrecruiters.com/Eurofins/744000157780871)** — Eurofins
+- **[10/10] [PhD Insect Virology: impact of the insect’s virome on insect immunity & fitness](https://www.academictransfer.com/en/jobs/365148/phd-insect-virology-impact-of-the-insects-virome-on-insect-immunity-fitness/)** — Wageningen University & Research — deadline 20/11/2026
+  Insects are exposed to a diverse range of infectious viruses throughout their lives.
+- **[10/10] [PhD Insect Virology: viruses manipulation of caterpillar behaviour in a multidim](https://www.academictransfer.com/en/jobs/365147/phd-insect-virology-viruses-manipulation-of-caterpillar-behaviour-in-a-multidim/)** — Wageningen University & Research — deadline 20/11/2026
+  Many parasites, including viruses, manipulate the behaviour of host organisms to increase their own transmission, linking to the concept of the ‘extended phenotype’.
+- **[10/10] [Research technician at Experimental Cardiology](https://www.werkenbijumcutrecht.nl/vacatures/analist/research-technician-at-experimental-cardiology-2026-7551)** — UMC Utrecht — deadline 30/11/2026
+  Research; 32 - 36 uur The Experimental Cardiology group at UMC Utrecht is seeking a research technician to produce, purify, and characterize engineered extracellular vesicles (EVs) for cardiac gene therapy applications…
+- **[6/10] [Cytologisch Analist](https://jobs.smartrecruiters.com/Eurofins/744000158335270)** — Eurofins
   VACATUREOMSCHRIJVING: Na een gedegen interne training, afhankelijk van jouw ervaring, ga je zelfstandig werken als cytologisch analist.
-- **[6/10] [Research analist Morfologie](https://www.naturalis.nl/over-ons/werken-bij-naturalis/research-analist-morfologie)** — Naturalis Biodiversity Center — deadline 17/11/2026
-  Als Research analist Morfologie Ga je aan de slag met bijzondere samples die bijvoorbeeld afkomstig zijn van zeer oude schepen en gebouwen.
 
 ## ⏰ Deadlines coming up
 
-- **[9/10] [PhD student to study shelled zooplankton in a changing Arctic Ocean](https://www.naturalis.nl/en/about-us/job-opportunities/phd-student-to-study-shelled-zooplankton-in-a-changing-arctic-ocean)** — Naturalis Biodiversity Center — deadline 29/10/2026 (**1 day left**)
-  As aPhD student ... You will find yourself in a unique research environment, inspired by passionate scientists from a wide range of disciplines (e.g., taxonomy, evolution, ecology and oceanography).You will receive…
-- **[9/10] [Wetenschappelijk medewerker Research & Development - Probabilistische genotypering](https://www.werkenvoornederland.nl/vacatures/wetenschappelijk-medewerker-research-development-probabilistische-genotypering-NFI-2026-5621)** — Nederlands Forensisch Instituut — deadline 29/10/2026 (**1 day left**)
-  Dit ga je doen DNA-onderzoek kan van doorslaggevend belang zijn in zowel de opsporing, als de bewijsvoering in strafzaken.
-- **[6/10] [Wetenschappelijk medewerker Research & Development -Databank zoekingen](https://www.werkenvoornederland.nl/vacatures/wetenschappelijk-medewerker-research-development-databank-zoekingen-NFI-2026-1064)** — Nederlands Forensisch Instituut — deadline 29/10/2026 (**1 day left**)
-  Dit ga je doen DNA-onderzoek kan van doorslaggevend belang zijn in zowel de opsporing, als de bewijsvoering in strafzaken.
-- **[10/10] [PhD position (1.0 fte, 4 years) in deep-sea benthic ecology in the Arctic Ocean](https://www.academictransfer.com/en/jobs/364591/phd-position-10-fte-4-years-in-deep-sea-benthic-ecology-in-the-arctic-ocean/)** — UvA — deadline 31/10/2026 (**3 days left**)
-  €3,204 - €4,051; Master's; 38 hours About the position You will be working within an international team of Dutch research institutes (UvA, the Naturalis Biodiversity Center, NIOZ Royal Netherlands Institute for Sea…
-- **[8/10] [PhD candidate for the project "Modulation of inflammatory Dendritic cell subsets in atherosclerosis"](https://www.academictransfer.com/en/jobs/364366/phd-candidate-for-the-project-modulation-of-inflammatory-dendritic-cell-subsets-in-atherosclerosis/)** — Universiteit Leiden — deadline 31/10/2026 (**3 days left**)
-  The Faculty of Science and the Leiden Academic Centre for Drug Research (LACDR) are looking for a: PhD candidate for the project “Modulation of inflammatory Dendritic cell subsets in atherosclerosis” Atherosclerosis is…
-- **[7/10] [PhD in Automated Spectroscopy of Photoactive Molecules and Thin Films](https://www.academictransfer.com/en/jobs/364237/phd-in-automated-spectroscopy-of-photoactive-molecules-and-thin-films/)** — UvA — deadline 31/10/2026 (**3 days left**)
-  How can we accelerate the discovery of next-generation materials — from porous architectures for CO₂ capture to photoactive systems for sustainable solar-energy conversion and unprecedented photomedicines? In this PhD…
-- **[7/10] [PhD Position on Biophysical Origins of RNA Toxicity in Huntington’s Disease](https://www.academictransfer.com/en/jobs/364327/phd-position-on-biophysical-origins-of-rna-toxicity-in-huntingtons-disease/)** — Universiteit Utrecht — deadline 31/10/2026 (**3 days left**)
-  In Huntington’s Disease (HD), expansion of CAG repeats in the huntingtin (HTT) gene leads to a toxic gain-of-function that ultimately results in fatal neurodegeneration.
-- **[6/10] [PhD Candidate in Explainable Machine Learning for Studying Biology at Single-Cell Resolution](https://www.academictransfer.com/en/jobs/364169/phd-candidate-in-explainable-machine-learning-for-studying-biology-at-single-cell-resolution/)** — UvA — deadline 31/10/2026 (**3 days left**)
-  Are you a MSc graduate with background in data science, computer science, biostatistics, bioinformatics or a related field? Do you have a solid foundation in machine learning? Are you passionate about biology and…
-- **[6/10] [Promovendus internationaal onderzoek naar de hersenziekte MLC](https://www.academictransfer.com/en/jobs/364926/promovendus-internationaal-onderzoek-naar-de-hersenziekte-mlc/)** — Amsterdam UMC — deadline 04/11/2026 (**7 days left**)
-  Het Amsterdam Leukodystrofie Centrum biedt een promotieplaats van vier jaar. Het centrum onderzoekt leukodystrofieën: erfelijke aandoeningen die de witte stof van de hersenen aantasten.
+- **[9/10] [PhD metabolic footprint in human enterovirus infections along gut-brain axis](https://www.academictransfer.com/en/jobs/364827/phd-metabolic-footprint-in-human-enterovirus-infections-along-gut-brain-axis/)** — Amsterdam UMC — deadline 30/10/2026 (**1 day left**)
+  About the project MERIT (MEtabolic Reprogramming in viral pathogenesis: from Infection to Therapeutic innovations) is an EU-funded MSCA training programme aimed at better understanding how viruses affect the human body.
+- **[9/10] [PhD: Role of mitochondrial dysfunction in enterovirus CNS disease (MCSA-DC)](https://www.academictransfer.com/en/jobs/365000/phd-role-of-mitochondrial-dysfunction-in-enterovirus-cns-disease-mcsa-dc/)** — Amsterdam UMC — deadline 30/10/2026 (**1 day left**)
+  About the project MERIT (MEtabolic Reprogramming in viral pathogenesis: from Infection to Therapeutic innovations) is an EU-funded MSCA training programme aimed at better understanding how viruses affect the human body.
+- **[6/10] [PhD: Mechanisms of HIV-induced neurodegeneration (MCSA)](https://www.academictransfer.com/en/jobs/365002/phd-mechanisms-of-hiv-induced-neurodegeneration-mcsa/)** — Amsterdam UMC — deadline 30/10/2026 (**1 day left**)
+  About the project MERIT (MEtabolic Reprogramming in viral pathogenesis: from Infection to Therapeutic innovations) is an EU-funded MSCA training programme aimed at better understanding how viruses affect the human body.
+- **[6/10] [MSCA-Doctoral Network ‘MERIT’ invites applications for 15 PhD positions](https://euraxess.ec.europa.eu/jobs/472124)** — AUMC — deadline 30/10/2026 (**1 day left**)
+  MERIT (MEtabolic Reprogramming in viral pathogenesis: from Infection to Therapeutic innovations) is an EU-funded MSCA training programme aimed at better understanding how viruses affect the human body.
+- **[7/10] [PhD position in the Artegiani & Hendriks group VISI-ON-BRAIN project](https://euraxess.ec.europa.eu/jobs/458763)** — Prinses Máxima Centrum — deadline 01/11/2026 (**3 days left**)
+  We are looking for a highly ambitious and enthusiastic PhD candidate who is eager to join our lab.
+- **[6/10] [PhD Position Single-Molecule Biophysic](https://www.academictransfer.com/en/jobs/364010/phd-position-single-molecule-biophysic/)** — TU Delft — deadline 01/11/2026 (**3 days left**)
+  We are seeking a motivated PhD student to use single-molecule techniques and computational tools to explore molecular interactions and apply them for therapeutic applications.
+- **[6/10] [PhD Position in Single-Molecule Biophysic](https://euraxess.ec.europa.eu/jobs/466380)** — Delft University of Technology via AcademicTransfer — deadline 01/11/2026 (**3 days left**)
+  We are seeking a motivated PhD student to use single-molecule techniques and computational tools to explore molecular interactions and apply them for therapeutic applications.
 
 Full list: https://erezu1.github.io/efrat_jobs/
