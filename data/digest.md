@@ -1,11 +1,17 @@
+## 🆕 3 new matches
+
+- **[9/10] [Research position Animal Breeding and Genomics](https://www.academictransfer.com/en/jobs/365250/research-position-animal-breeding-and-genomics/)** — Wageningen University & Research — deadline 22/11/2026
+  Shape the future of sustainable livestock breeding Are you passionate about animal breeding, quantitative genetics, and translating scientific discoveries into practical solutions? Do you want your research to have a…
+- **[9/10] [PhD: How taste is encoded in the brain of caterpillars & butterflies](https://www.academictransfer.com/en/jobs/365247/phd-how-taste-is-encoded-in-the-brain-of-caterpillars-butterflies/)** — Wageningen University & Research — deadline 29/11/2026
+  Are you a highly motivated and curious PhD candidate, willing to bridge across the fields of neuroscience, ecology and evolutionary biology? Do you want to explore how butterflies and caterpillars use their taste system…
+- **[6/10] [Ecoloog Natuurinclusieve Landbouw](https://www.groeneruimte.nl/vacaturebank/47711/)** — Natuurmonumenten — deadline 22/11/2026
+  Ecoloog Natuurinclusieve Landbouw Natuurmonumenten | hbo wo | Amersfoort Geplaatst: 03/11/2026 Solliciteer direct Bewaar als favoriet Ecoloog Natuurinclusieve Landbouw De opgave voor een natuurinclusief landelijk gebied…
 
 ## ⏰ Deadlines coming up
 
-- **[8/10] [PhD: new methodologies for RSV infection and immunity](https://www.werkenvoornederland.nl/vacatures/phd-new-methodologies-for-rsv-infection-and-immunity-RIVM-2026-7835)** — RIVM — deadline 09/11/2026 (**7 days left**)
-  Dit ga je doen Are you an MSc graduate in viro-immunology and keen to help replace traditional animal testing? As a PhD researcher within a new European consortium, you will advance, standardize, and qualify a…
-- **[7/10] [Freshwater Ecology Researcher](https://www.academictransfer.com/en/jobs/364884/freshwater-ecology-researcher/)** — Wageningen University & Research — deadline 09/11/2026 (**7 days left**)
-  Are you an ecologist who wants to contribute to the restoration of Dutch freshwater ecosystems? Do you have knowledge of freshwater ecology and the organisms that inhabit these systems, experience in ecological…
-- **[6/10] [Onderzoeker zoetwaterecologie](https://www.academictransfer.com/en/jobs/364886/onderzoeker-zoetwaterecologie/)** — Wageningen University & Research — deadline 09/11/2026 (**7 days left**)
-  Ben jij ecoloog en wil je bijdragen aan het herstel van de Nederlandse waternatuur? Heb je kennis van zoetwaterecologie, de organismen die daar te vinden zijn, ervaring met het doen van ecologisch onderzoek, en vind je…
+- **[6/10] [Promovendus internationaal onderzoek naar de hersenziekte MLC](https://www.academictransfer.com/en/jobs/364926/promovendus-internationaal-onderzoek-naar-de-hersenziekte-mlc/)** — Amsterdam UMC — deadline 04/11/2026 (**1 day left**)
+  Het Amsterdam Leukodystrofie Centrum biedt een promotieplaats van vier jaar. Het centrum onderzoekt leukodystrofieën: erfelijke aandoeningen die de witte stof van de hersenen aantasten.
+- **[6/10] [PhD-student in cellular neuroscience](https://www.academictransfer.com/en/jobs/364847/phd-student-in-cellular-neuroscience/)** — Vrije Universiteit Amsterdam — deadline 06/11/2026 (**3 days left**)
+  Project description: Our ability to walk, talk and form memories requires that neurons in our brain form, maintain and adapt billions of synaptic connections to establish functional neuronal circuits.
 
 Full list: https://erezu1.github.io/efrat_jobs/
