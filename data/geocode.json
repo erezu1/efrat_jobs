@@ -297,6 +297,10 @@
 51.2745,
 5.5745
 ],
+"buenos aires": [
+52.3028,
+4.8464
+],
 "bunde": [
 50.8974,
 5.7325
@@ -413,6 +417,10 @@
 "den bosch": [
 51.6889,
 5.3031
+],
+"den burg": [
+53.0552,
+4.7967
 ],
 "den haag": [
 52.08,
@@ -866,6 +874,7 @@
 5.4577
 ],
 "home office - south holland": null,
+"home-based in centraal en op locatie bij klanten": null,
 "home-based in omgeving ’s-hertogenbosch met klantbezoeken": null,
 "hoofddorp": [
 52.3056,
@@ -1095,6 +1104,10 @@
 "made": [
 51.6773,
 4.7932
+],
+"manilla": [
+52.032,
+4.8723
 ],
 "margraten": [
 50.8202,
@@ -1672,6 +1685,7 @@
 53.1803,
 6.1701
 ],
+"taipee": null,
 "tbilisi": [
 52.2252,
 5.1776
