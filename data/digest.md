@@ -1,15 +1,15 @@
-## 🆕 2 new matches
+## 🆕 1 new match
 
-- **[7/10] [Technician](https://www.academictransfer.com/en/jobs/365335/technician/)** — KNAW — deadline 25/12/2026
-  The Mattiroli lab is looking for a technician as part of a joint project with the laboratory of Prof. Nynke Dekker at the University of Oxford.
-- **[7/10] [Technician](https://vacatures.knaw.nl/job/Technician/3179-en_US)** — KNAW — Hubrecht Institute — deadline 25/12/2026
-  Scientific/Non-scientific: Academic support staff Institute: Hubrecht Institute Location: Utrecht Posting End Date: 12/25/26 Minimum hours per week: 38 Maximum Salary (gross per month, whole numbers): 4.159 Contract…
+- **[9/10] [Forensic DNA analist](https://jobs.smartrecruiters.com/Eurofins/744000160192917)** — Eurofins
+  JOB DESCRIPTION: As a Forensic DNA Analyst, you will perform high-throughput DNA testing on a wide range of forensic and kinship samples, supporting criminal investigations and identification cases in the Netherlands…
 
 ## ⏰ Deadlines coming up
 
-- **[6/10] [PhD-student in cellular neuroscience](https://www.academictransfer.com/en/jobs/364847/phd-student-in-cellular-neuroscience/)** — Vrije Universiteit Amsterdam — deadline 06/11/2026 (**1 day left**)
-  Project description: Our ability to walk, talk and form memories requires that neurons in our brain form, maintain and adapt billions of synaptic connections to establish functional neuronal circuits.
-- **[6/10] [Junior ecoloog](https://greenjobs.nl/vacature/junior-ecoloog-jd)** — Waterschap De Dommel — deadline 12/11/2026 (**7 days left**)
-  Junior Ecoloog 23-36 uur | Boxtel Wat ga je doen? Wil jij een rol spelen in het toekomstbestendig maken van water en natuur in Brabant? Bij Waterschap De Dommel werk je aan maatschappelijke opgaven die er écht toe doen.
+- **[8/10] [PhD: new methodologies for RSV infection and immunity](https://www.werkenvoornederland.nl/vacatures/phd-new-methodologies-for-rsv-infection-and-immunity-RIVM-2026-7835)** — RIVM — deadline 09/11/2026 (**3 days left**)
+  Dit ga je doen Are you an MSc graduate in viro-immunology and keen to help replace traditional animal testing? As a PhD researcher within a new European consortium, you will advance, standardize, and qualify a…
+- **[7/10] [Freshwater Ecology Researcher](https://www.academictransfer.com/en/jobs/364884/freshwater-ecology-researcher/)** — Wageningen University & Research — deadline 09/11/2026 (**3 days left**)
+  Are you an ecologist who wants to contribute to the restoration of Dutch freshwater ecosystems? Do you have knowledge of freshwater ecology and the organisms that inhabit these systems, experience in ecological…
+- **[6/10] [Onderzoeker zoetwaterecologie](https://www.academictransfer.com/en/jobs/364886/onderzoeker-zoetwaterecologie/)** — Wageningen University & Research — deadline 09/11/2026 (**3 days left**)
+  Ben jij ecoloog en wil je bijdragen aan het herstel van de Nederlandse waternatuur? Heb je kennis van zoetwaterecologie, de organismen die daar te vinden zijn, ervaring met het doen van ecologisch onderzoek, en vind je…
 
 Full list: https://erezu1.github.io/efrat_jobs/
