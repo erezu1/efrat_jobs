@@ -1,15 +1,8 @@
-## 🆕 1 new match
+## 🆕 2 new matches
 
-- **[9/10] [Forensic DNA analist](https://jobs.smartrecruiters.com/Eurofins/744000160192917)** — Eurofins
+- **[9/10] [Forensic DNA analyst](https://jobs.smartrecruiters.com/Eurofins/744000160193562)** — Eurofins
   JOB DESCRIPTION: As a Forensic DNA Analyst, you will perform high-throughput DNA testing on a wide range of forensic and kinship samples, supporting criminal investigations and identification cases in the Netherlands…
-
-## ⏰ Deadlines coming up
-
-- **[8/10] [PhD: new methodologies for RSV infection and immunity](https://www.werkenvoornederland.nl/vacatures/phd-new-methodologies-for-rsv-infection-and-immunity-RIVM-2026-7835)** — RIVM — deadline 09/11/2026 (**3 days left**)
-  Dit ga je doen Are you an MSc graduate in viro-immunology and keen to help replace traditional animal testing? As a PhD researcher within a new European consortium, you will advance, standardize, and qualify a…
-- **[7/10] [Freshwater Ecology Researcher](https://www.academictransfer.com/en/jobs/364884/freshwater-ecology-researcher/)** — Wageningen University & Research — deadline 09/11/2026 (**3 days left**)
-  Are you an ecologist who wants to contribute to the restoration of Dutch freshwater ecosystems? Do you have knowledge of freshwater ecology and the organisms that inhabit these systems, experience in ecological…
-- **[6/10] [Onderzoeker zoetwaterecologie](https://www.academictransfer.com/en/jobs/364886/onderzoeker-zoetwaterecologie/)** — Wageningen University & Research — deadline 09/11/2026 (**3 days left**)
-  Ben jij ecoloog en wil je bijdragen aan het herstel van de Nederlandse waternatuur? Heb je kennis van zoetwaterecologie, de organismen die daar te vinden zijn, ervaring met het doen van ecologisch onderzoek, en vind je…
+- **[6/10] [Onderzoeks- en Onderwijsmedewerker Plant-Microbe Interacties](https://www.academictransfer.com/en/jobs/365390/onderzoeks-en-onderwijsmedewerker-plant-microbe-interacties/)** — Universiteit Utrecht — deadline 30/11/2026
+  Heb jij een passie voor biologie, moleculaire technieken en plant-microbe interacties? Of heb je al ervaring in een lab en wil je je verder ontwikkelen? Bij de onderzoeksgroep Plant-Microbe Interactions van de…
 
 Full list: https://erezu1.github.io/efrat_jobs/
