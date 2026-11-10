@@ -1,15 +1,15 @@
-## 🆕 2 new matches
+## 🆕 3 new matches
 
-- **[7/10] [Research Assistant – Genetic engineering of acetogens](https://www.academictransfer.com/en/jobs/365409/research-assistant-genetic-engineering-of-acetogens/)** — Wageningen University & Research — deadline 30/11/2026
-  We are seeking an enthusiastic and motivated Research Assistant to help engineer acetogenic bacteria for the conversion of CO and CO2 into valuable products.
-- **[6/10] [PhD in cell therapy for hereditary eye diseases: A vision for the future](https://www.academictransfer.com/en/jobs/365398/phd-in-cell-therapy-for-hereditary-eye-diseases-a-vision-for-the-future/)** — Amsterdam UMC — deadline 22/11/2026
-  Developing new treatments starts with models that accurately reflect the disease in the patient.
+- **[8/10] [Analyst in PCR Diagnostics for Animal Diseases](https://www.wur.nl/en/vacancy/analyst-pcr-diagnostics-animal-diseases)** — Wageningen University & Research — Wageningen Bioveterinary Research — deadline 01/12/2026
+  Analyst in PCR Diagnostics for Animal Diseases Your job Have you completed an MLO or HLO degree and are you ready for a new challenge as a Laboratory Analyst in a PCR laboratory within an inspiring and dynamic…
+- **[6/10] [Assistant Scientist - Early Development Studies](https://jobs.smartrecruiters.com/Eurofins/744000160827903)** — Eurofins
+  JOB DESCRIPTION: Job Description For our team in Leiden, we are looking for an Assistant or Associate Scientist, depending on experience.
+- **[6/10] [Analyst Bacterial Animal Diseases](https://www.wur.nl/en/vacancy/analyst-bacterial-animal-diseases)** — Wageningen University & Research — Wageningen Bioveterinary Research — deadline 01/12/2026
+  Analyst Bacterial Animal Diseases Your job Have you completed an MLO or HLO degree and are you ready for a new challenge as a Laboratory Analyst – Bacterial Animal Diseases in an inspiring and dynamic environment? Would…
 
 ## ⏰ Deadlines coming up
 
-- **[6/10] [Junior ecoloog](https://greenjobs.nl/vacature/junior-ecoloog-jd)** — Waterschap De Dommel — deadline 12/11/2026 (**3 days left**)
-  Junior Ecoloog 23-36 uur | Boxtel Wat ga je doen? Wil jij een rol spelen in het toekomstbestendig maken van water en natuur in Brabant? Bij Waterschap De Dommel werk je aan maatschappelijke opgaven die er écht toe doen.
-- **[7/10] [Inspecteur natuur](https://www.werkenvoornederland.nl/vacatures/inspecteur-natuur-NVWA-2026-9437)** — Nederlandse Voedsel- en Warenautoriteit (NVWA) — deadline 16/11/2026 (**7 days left**)
-  Dit ga je doen Als inspecteur natuur in de regio zuidwest Nederland zet je je in voor het beschermen van planten en dieren tegen illegale handel, slechte huisvesting en de opmars van invasieve exoten.
+- **[7/10] [PhD Position Natural Building Skins for Heat Resilience](https://www.academictransfer.com/en/jobs/364491/phd-position-natural-building-skins-for-heat-resilience/)** — TU Delft — deadline 11/11/2026 (**1 day left**)
+  Join us in developing the next generation of climate-resilient building envelopes.
 
 Full list: https://erezu1.github.io/efrat_jobs/
