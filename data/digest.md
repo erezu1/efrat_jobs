@@ -1,21 +1,17 @@
+## 🆕 1 new match
+
+- **[10/10] [Analist Developmental, Stem Cell and Cancer Biology](https://www.academictransfer.com/en/jobs/365841/analist-developmental-stem-cell-and-cancer-biology/)** — UvA — deadline 03/01/2027
+  Lever jij graag een ondersteunende bijdrage aan fundamenteel onderzoek in de levenswetenschappen? Vind je het niet alleen leuk om experimenten te doen, maar zet je jouw organisatorische vaardigheden ook graag in om…
 
 ## ⏰ Deadlines coming up
 
-- **[10/10] [PhD Insect Virology: impact of the insect’s virome on insect immunity & fitness](https://www.academictransfer.com/en/jobs/365148/phd-insect-virology-impact-of-the-insects-virome-on-insect-immunity-fitness/)** — Wageningen University & Research — deadline 24/11/2026 (**1 day left**)
-  Insects are exposed to a diverse range of infectious viruses throughout their lives.
-- **[9/10] [PhD: viral manipulation of caterpillar behaviour in a multidimensional context](https://www.academictransfer.com/en/jobs/365147/phd-viral-manipulation-of-caterpillar-behaviour-in-a-multidimensional-context/)** — Wageningen University & Research — deadline 24/11/2026 (**1 day left**)
-  Many parasites, including viruses, manipulate the behaviour of host organisms to increase their own transmission, linking to the concept of the ‘extended phenotype’.
-- **[7/10] [Research Assistant – Genetic engineering of acetogens](https://www.academictransfer.com/en/jobs/365409/research-assistant-genetic-engineering-of-acetogens/)** — Wageningen University & Research — deadline 30/11/2026 (**7 days left**)
-  We are seeking an enthusiastic and motivated Research Assistant to help engineer acetogenic bacteria for the conversion of CO and CO2 into valuable products.
-- **[7/10] [PhD Researcher in Legal and ethical perspectives in data-driven technologies in healthcare](https://www.academictransfer.com/en/jobs/365511/phd-researcher-in-legal-and-ethical-perspectives-in-data-driven-technologies-in-healthcare/)** — UvA — deadline 30/11/2026 (**7 days left**)
-  We are inviting prospective researchers to apply for a PhD position led by Dr. Mahsa Shabani.
-- **[7/10] [PhD position in human liver organoid modelling](https://euraxess.ec.europa.eu/jobs/470083)** — Prinses Máxima Centrum — deadline 30/11/2026 (**7 days left**)
-  We are seeking a highly ambitious and enthusiastic PhD candidate to join the Artegiani & Hendriks group.
-- **[6/10] [Onderzoeks- en Onderwijsmedewerker Plant-Microbe Interacties](https://www.academictransfer.com/en/jobs/365390/onderzoeks-en-onderwijsmedewerker-plant-microbe-interacties/)** — Universiteit Utrecht — deadline 30/11/2026 (**7 days left**)
-  Heb jij een passie voor biologie, moleculaire technieken en plant-microbe interacties? Of heb je al ervaring in een lab en wil je je verder ontwikkelen? Bij de onderzoeksgroep Plant-Microbe Interactions van de…
-- **[6/10] [Unflappable Laboratory Technician](https://www.academictransfer.com/en/jobs/365729/unflappable-laboratory-technician/)** — Universiteit Leiden — deadline 30/11/2026 (**7 days left**)
-  The isolation and identification of valuable compounds are at the heart of natural products research.
-- **[6/10] [Bio-informaticus/Data Engineering](https://www.werkenvoornederland.nl/vacatures/bio-informaticus-data-engineering-NFI-2026-3379)** — Nederlands Forensisch Instituut — deadline 30/11/2026 (**7 days left**)
-  Dit ga je doen Hoe kan de informatie uit forensisch onderzoek aan planten, dieren en micro-organismen door het Nederlands Forensisch Instituut effectief worden gebruikt binnen strafrechtelijk onderzoek? Dat is dé vraag…
+- **[10/10] [1. PhD Position in Fungal Cell Biology](https://www.academictransfer.com/en/jobs/365569/1-phd-position-in-fungal-cell-biology/)** — Vrije Universiteit Amsterdam — deadline 27/11/2026 (**3 days left**)
+  We are looking for a motivated PhD candidate to join the Nuclear Swarms project, funded by an NWO Vidi grant and led by Dr Vasilis Kokkoris at Vrije Universiteit Amsterdam.
+- **[8/10] [PhD student - Traumatic Brain Injury](https://www.academictransfer.com/en/jobs/364479/phd-student-traumatic-brain-injury/)** — KNAW — deadline 01/12/2026 (**7 days left**)
+  Team A PhD position is available in the Neurogenesis & Neurodegeneration group at the Netherlands Institute for Neuroscience in Amsterdam.
+- **[8/10] [Analyst in PCR Diagnostics for Animal Diseases](https://www.wur.nl/en/vacancy/analyst-pcr-diagnostics-animal-diseases)** — Wageningen University & Research — Wageningen Bioveterinary Research — deadline 01/12/2026 (**7 days left**)
+  Analyst in PCR Diagnostics for Animal Diseases Your job Have you completed an MLO or HLO degree and are you ready for a new challenge as a Laboratory Analyst in a PCR laboratory within an inspiring and dynamic…
+- **[6/10] [Analyst Bacterial Animal Diseases](https://www.wur.nl/en/vacancy/analyst-bacterial-animal-diseases)** — Wageningen University & Research — Wageningen Bioveterinary Research — deadline 01/12/2026 (**7 days left**)
+  Analyst Bacterial Animal Diseases Your job Have you completed an MLO or HLO degree and are you ready for a new challenge as a Laboratory Analyst – Bacterial Animal Diseases in an inspiring and dynamic environment? Would…
 
 Full list: https://erezu1.github.io/efrat_jobs/
