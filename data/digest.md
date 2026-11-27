@@ -1,21 +1,25 @@
-## 🆕 4 new matches
+## 🆕 2 new matches
 
-- **[10/10] [Analyst in Fish and Shellfish Diseases](https://www.academictransfer.com/en/jobs/365887/analyst-in-fish-and-shellfish-diseases/)** — Wageningen University & Research — deadline 04/01/2027
-  Discover the world beneath the water. Use your expertise to contribute to healthy fish, shellfish and crustaceans.
-- **[10/10] [USEQ Lab technician with focus on single cell sequencing (10X)](https://www.werkenbijumcutrecht.nl/vacatures/useq-lab-technician-with-focus-on-single-cell-sequencing-10x-2026-7639)** — UMC Utrecht — deadline 07/01/2027
-  Research; 32 - 36 uur; €3.171 - €4.492 We are looking for a research technician / operator to become responsible for our single cell sequencing workflow, with a focus on the 10X Chromium platform.
-- **[7/10] [Commercial Intern (MSc)](https://www.baseclear.com/career-job/commercial-intern-msc/)** — BaseClear (genomics lab)
-  Leiden Bio Science Park · 6 months · 40 hours per week · Start: January–February 2027 BaseClear helps organizations transform biological samples into reliable, actionable insights that support research, product…
-- **[6/10] [Nonconformance & CAPA Specialist](https://jobs.smartrecruiters.com/Eurofins/744000163843449)** — Eurofins
+- **[10/10] [Analist - Moleculaire Tumor Diagnostiek](https://www.werkenbijavl.nl/vacatures/analist-moleculaire-tumor-diagnostiek/)** — Netherlands Cancer Institute – Antoni van Leeuwenhoek — deadline 11/12/2026
+  Analist - Moleculaire Tumor Diagnostiek Solliciteren Analist - Moleculaire Tumor Diagnostiek 32-36u p/wk € 3.228 - € 4.346 hbo instapniveau Sluitingsdatum: 11 dec.
+- **[6/10] [Junior Nonconformance & CAPA Specialist](https://jobs.smartrecruiters.com/Eurofins/744000163978280)** — Eurofins
   JOB DESCRIPTION: We are looking for a motivated and curious Nonconformance & CAPA Specialist to support quality investigations and improvements within a regulated medical device environment.
 
 ## ⏰ Deadlines coming up
 
-- **[10/10] [1. PhD Position in Fungal Cell Biology](https://www.academictransfer.com/en/jobs/365569/1-phd-position-in-fungal-cell-biology/)** — Vrije Universiteit Amsterdam — deadline 27/11/2026 (**1 day left**)
-  We are looking for a motivated PhD candidate to join the Nuclear Swarms project, funded by an NWO Vidi grant and led by Dr Vasilis Kokkoris at Vrije Universiteit Amsterdam.
-- **[9/10] [PhD: How taste is encoded in the brain of caterpillars & butterflies](https://www.academictransfer.com/en/jobs/365247/phd-how-taste-is-encoded-in-the-brain-of-caterpillars-butterflies/)** — Wageningen University & Research — deadline 29/11/2026 (**3 days left**)
-  Are you a highly motivated and curious PhD candidate, willing to bridge across the fields of neuroscience, ecology and evolutionary biology? Do you want to explore how butterflies and caterpillars use their taste system…
-- **[9/10] [PhD position: Visualization and comparison of pangenomes](https://www.academictransfer.com/en/jobs/365736/phd-position-visualization-and-comparison-of-pangenomes/)** — Wageningen University & Research — deadline 03/12/2026 (**7 days left**)
-  Are you interested in bioinformatics or computational genomics and are you curious and eager to learn more about comparative genomics? Do you have a background in bioinformatics, computer science, or statistical…
+- **[7/10] [Research Assistant – Genetic engineering of acetogens](https://www.academictransfer.com/en/jobs/365409/research-assistant-genetic-engineering-of-acetogens/)** — Wageningen University & Research — deadline 30/11/2026 (**3 days left**)
+  We are seeking an enthusiastic and motivated Research Assistant to help engineer acetogenic bacteria for the conversion of CO and CO2 into valuable products.
+- **[7/10] [PhD Researcher in Legal and ethical perspectives in data-driven technologies in healthcare](https://www.academictransfer.com/en/jobs/365511/phd-researcher-in-legal-and-ethical-perspectives-in-data-driven-technologies-in-healthcare/)** — UvA — deadline 30/11/2026 (**3 days left**)
+  We are inviting prospective researchers to apply for a PhD position led by Dr. Mahsa Shabani.
+- **[7/10] [PhD position in human liver organoid modelling](https://euraxess.ec.europa.eu/jobs/470083)** — Prinses Máxima Centrum — deadline 30/11/2026 (**3 days left**)
+  We are seeking a highly ambitious and enthusiastic PhD candidate to join the Artegiani & Hendriks group.
+- **[6/10] [Onderzoeks- en Onderwijsmedewerker Plant-Microbe Interacties](https://www.academictransfer.com/en/jobs/365390/onderzoeks-en-onderwijsmedewerker-plant-microbe-interacties/)** — Universiteit Utrecht — deadline 30/11/2026 (**3 days left**)
+  Heb jij een passie voor biologie, moleculaire technieken en plant-microbe interacties? Of heb je al ervaring in een lab en wil je je verder ontwikkelen? Bij de onderzoeksgroep Plant-Microbe Interactions van de…
+- **[6/10] [Unflappable Laboratory Technician](https://www.academictransfer.com/en/jobs/365729/unflappable-laboratory-technician/)** — Universiteit Leiden — deadline 30/11/2026 (**3 days left**)
+  The isolation and identification of valuable compounds are at the heart of natural products research.
+- **[6/10] [Bio-informaticus/Data Engineering](https://www.werkenvoornederland.nl/vacatures/bio-informaticus-data-engineering-NFI-2026-3379)** — Nederlands Forensisch Instituut — deadline 30/11/2026 (**3 days left**)
+  Dit ga je doen Hoe kan de informatie uit forensisch onderzoek aan planten, dieren en micro-organismen door het Nederlands Forensisch Instituut effectief worden gebruikt binnen strafrechtelijk onderzoek? Dat is dé vraag…
+- **[7/10] [PhD Position: Ecology of Waterway Management](https://www.academictransfer.com/en/jobs/365584/phd-position-ecology-of-waterway-management/)** — Radboud Universiteit — deadline 04/12/2026 (**7 days left**)
+  We have five positions available on the new BALANS project in the Netherlands: three PhD positions (at Radboud University (RU), the University of Groningen (RUG) and FLORON/RAVON respectively), one 4-year postdoctoral…
 
 Full list: https://erezu1.github.io/efrat_jobs/
